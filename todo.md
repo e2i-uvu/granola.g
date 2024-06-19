@@ -1,0 +1,5 @@
+- [ ] Plan the project
+- [ ] Create a front end with [Streamlit](https://streamlit.io/) for gathering information
+- [ ] Documents
+- [ ] Meetings times
+- [ ] Golang???
