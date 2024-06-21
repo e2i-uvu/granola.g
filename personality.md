@@ -30,7 +30,11 @@ Leet code question dependant on expertise area
 
 2) Embedded
 
+  * Move all zeroes in an array to the end of the array while maintaining the order of the rest of the list.
+
 3) Web Dev
+
+  * 
 
 4) Backend
 
