@@ -1,22 +1,25 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	response := Response{Name: "John", Lang: "Python", AOI: "Embedded, Web"}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-}
-
 func main() {
+	file, err := os.OpenFile("logfile.txt", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	// Set the output of log package to the file
+	log.SetOutput(file)
+
+	log.Println("Initialized:")
 	go InitSQL()
-	fmt.Print("Hello")
-	http.HandleFunc("/", handler)
+	http.HandleFunc("/interviewStart", InterviewStartHandler)
 	go http.ListenAndServe(":8080", nil)
 	for {
 		time.Sleep(1 * time.Second)

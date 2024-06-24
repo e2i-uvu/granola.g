@@ -4,7 +4,7 @@ services:
       context: ./backend/
       dockerfile: ./Dockerfile
     volumes:
-      - db:./database
+      - db:/usr/src/app/database
 
   streamlit:
     build:
