@@ -16,7 +16,11 @@ func InterviewStartHandler(w http.ResponseWriter, r *http.Request) {
 		id, ok := data["uvuid"].(float64)
 		uvuid := int(id)
 		if ok {
-			person := GetUser(uvuid)
+			person, err := GetUser(uvuid)
+			if err != nil {
+				http.Error(w, "Invalid input", http.StatusNotAcceptable)
+				return
+			}
 			response, err := json.Marshal(person)
 			if err != nil {
 			}

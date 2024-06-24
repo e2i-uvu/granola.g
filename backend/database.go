@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 )
@@ -29,7 +30,7 @@ func InitSQL() {
 	db.Exec(`INSERT INTO users (uvuid, name, lang, aoi) VALUES (?,?,?,?)`, 10955272, "Henry", "Python", "Anything")
 }
 
-func GetUser(uvuid int) Person {
+func GetUser(uvuid int) (Person, error) {
 	db, err := sql.Open("sqlite3", "./database/database.db")
 	if err != nil {
 	}
@@ -43,6 +44,14 @@ func GetUser(uvuid int) Person {
 
 	rows, err := stmt.Query(uvuid)
 	if err != nil {
+		person := Person{
+			PID:   0,
+			UvuID: 0,
+			Name:  "John Doe",
+			Lang:  "Golang",
+			AOI:   "Backend development",
+		}
+		return person, errors.New("invalid id")
 	}
 	defer rows.Close()
 
@@ -58,7 +67,7 @@ func GetUser(uvuid int) Person {
 		users = append(users, user)
 	}
 
-	return users[len(users)-1]
+	return users[len(users)-1], nil
 }
 
 func (user Person) Save() error {
