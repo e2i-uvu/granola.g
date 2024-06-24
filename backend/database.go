@@ -44,14 +44,6 @@ func GetUser(uvuid int) (Person, error) {
 
 	rows, err := stmt.Query(uvuid)
 	if err != nil {
-		person := Person{
-			PID:   0,
-			UvuID: 0,
-			Name:  "John Doe",
-			Lang:  "Golang",
-			AOI:   "Backend development",
-		}
-		return person, errors.New("invalid id")
 	}
 	defer rows.Close()
 
@@ -61,7 +53,8 @@ func GetUser(uvuid int) (Person, error) {
 		log.Println(rows)
 		err := rows.Scan(&user.PID, &user.UvuID, &user.Name, &user.AOI, &user.Lang)
 		if err != nil {
-			log.Println(err)
+			person := Person{UvuID: 0, PID: 0, Name: "", AOI: "", Lang: ""}
+			return person, errors.New("No users match ID")
 		}
 		log.Println(user)
 		users = append(users, user)
