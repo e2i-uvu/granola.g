@@ -1,0 +1,14 @@
+services:
+  go_server:
+    build:
+      context: ./backend/
+      dockerfile: ./Dockerfile
+
+  streamlit:
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - go_server
