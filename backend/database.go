@@ -47,7 +47,7 @@ func GetUser(uvuid int) (Person, error) {
 	stmt, err := db.Prepare(query)
 	if err != nil {
 		InfoLogger.Println("db.prepare", err)
-		person := Person{UvuID: 0, PID: 0, Name: "", AOI: "", Lang: ""}
+		person := Person{UvuID: 0, PID: 0, Name: "", Lang: "", AOI: ""}
 		return person, errors.New("No users match ID")
 	}
 	defer stmt.Close()
@@ -55,7 +55,7 @@ func GetUser(uvuid int) (Person, error) {
 	rows, err := stmt.Query(uvuid)
 	if err != nil {
 		InfoLogger.Println("stmt.query", err)
-		person := Person{UvuID: 0, PID: 0, Name: "", AOI: "", Lang: ""}
+		person := Person{UvuID: 0, PID: 0, Name: "", Lang: "", AOI: ""}
 		return person, errors.New("No users match ID")
 	}
 	defer rows.Close()
@@ -63,10 +63,10 @@ func GetUser(uvuid int) (Person, error) {
 	var users []Person
 	for rows.Next() {
 		var user Person
-		err := rows.Scan(&user.PID, &user.UvuID, &user.Name, &user.AOI, &user.Lang)
+		err := rows.Scan(&user.PID, &user.UvuID, &user.Name, &user.Lang, &user.AOI)
 		if err != nil {
 			InfoLogger.Println("Rows.scan", err)
-			person := Person{UvuID: 0, PID: 0, Name: "", AOI: "", Lang: ""}
+			person := Person{UvuID: 0, PID: 0, Name: "", Lang: "", AOI: ""}
 			return person, errors.New("No users match ID")
 		}
 		users = append(users, user)
@@ -74,7 +74,7 @@ func GetUser(uvuid int) (Person, error) {
 	if len(users) > 1 {
 		return users[len(users)-1], nil
 	}
-	person := Person{UvuID: 0, PID: 0, Name: "", AOI: "", Lang: ""}
+	person := Person{UvuID: 0, PID: 0, Name: "", Lang: "", AOI: ""}
 	return person, errors.New("No users match ID")
 }
 
