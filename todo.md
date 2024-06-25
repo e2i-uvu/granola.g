@@ -38,6 +38,4 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
 - [ ] Implement server communication using Go
 - [ ] Work on database integration
 
----
 
-You can copy and paste this directly into a GitHub issue or README file, and it will render with checkboxes.
