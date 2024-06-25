@@ -7,17 +7,19 @@ import (
 	"time"
 )
 
+var (
+	InfoLogger *log.Logger
+)
+
 func main() {
-	file, err := os.OpenFile("logfile.txt", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	file, err := os.OpenFile("./database/app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to open log file: %v", err)
 	}
-	defer file.Close()
 
-	// Set the output of log package to the file
-	log.SetOutput(file)
+	InfoLogger = log.New(file, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
 
-	log.Println("Initialized:")
+	InfoLogger.Println("Initialized:")
 	go InitSQL()
 	http.HandleFunc("/interviewStart", InterviewStartHandler)
 	go http.ListenAndServe(":8080", nil)

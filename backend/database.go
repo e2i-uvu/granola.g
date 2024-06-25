@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	_ "github.com/mattn/go-sqlite3"
-	"log"
 )
 
 type Person struct {
@@ -33,34 +32,45 @@ func InitSQL() {
 func GetUser(uvuid int) (Person, error) {
 	db, err := sql.Open("sqlite3", "./database/database.db")
 	if err != nil {
+		InfoLogger.Println("sql.open", err)
+		person := Person{UvuID: 0, PID: 0, Name: "", AOI: "", Lang: ""}
+		return person, errors.New("No users match ID")
 	}
 	defer db.Close()
 
 	query := "SELECT * FROM users WHERE uvuid = ?"
 	stmt, err := db.Prepare(query)
 	if err != nil {
+		InfoLogger.Println("db.prepare", err)
+		person := Person{UvuID: 0, PID: 0, Name: "", AOI: "", Lang: ""}
+		return person, errors.New("No users match ID")
 	}
 	defer stmt.Close()
 
 	rows, err := stmt.Query(uvuid)
 	if err != nil {
+		InfoLogger.Println("stmt.query", err)
+		person := Person{UvuID: 0, PID: 0, Name: "", AOI: "", Lang: ""}
+		return person, errors.New("No users match ID")
 	}
 	defer rows.Close()
 
 	var users []Person
 	for rows.Next() {
 		var user Person
-		log.Println(rows)
 		err := rows.Scan(&user.PID, &user.UvuID, &user.Name, &user.AOI, &user.Lang)
 		if err != nil {
+			InfoLogger.Println("Rows.scan", err)
 			person := Person{UvuID: 0, PID: 0, Name: "", AOI: "", Lang: ""}
 			return person, errors.New("No users match ID")
 		}
-		log.Println(user)
 		users = append(users, user)
 	}
-
-	return users[len(users)-1], nil
+	if len(users) > 1 {
+		return users[len(users)-1], nil
+	}
+	person := Person{UvuID: 0, PID: 0, Name: "", AOI: "", Lang: ""}
+	return person, errors.New("No users match ID")
 }
 
 func (user Person) Save() error {
