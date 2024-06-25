@@ -12,7 +12,7 @@ func InterviewStartHandler(w http.ResponseWriter, r *http.Request) {
 		var data map[string]interface{}
 		err := json.NewDecoder(r.Body).Decode(&data)
 		if err != nil {
-			http.Error(w, "Bad request", http.StatusBadRequest)
+			http.Error(w, "Invalid input", http.StatusNotAcceptable)
 			return
 		}
 		id, err := strconv.ParseInt(data["uvuid"].(string), 10, 0)
