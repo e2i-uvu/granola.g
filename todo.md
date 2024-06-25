@@ -21,6 +21,7 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
 ### Carlos:
 - [ ] Set up development environment
 - [ ] Work on Streamlit features
+- [ ] Create a simple application to get someone's UVU ID and make a request to the back end
 - [ ] Collaborate with Joshua
 
 ### Joshua Guts:
