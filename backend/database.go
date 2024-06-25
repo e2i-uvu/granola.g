@@ -26,7 +26,12 @@ func InitSQL() {
 	}
 	if err != nil {
 	}
-	db.Exec(`INSERT INTO users (uvuid, name, lang, aoi) VALUES (?,?,?,?)`, 10955272, "Henry", "Python", "Anything")
+	db.Exec(`INSERT INTO users (uvuid, name, lang, aoi) VALUES (?,?,?,?)`, 10955272, "Henry", "Golang", "Anything")
+	db.Exec(`INSERT INTO users (uvuid, name, lang, aoi) VALUES (?,?,?,?)`, 42069, "John Doe", "Javascript Quiche Eater", "Web Dev")
+	db.Exec(`INSERT INTO users (uvuid, name, lang, aoi) VALUES (?,?,?,?)`, 10810570, "Guts", "Python", "Front End")
+	db.Exec(`INSERT INTO users (uvuid, name, lang, aoi) VALUES (?,?,?,?)`, 10976160, "Spencer", "Mystique", "Devops")
+	db.Exec(`INSERT INTO users (uvuid, name, lang, aoi) VALUES (?,?,?,?)`, 11006941, "Carlos", "Python Electric Boogaloo", "AI")
+	db.Exec(`INSERT INTO users (uvuid, name, lang, aoi) VALUES (?,?,?,?)`, 10985171, "Noble", "Project Management", "IOS App Dev")
 }
 
 func GetUser(uvuid int) (Person, error) {
