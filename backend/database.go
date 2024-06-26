@@ -14,6 +14,14 @@ type Person struct {
 	AOI   string `json:"aoi"`
 }
 
+type InterviewResult struct {
+	PID       int  `json:"pid"`
+	FKUser    int  `json:"fkuser"`
+	CanCode   bool `json:"cancode"`
+	Enjoyment int8 `json:"enjoyment"`
+	Social    int8 `json:"social"`
+}
+
 func InitSQL() {
 	db, err := sql.Open("sqlite3", "./database/database.db")
 	if err != nil {
@@ -24,8 +32,16 @@ func InitSQL() {
 		(id INTEGER PRIMARY KEY, uvuid INTEGER, name TEXT, lang TEXT, aoi Text)`)
 	if err != nil {
 	}
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS interviews
+		(id INTEGER PRIMARY KEY,
+		fkuser INTEGER, 
+		cancode BOOLEAN, 
+		enjoyment DECIMAL(2, 0), 
+		social DECIMAL(2,0), 
+		CONSTRAINT fk_user FOREIGN KEY (fkuser) REFERENCES users(id))`)
 	if err != nil {
 	}
+
 	db.Exec(`INSERT INTO users (uvuid, name, lang, aoi) VALUES (?,?,?,?)`, 10955272, "Henry", "Golang", "Anything")
 	db.Exec(`INSERT INTO users (uvuid, name, lang, aoi) VALUES (?,?,?,?)`, 42069, "John Doe", "Javascript Quiche Eater", "Web Dev")
 	db.Exec(`INSERT INTO users (uvuid, name, lang, aoi) VALUES (?,?,?,?)`, 10810570, "Guts", "Python", "Front End")
