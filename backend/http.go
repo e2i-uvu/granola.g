@@ -40,3 +40,8 @@ func InterviewStartHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
+
+func InterviewFinishHandler(w http.ResponseWriter, r *http.Request) {
+	// TODO have finished interview pass back into database
+
+}

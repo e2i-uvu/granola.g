@@ -22,6 +22,7 @@ func main() {
 	InfoLogger.Println("Initialized:")
 	go InitSQL()
 	http.HandleFunc("/interviewStart", InterviewStartHandler)
+	http.HandleFunc("/interviewFinish", InterviewFinishHandler)
 	go http.ListenAndServe(":8080", nil)
 	for {
 		time.Sleep(1 * time.Second)
