@@ -11,6 +11,7 @@ pages = {
     "Interview": [
         st.Page("interview.py", title="Interview"),
         st.Page("teams.py", title="Team Building", default=False),
+        st.Page("interviewForm.py", title="Interview Form", default=False)
     ]
 }
 
