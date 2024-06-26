@@ -25,3 +25,5 @@ else:
             data["q1"] = q1
             data["q2"] = q2
             st.dataframe(data, use_container_width=True)
+            # Not sure of how to write the proper request :P
+            post = requests.post(backend + "path/to/update/db", json=data)
