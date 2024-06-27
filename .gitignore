@@ -1,6 +1,7 @@
 
 # Go database stuff
 backend/database/*
+frontend/.env
 
 # Python virtual environments
 .venv/

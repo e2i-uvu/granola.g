@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-backend = os.getenv("backend")
+backend = os.getenv("BACKEND")
 
 st.title("Interview App")
 
