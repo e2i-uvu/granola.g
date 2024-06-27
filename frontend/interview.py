@@ -1,7 +1,10 @@
 import streamlit as st
 import requests
+from dotenv import load_dotenv
+import os
 
-backend = "http://go_server:8080/"
+load_dotenv()
+backend = os.getenv("backend")
 
 st.title("Interview App")
 
@@ -24,7 +27,8 @@ else:
             data["q1"] = q1
             data["q2"] = q2
             st.dataframe(data, use_container_width=True)
-            post = requests.post(backend + "path/to/update/db", json=data, headers={"Content-Type": "application/json"})
+            post = requests.post(backend + "path/to/update/db",
+                                 json=data, headers={"Content-Type": "application/json"})
 
 st.title("2nd Portion")
 

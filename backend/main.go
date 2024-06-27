@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -23,7 +24,8 @@ func main() {
 	go InitSQL()
 	http.HandleFunc("/interviewStart", InterviewStartHandler)
 	http.HandleFunc("/interviewFinish", InterviewFinishHandler)
-	go http.ListenAndServe(":8080", nil)
+	go http.ListenAndServe(":8081", nil)
+	fmt.Println("View Server at localhost:8081")
 	for {
 		time.Sleep(1 * time.Second)
 	}
