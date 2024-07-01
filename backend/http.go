@@ -47,27 +47,28 @@ func InterviewFinishHandler(w http.ResponseWriter, r *http.Request) {
 		var data map[string]interface{}
 		err := json.NewDecoder(r.Body).Decode(&data)
 		if err != nil {
+			InfoLogger.Println("Decode of json failed")
 			http.Error(w, "Invalid input", http.StatusNotAcceptable)
 			return
 		}
 		fkuser, err := strconv.ParseInt(data["fkuser"].(string), 10, 0)
 		if err != nil {
-			InfoLogger.Println("received invalid input")
+			InfoLogger.Println("received invalid input fkuser")
 			http.Error(w, "Invalid input", http.StatusNotAcceptable)
 		}
 		cancode, ok := data["cancode"].(bool)
 		if !ok {
-			InfoLogger.Println("received invalid input")
+			InfoLogger.Println("received invalid input cancode")
 			http.Error(w, "Invalid input", http.StatusNotAcceptable)
 		}
 		enjoyment, err := strconv.ParseInt(data["enjoyment"].(string), 10, 8)
 		if err != nil {
-			InfoLogger.Println("received invalid input")
+			InfoLogger.Println("received invalid input enjoyment value")
 			http.Error(w, "Invalid input", http.StatusNotAcceptable)
 		}
 		social, err := strconv.ParseInt(data["social"].(string), 10, 8)
 		if err != nil {
-			InfoLogger.Println("received invalid input")
+			InfoLogger.Println("received invalid input social value")
 			http.Error(w, "Invalid input", http.StatusNotAcceptable)
 		}
 		inter := InterviewResult{
