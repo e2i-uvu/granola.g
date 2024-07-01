@@ -23,12 +23,12 @@ else:
         st.write(f"Name: {st.session_state["data"]["name"]}")
         st.write(f"UVU ID: {st.session_state["data"]["uvuid"]}")
         q1 = st.checkbox("Can code")
-        q2 = int(st.number_input("Enjoyment", min_value=1, max_value=10, value=5))
-        q3 = int(st.number_input("Social", min_value=1, max_value=10, value=5))
+        q2 = st.number_input("Enjoyment", min_value=1, max_value=10, value=5)
+        q3 = st.number_input("Social", min_value=1, max_value=10, value=5)
         if st.form_submit_button("Submit"):
             interview_data = json.dumps(dict(fkuser=st.session_state["data"]["pid"], cancode=q1, enjoyment=q2, social=q3))
             # I doubt request.post works. Blame on 
-            post = requests.post(backend + "path/to/update/db",
+            post = requests.post(backend + "interviewFinish",
                                  json=interview_data, headers={"Content-Type": "application/json"})
             if post.status_code == 200:
                 st.write(post.status_code)
@@ -36,6 +36,7 @@ else:
             else:
                 st.write(post.status_code)
                 st.write("There was an error in the submission.")
+                st.write(interview_data)
 
 st.title("2nd Portion")
 
