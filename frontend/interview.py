@@ -36,7 +36,6 @@ else:
             else:
                 st.write(post.status_code)
                 st.write("There was an error in the submission.")
-                st.write(interview_data)
 
 st.title("2nd Portion")
 
