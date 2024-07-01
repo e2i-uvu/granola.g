@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 from dotenv import load_dotenv
 import os
+import json
 
 load_dotenv()
 backend = os.getenv("BACKEND")
@@ -14,21 +15,21 @@ if "data" not in st.session_state:
         response = requests.post(
             backend + "interviewStart", json={"uvuid": str(id)}, headers={"Content-Type": "application/json"})
         if response.status_code == 200:
-            data = response.json()
-            st.session_state["data"] = data
+            st.session_state["data"] = response.json()
         else:
             st.write(str(response.reason) + " " + str(response.status_code))
 else:
-    data = st.session_state["data"]
     with st.form(key="interviewForm"):
-        q1 = st.text_input("Fibonacci Sequence")
-        q2 = st.text_input("Game Engine Library")
+        st.write(f"Name: {st.session_state["data"]["name"]}")
+        st.write(f"UVU ID: {st.session_state["data"]["uvuid"]}")
+        q1 = st.checkbox("Can code")
+        q2 = int(st.number_input("Enjoyment", min_value=1, max_value=10, value=5))
+        q3 = int(st.number_input("social", min_value=1, max_value=10, value=5))
         if st.form_submit_button("Submit"):
-            data["q1"] = q1
-            data["q2"] = q2
-            st.dataframe(data, use_container_width=True)
+            interview_data = json.loads(dict(personid=st.session_state["data"]["pid"], canCode=q1, enjoyment=q2, social=q3))
+            # I doubt request.post works. Blame on 
             post = requests.post(backend + "path/to/update/db",
-                                 json=data, headers={"Content-Type": "application/json"})
+                                 json=interview_data, headers={"Content-Type": "application/json"})
 
 st.title("2nd Portion")
 
