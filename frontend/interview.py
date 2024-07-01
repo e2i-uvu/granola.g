@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 from dotenv import load_dotenv
 import os
+import json
 
 load_dotenv()
 backend = os.getenv("BACKEND")
@@ -25,8 +26,7 @@ else:
         q2 = int(st.number_input("Enjoyment", min_value=1, max_value=10, value=5))
         q3 = int(st.number_input("social", min_value=1, max_value=10, value=5))
         if st.form_submit_button("Submit"):
-            interview_data = dict(personid=st.session_state["data"]["pid"], canCode=q1, enjoyment=q2, social=q3)
-            st.dataframe(interview_data, use_container_width=True)
+            interview_data = json.loads(dict(personid=st.session_state["data"]["pid"], canCode=q1, enjoyment=q2, social=q3))
             # I doubt request.post works. Blame on 
             post = requests.post(backend + "path/to/update/db",
                                  json=interview_data, headers={"Content-Type": "application/json"})
