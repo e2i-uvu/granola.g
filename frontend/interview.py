@@ -46,19 +46,6 @@ else:
 
 # st.title("2nd Portion")
 
-<<<<<<< HEAD
-=======
-second_id = st.text_input("Enter UVU ID for 2nd Portion:")
-if st.button("Submit 2nd Portion"):
-    response = requests.post(
-        backend + "interviewStart", json={"uvuid": str(second_id)}, headers={"Content-Type": "application/json"})
-    if response.status_code == 200:
-        second_data = response.json()
-        st.json(second_data)
-    else:
-        st.write(str(response.reason) + " " + str(response.status_code))
-
->>>>>>> 932d6e2157b8d7d2c0a6ce32fe627d4bce6bcd83
 # second_id = st.text_input("Enter UVU ID for 2nd Portion:")
 # if st.button("Submit 2nd Portion"):
 #     response = requests.post(
