@@ -55,7 +55,7 @@ if st.button("Submit 2nd Portion"):
         st.json(second_data)
     else:
         st.write(str(response.reason) + " " + str(response.status_code))
-=======
+
 # second_id = st.text_input("Enter UVU ID for 2nd Portion:")
 # if st.button("Submit 2nd Portion"):
 #     response = requests.post(
