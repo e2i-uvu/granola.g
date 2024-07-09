@@ -30,11 +30,11 @@ else:
         if st.form_submit_button("Submit"):
             interview_data = json.dumps(
                 dict(
-                    fkuser=st.session_state["data"]["pid"], 
+                    fkuser=st.session_state["data"]["pid"],
                     cancode=q1, enjoyment=q2, social=q3
                 )
             )
-            # I doubt request.post works. Blame on 
+            # I doubt request.post works. Blame on
             post = requests.post(backend + "interviewFinish",
                                  json=interview_data, headers={"Content-Type": "application/json"})
             if post.status_code == 200:
@@ -44,18 +44,8 @@ else:
                 st.write(post.status_code)
                 st.write("There was an error in the submission.")
 
-#st.title("2nd Portion")
+# st.title("2nd Portion")
 
-second_id = st.text_input("Enter UVU ID for 2nd Portion:")
-if st.button("Submit 2nd Portion"):
-    response = requests.post(
-        backend + "interviewStart", json={"uvuid": str(second_id)}, headers={"Content-Type": "application/json"})
-    if response.status_code == 200:
-        second_data = response.json()
-        st.json(second_data)
-    else:
-        st.write(str(response.reason) + " " + str(response.status_code))
-=======
 # second_id = st.text_input("Enter UVU ID for 2nd Portion:")
 # if st.button("Submit 2nd Portion"):
 #     response = requests.post(
@@ -65,4 +55,3 @@ if st.button("Submit 2nd Portion"):
 #         st.json(second_data)
 #     else:
 #         st.write(str(response.reason) + " " + str(response.status_code))
->>>>>>> 8a1132508cf498066c01a758da18256ecaf98972
