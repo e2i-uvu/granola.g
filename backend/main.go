@@ -25,6 +25,7 @@ func main() {
 	http.HandleFunc("/interviewStart", InterviewStartHandler)
 	http.HandleFunc("/interviewFinish", InterviewFinishHandler)
 	go http.ListenAndServe(":8081", nil)
+	InfoLogger.Println("View Server at Localhost:8081")
 	fmt.Println("View Server at localhost:8081")
 	for {
 		time.Sleep(1 * time.Second)
