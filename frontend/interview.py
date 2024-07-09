@@ -46,7 +46,6 @@ else:
 
 #st.title("2nd Portion")
 
-<<<<<<< HEAD
 second_id = st.text_input("Enter UVU ID for 2nd Portion:")
 if st.button("Submit 2nd Portion"):
     response = requests.post(
