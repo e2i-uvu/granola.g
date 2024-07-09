@@ -14,7 +14,14 @@ type InterviewResult struct {
 	Social    int8 `json:"social"`
 }
 
-func (inter InterviewResult) Save() error {
+type InterviewResultIn struct {
+	FKUser    int  `json:"fkuser"`
+	CanCode   bool `json:"cancode"`
+	Enjoyment int  `json:"enjoyment"`
+	Social    int  `json:"social"`
+}
+
+func (inter InterviewResultIn) Save() error {
 	db, err := sql.Open("sqlite3", "./database/database.db")
 	if err != nil {
 		InfoLogger.Fatal("Unable to connect to database")

@@ -3,6 +3,8 @@ package main
 import (
 	"database/sql"
 	"errors"
+	"fmt"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -36,7 +38,8 @@ func GetUser(uvuid int) (Person, error) {
 	if err != nil {
 		InfoLogger.Println("stmt.query", err)
 		person := Person{UvuID: 0, PID: 0, Name: "", Lang: "", AOI: ""}
-		return person, errors.New("No users match ID")
+		errorString := fmt.Sprintf("No users match ID %d", uvuid)
+		return person, errors.New(errorString)
 	}
 	defer rows.Close()
 
