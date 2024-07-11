@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"strconv"
 )
@@ -46,53 +45,54 @@ func InterviewStartHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func InterviewFinishHandler(w http.ResponseWriter, r *http.Request) {
+
+	type RequestBody struct {
+		Fkuser    string `json:"fkuser"`
+		Cancode   string `json:"cancode"`
+		Enjoyment string `json:"enjoyment"`
+		Social    string `json:"social"`
+	}
+
 	InfoLogger.Println("InterviewFinishHandler Called")
 	if r.Method == "POST" && r.Header.Get("Content-Type") == "application/json" {
-		body, err := io.ReadAll(r.Body)
+		var requestBody RequestBody
+		err := json.NewDecoder(r.Body).Decode(&requestBody)
 		if err != nil {
-			InfoLogger.Println("Unable to decode body")
-			http.Error(w, "Invalid Input", http.StatusNotAcceptable)
-			return
+			InfoLogger.Println("Improper Data into Interviewfinishhandler")
+			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
-		var interview map[string]interface{}
-		err = json.Unmarshal([]byte(body), &interview)
+
+		fk, err := strconv.ParseInt(requestBody.Fkuser, 10, 0)
 		if err != nil {
-			message := fmt.Sprintf("Error: %s, Data %s", err, body)
-			InfoLogger.Println(message)
-			println(message)
-			http.Error(w, "Invalid input", http.StatusNotAcceptable)
-			return
+			InfoLogger.Println("Improper Data into Interviewfinishhandler")
+			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
-		// fkuser, err := strconv.ParseInt(data["fkuser"].(string), 10, 0)
-		// if err != nil {
-		// 	InfoLogger.Println("received invalid input fkuser")
-		// 	http.Error(w, "Invalid input", http.StatusNotAcceptable)
-		// }
-		// cancode, ok := data["cancode"].(bool)
-		// if !ok {
-		// 	InfoLogger.Println("received invalid input cancode")
-		// 	http.Error(w, "Invalid input", http.StatusNotAcceptable)
-		// }
-		// enjoyment, err := strconv.ParseInt(data["enjoyment"].(string), 10, 8)
-		// if err != nil {
-		// 	InfoLogger.Println("received invalid input enjoyment value")
-		// 	http.Error(w, "Invalid input", http.StatusNotAcceptable)
-		// }
-		// social, err := strconv.ParseInt(data["social"].(string), 10, 8)
-		// if err != nil {
-		// 	InfoLogger.Println("received invalid input social value")
-		// 	http.Error(w, "Invalid input", http.StatusNotAcceptable)
-		// }
-		// inter := InterviewResult{
-		// 	FKUser:    int(fkuser),
-		// 	CanCode:   cancode,
-		// 	Enjoyment: int8(enjoyment),
-		// 	Social:    int8(social),
-		// }
-		// err = interview.Save()
-		// if err != nil {
-		// 	http.Error(w, "Invalid input", http.StatusNotAcceptable)
-		// }
+		cancode, err := strconv.ParseBool(requestBody.Cancode)
+		if err != nil {
+			InfoLogger.Println("Improper Data into Interviewfinishhandler")
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
+		enjoyment, err := strconv.ParseInt(requestBody.Enjoyment, 10, 8)
+		if err != nil {
+			InfoLogger.Println("Improper Data into Interviewfinishhandler")
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
+		social, err := strconv.ParseInt(requestBody.Social, 10, 8)
+		if err != nil {
+			InfoLogger.Println("Improper Data into Interviewfinishhandler")
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
+
+		var inter InterviewResultIn
+		inter.FKUser = int(fk)
+		inter.CanCode = cancode
+		inter.Enjoyment = int8(enjoyment)
+		inter.Social = int8(social)
+		err = inter.Save()
+		if err != nil {
+			InfoLogger.Println("Things did not properly save.")
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
 
 		w.WriteHeader(http.StatusOK)
 	} else {

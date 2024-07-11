@@ -17,8 +17,8 @@ type InterviewResult struct {
 type InterviewResultIn struct {
 	FKUser    int  `json:"fkuser"`
 	CanCode   bool `json:"cancode"`
-	Enjoyment int  `json:"enjoyment"`
-	Social    int  `json:"social"`
+	Enjoyment int8 `json:"enjoyment"`
+	Social    int8 `json:"social"`
 }
 
 func (inter InterviewResultIn) Save() error {
