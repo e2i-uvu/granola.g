@@ -24,6 +24,7 @@ func main() {
 	go InitSQL()
 	http.HandleFunc("/interviewStart", InterviewStartHandler)
 	http.HandleFunc("/interviewFinish", InterviewFinishHandler)
+	http.HandleFunc("/hire", HiringHandler) // TODO add user authentication
 	go http.ListenAndServe(":8081", nil)
 	InfoLogger.Println("View Server at Localhost:8081")
 	fmt.Println("View Server at localhost:8081")

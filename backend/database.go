@@ -12,7 +12,11 @@ func InitSQL() {
 	}
 	defer db.Close()
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS users 
-		(id INTEGER PRIMARY KEY, uvuid INTEGER, name TEXT, lang TEXT, aoi Text)`)
+		(id INTEGER PRIMARY KEY, 
+		uvuid INTEGER, 
+		name TEXT, 
+		lang TEXT, 
+		aoi Text)`)
 	if err != nil {
 	}
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS interviews
@@ -21,6 +25,7 @@ func InitSQL() {
 		cancode BOOLEAN, 
 		enjoyment DECIMAL(2, 0), 
 		social DECIMAL(2,0), 
+		hired DECIMAL(2,0), 
 		CONSTRAINT fk_user FOREIGN KEY (fkuser) REFERENCES users(id))`)
 	if err != nil {
 	}

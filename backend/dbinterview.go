@@ -12,6 +12,7 @@ type InterviewResult struct {
 	CanCode   bool `json:"cancode"`
 	Enjoyment int8 `json:"enjoyment"`
 	Social    int8 `json:"social"`
+	Hired     int8 `json:"hired"`
 }
 
 type InterviewResultIn struct {
@@ -28,13 +29,13 @@ func (inter InterviewResultIn) Save() error {
 	}
 	defer db.Close()
 
-	stmt, err := db.Prepare("INSERT INTO interviews (fkuser, cancode, enjoyment, social) VALUES (?, ?, ?, ?)")
+	stmt, err := db.Prepare("INSERT INTO interviews (fkuser, cancode, enjoyment, social, hired) VALUES (?, ?, ?, ?, >)")
 	if err != nil {
 		InfoLogger.Fatal("Unable to prepare statement to save interview result to database")
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(inter.FKUser, inter.CanCode, inter.Enjoyment, inter.Social)
+	_, err = stmt.Exec(inter.FKUser, inter.CanCode, inter.Enjoyment, inter.Social, 0)
 	if err != nil {
 		return errors.New("Invalid information has been sent")
 	}
