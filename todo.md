@@ -43,7 +43,7 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
 ## Tasks: 7/15-7/22
 
 ### Noble:
-- [ ]  Update TODO list.
+- [x]  Update TODO list.
 - [ ]  Write a proposal for the need for Open AI.
 - [ ]  Set deadline for VM setup (latest by 31st).
 - [ ]  Traefik setup without VM.
