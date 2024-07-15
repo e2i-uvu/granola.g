@@ -50,10 +50,10 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
 - [ ]  Need API and documentation for SkillKo ASAP.
 
 ### Henry:
-- [ ]  User authentication (Completed).
-- [ ]  Backend for Hiring page (Completed).
-- [ ]  Backend for Status (Completed).
-- [ ]  Backend for Firing (Completed).
+- [x]  User authentication 
+- [ ]  Backend for Hiring page 
+- [ ]  Backend for Status 
+- [ ]  Backend for Firing 
 
 ### Spencer:
 - [ ]  Front end of the app.
