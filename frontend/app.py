@@ -15,21 +15,29 @@ except IndexError:
     st.session_state["dev"] = False
 
 
-st.title("Team Building")
+# any UI elements in this file will be rendered
+# on every page of the streamlit app
+
+# st.title("Team Building")
 
 st.logo(
-    image="./static/innovation-academy-logo-side.png",
+    image="./static/innovation-academy-logo-side-green.png",
     link="https://www.uvu.edu/innovation/e2i/",
-    icon_image="./static/uvu-logo.png",
+    icon_image="./static/uvu-logo-green.png",
 )
 
 # can add pages here
 pages = {
     "Teams": [
-        st.Page("interview.py", title="Interview"),
-        st.Page("employees.py", title="Employee Info"),
-        st.Page("teams.py", title="Team Building", default=False),
-        st.Page("chat.py", title="AI Chat"),
+        st.Page("interview.py", title="Interview", icon=":material/person_add:"),
+        st.Page("employees.py", title="Employees", icon=":material/groups:"),
+        st.Page(
+            "teams.py",
+            title="Team Building",
+            default=False,
+            icon=":material/reduce_capacity:",
+        ),
+        st.Page("chat.py", title="AI Chat", icon=":material/chat:"),
     ],
 }
 
