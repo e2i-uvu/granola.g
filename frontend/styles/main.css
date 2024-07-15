@@ -1,0 +1,14 @@
+/* hide 0-height iframes */
+.element-container:has(iframe[height="0"]) {
+  display: none;
+}
+
+#MainMenu {
+  visibility: hidden;
+}
+footer {
+  visibility: hidden;
+}
+header {
+  visibility: hidden;
+}
