@@ -117,3 +117,72 @@
 - Carlos to develop scoring function from interview and survey data.
 - AI determines when to call a function that builds a team.
 - Set up a billing account for OpenAI.
+
+## July 15th
+# Granola.g Project Meeting Notes
+
+## Meeting Agenda
+- PRs
+- Look at tasks, help with progress
+- Questions and concerns
+- Open AI billing account
+- Qualtrics from Nicole
+- SkillKo
+
+## Key Points
+- **PRs:**
+  - Review and discuss any pull requests.
+- **Tasks:**
+  - Address progress and assist with any ongoing tasks.
+- **Questions & Concerns:**
+  - Address any questions or concerns from the team.
+- **Open AI Billing Account:**
+  - Discuss the need for setting up an Open AI billing account.
+- **Qualtrics:**
+  - Update from Nicole on the Qualtrics survey.
+- **SkillKo:**
+  - Discussion on the SkillKo tool.
+
+## Task Status
+- **Hiring Status:**
+  - 1 hired, 0 nothing yet, -1, -2
+
+## Tasks
+- **Noble:**
+  - Update TODO list.
+  - Write a proposal for the need for Open AI.
+  - Set deadline for VM setup: At the latest, the 31st, or we won't be able to continue without VM.
+  - Traefik setup without VM.
+  - Need API and documentation for SkillKo ASAP.
+
+- **Henry:**
+  - **Completed:**
+    - User authentication
+    - Backend for Hiring page
+    - Backend for Status
+    - Backend for Firing
+
+- **Spencer:**
+  - Front end of the app
+  - Front end AI chat page and manual entry
+  - Front end Hiring and Status page
+  - Front end Firing page
+  - Team building algorithm
+  - SkillKo integration
+
+- **Carlos:**
+  - Grading and hiring score
+  - Displaying data with `ST.data_frame`
+  - Collaborate with Spencer on code comments
+  - Team building algorithm
+  - SkillKo integration
+
+- **Guts:**
+  - User experience for the front end
+  - Development of pages
+  - Collaborate with Spencer on code comments
+  - Team building algorithm
+
+## Comments
+- The team building algorithm will improve over time; it doesn't need to be perfect for the first release, it just needs to build teams.
+- We can't continue without VM by the end of the month.
