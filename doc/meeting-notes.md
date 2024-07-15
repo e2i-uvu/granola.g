@@ -158,9 +158,9 @@
 - **Henry:**
   - **Completed:**
     - User authentication
-    - Backend for Hiring page
-    - Backend for Status
-    - Backend for Firing
+  - Backend for Hiring page
+  - Backend for Status
+  - Backend for Firing
 
 - **Spencer:**
   - Front end of the app
