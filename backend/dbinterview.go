@@ -29,7 +29,7 @@ func (inter InterviewResultIn) Save() error {
 	}
 	defer db.Close()
 
-	stmt, err := db.Prepare("INSERT INTO interviews (fkuser, cancode, enjoyment, social, hired) VALUES (?, ?, ?, ?, >)")
+	stmt, err := db.Prepare("INSERT INTO interviews (fkuser, cancode, enjoyment, social, hired) VALUES (?, ?, ?, ?, ?)")
 	if err != nil {
 		InfoLogger.Fatal("Unable to prepare statement to save interview result to database")
 	}

@@ -21,7 +21,7 @@ func GetUser(uvuid int) (Person, error) {
 	if err != nil {
 		InfoLogger.Println("sql.open", err)
 		person := Person{UvuID: 0, PID: 0, Name: "", AOI: "", Lang: ""}
-		return person, errors.New("No users match ID")
+		return person, errors.New("Unable to open connection to db")
 	}
 	defer db.Close()
 

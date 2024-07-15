@@ -12,6 +12,25 @@ var (
 	InfoLogger *log.Logger
 )
 
+const (
+	validUserName = "Username"
+	validPassword = "Password"
+)
+
+func authMiddleWare(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		user, pass, ok := r.BasicAuth()
+
+		if !ok || user != validUserName || pass != validPassword {
+			w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+		next.ServeHTTP(w, r)
+
+	})
+}
+
 func main() {
 	file, err := os.OpenFile("./database/app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
@@ -22,10 +41,11 @@ func main() {
 
 	InfoLogger.Println("Initialized:")
 	go InitSQL()
-	http.HandleFunc("/interviewStart", InterviewStartHandler)
-	http.HandleFunc("/interviewFinish", InterviewFinishHandler)
-	http.HandleFunc("/hire", HiringHandler) // TODO add user authentication
-	go http.ListenAndServe(":8081", nil)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/interviewStart", InterviewStartHandler)
+	mux.Handle("/interviewFinish", authMiddleWare(http.HandlerFunc(InterviewFinishHandler)))
+	mux.Handle("/hire", authMiddleWare(http.HandlerFunc(HiringHandler)))
+	go http.ListenAndServe(":8081", mux)
 	InfoLogger.Println("View Server at Localhost:8081")
 	fmt.Println("View Server at localhost:8081")
 	for {

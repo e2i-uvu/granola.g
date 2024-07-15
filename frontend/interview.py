@@ -1,11 +1,13 @@
 import streamlit as st
 import requests
+from requests.auth import HTTPBasicAuth
 from dotenv import load_dotenv
 import os
-import json
 
 load_dotenv()
 backend = os.getenv("BACKEND")
+username = os.getenv("USERNAME")
+password = os.getenv("PASSWORD")
 
 st.title("Interview App")
 
@@ -34,9 +36,9 @@ else:
             }
 
             print(interview_data)
-            # I doubt request.post works. Blame on
-            post = requests.post(backend + "interviewFinish",
-                                 json=interview_data, headers={"Content-Type": "application/json"})
+            post = requests.post(
+                backend + "interviewFinish", auth=HTTPBasicAuth(username, password),
+                json=interview_data, headers={"Content-Type": "application/json"})
             if post.status_code == 200:
                 st.write(post.status_code)
                 st.write("Interview form submitted succesfully.")

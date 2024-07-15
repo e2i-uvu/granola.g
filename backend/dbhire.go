@@ -34,7 +34,7 @@ func potentialHires() (PotentialHire, error) {
 }
 
 // take interview pid set flag to appropriate position(1 for hired 0 for not)
-func Hire()
+// func Hire()
 
 // define later based on a multitude of factors
-func GetHired()
+// func GetHired()
