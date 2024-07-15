@@ -39,4 +39,40 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
 - [x] Implement server communication using Go
 - [x] Work on database integration
 
+---
+## Tasks: 7/15-7/22
+
+### Noble:
+- [x]  Update TODO list.
+- [ ]  Write a proposal for the need for Open AI.
+- [ ]  Set deadline for VM setup (latest by 31st).
+- [ ]  Traefik setup without VM.
+- [ ]  Need API and documentation for SkillKo ASAP.
+
+### Henry:
+- [x]  User authentication 
+- [ ]  Backend for Hiring page 
+- [ ]  Backend for Status 
+- [ ]  Backend for Firing 
+
+### Spencer:
+- [ ]  Front end of the app.
+- [ ]  Front end AI chat page and manual entry.
+- [ ]  Front end Hiring and Status page.
+- [ ]  Front end Firing page.
+- [ ]  Team building algorithm.
+- [ ]  SkillKo integration.
+
+### Carlos:
+- [ ]  Grading and hiring score.
+- [ ]  Displaying data with `ST.data_frame`.
+- [ ]  Collaborate with Spencer on code comments.
+- [ ]  Team building algorithm.
+- [ ]  SkillKo integration.
+
+### Guts:
+- [ ]  User experience for the front end.
+- [ ]  Development of pages.
+- [ ]  Collaborate with Spencer on code comments.
+- [ ]  Team building algorithm.
 
