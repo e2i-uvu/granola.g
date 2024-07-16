@@ -12,67 +12,85 @@ password = os.getenv("PASSWORD")
 
 st.title("Employees")
 
-option = st.selectbox('Select one',
-                      ('Select an option', 'hire', 'status', 'fire')
-                      )
+def main():
+    option = st.selectbox('Select one',
+    ('Select an option', 'hire', 'status', 'fire')
+                        )
+    # st.write(f'You selected: {option}')
+    if option != 'Select an option':
+        option_selection(option)
 
-# st.write(f'You selected: {option}')
-if option != 'Select an option':
+def option_selection(option):
     if option == 'hire':
-        st.write('You are hiring this person')
-        r = requests.get(backend + "hire",
-                         auth=HTTPBasicAuth(username, password))
-        if (r.status_code != 200):
-            st.text("The world is dying")
-            st.text(r.status_code)
-        else:
-            data = r.json()
-            df = pd.DataFrame(data)
-
-            df['hired'] = df['hired'].apply(lambda x: x >= 1)
-            #^converts the 'hired' column into boolean values to show up as checkmarks
-
-            columns_order = ['hired'] + [col for col in df.columns if col != 'hired']
-            df = df[columns_order]
-            #^reorders the columns to put 'hired' column at the front of the list
-
-            column_config = {
-                "hired": st.column_config.Column(label="Hire"),
-                "pid": st.column_config.Column(label="PID", disabled=True),
-                "uvuid": st.column_config.Column(label="UVUID", disabled=True),
-                "name": st.column_config.Column(label="Name", disabled=True),
-                "lang": st.column_config.Column(label="Language", disabled=True),
-                "aoi": st.column_config.Column(label="Area of Interest", disabled=True),
-                "cancode": st.column_config.Column(label="Can Code", disabled=True),
-                "enjoyment": st.column_config.Column(label="Enjoyment", disabled=True),
-                "social": st.column_config.Column(label="Social", disabled=True),
-                "score": st.column_config.Column(label="Score", disabled=True)
-            }
-            
-            edited_df = st.data_editor(df, column_config=column_config)
-
-            if st.button('Save Changes'):
-                edited_data = edited_df.to_dict(orient='records')
-                response = requests.post(backend + "update",
-                                        json = edited_data,
-                                        auth=HTTPBasicAuth(username, password))
-                if response.status_code == 200:
-                    st.success("Changes saved successfully!")
-                else:
-                    st.error(f"Failed to save changes. Status code: {response.status_code}")
-
+        show_hire()
     elif option == 'status':
-        st.write('Here is the status')
-        r = requests.get(backend + "status",
-                         auth=HTTPBasicAuth(username, password))
-        if (r.status_code != 200):
-            st.text("The world is dying")
-            st.text(r.status_code)
-        else:
-            st.json(r.json())
+        show_status()
     elif option == 'fire':
         st.write('Congratulations! You have been fired!')
 
+def show_status():
+    st.write('Here is the status')
+    r = requests.get(backend + "status",
+                    auth=HTTPBasicAuth(username, password))
+    if (r.status_code != 200):
+        st.text("The world is dying")
+        st.text(r.status_code)
+    else:
+        st.json(r.json())
+        
+def show_hire():
+    st.write('You are hiring this person')
+    r = requests.get(backend + "hire",
+                    auth=HTTPBasicAuth(username, password))
+    if (r.status_code != 200):
+        st.text("The world is dying")
+        st.text(r.status_code)
+    else:
+        data = r.json()
+        df = pd.DataFrame(data)
+
+        df['hired'] = df['hired'].apply(lambda x: x >= 1)
+        #^converts the 'hired' column into boolean values to show up as checkmarks
+
+        if 'checkboxes' not in st.session_state:
+            st.session_state['checkboxes'] = df['hired'].tolist()
+        
+        df['hired'] = st.session_state['checkboxes']
+
+        columns_order = ['hired'] + [col for col in df.columns if col != 'hired']
+        df = df[columns_order]
+        #^reorders the columns to put 'hired' column at the front of the list
+
+        column_config = {
+            "hired": st.column_config.Column(label="Hire"),
+            "pid": st.column_config.Column(label="PID", disabled=True),
+            "uvuid": st.column_config.Column(label="UVUID", disabled=True),
+            "name": st.column_config.Column(label="Name", disabled=True),
+            "lang": st.column_config.Column(label="Language", disabled=True),
+            "aoi": st.column_config.Column(label="Area of Interest", disabled=True),
+            "cancode": st.column_config.Column(label="Can Code", disabled=True),
+            "enjoyment": st.column_config.Column(label="Enjoyment", disabled=True),
+            "social": st.column_config.Column(label="Social", disabled=True),
+            "score": st.column_config.Column(label="Score", disabled=True)
+        }
+        
+        edited_df = st.data_editor(df, column_config=column_config)
+
+        st.session_state['checkboxes'] = edited_df['hired'].tolist()
+
+        if st.button('Save Changes'):
+            edited_df['hired'] = edited_df['hired'].apply(lambda x: 1 if x else 0)
+            filtered_data = edited_df[['pid', 'hired']].to_dict(orient='records')
+
+            response = requests.post(backend + "update",
+                                    json=filtered_data,
+                                    auth=HTTPBasicAuth(username, password))
+            if response.status_code == 200:
+                st.success("Changes save successfully!")
+            else:
+                st.error(f"Failed to save changes. Status code: {response.status_code}")
+
+main()
 # Read everything in, if the hire is 1, if it is false then it is 0.
 # I want the hire box to appear in column 1, and I want it to be a checkbox
 # 
