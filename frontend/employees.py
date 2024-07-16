@@ -54,7 +54,7 @@ def show_hire():
 
         if 'checkboxes' not in st.session_state:
             st.session_state['checkboxes'] = df['hired'].tolist()
-        
+                
         df['hired'] = st.session_state['checkboxes']
 
         columns_order = ['hired'] + [col for col in df.columns if col != 'hired']
@@ -89,6 +89,7 @@ def show_hire():
                 st.success("Changes save successfully!")
             else:
                 st.error(f"Failed to save changes. Status code: {response.status_code}")
+        st.write(st.session_state)
 
 main()
 # Read everything in, if the hire is 1, if it is false then it is 0.
