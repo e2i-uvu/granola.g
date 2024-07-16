@@ -14,7 +14,6 @@ type PotentialFire struct {
 	CanCode   bool   `json:"cancode"`
 	Enjoyment int8   `json:"enjoyment"`
 	Social    int8   `json:"social"`
-	Score     int8   `json:"score"`
 }
 
 func GetPotentialFires() ([]PotentialFire, error) {
@@ -29,7 +28,7 @@ func GetPotentialFires() ([]PotentialFire, error) {
 	result, err := db.Query(`SELECT i.id, u.name, u.uvuid, u.aoi, i.cancode, i.enjoyment, i.social, u.lang
 	FROM interviews i
 	JOIN users u ON i.fkuser = u.id
-	WHERE i.hired = 1`)
+	WHERE i.hired = 1.0;`)
 	if err != nil {
 		InfoLogger.Println("Unable to select people", err)
 		var potential []PotentialFire
