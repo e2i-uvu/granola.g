@@ -3,6 +3,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 from dotenv import load_dotenv
 import os
+import pandas as pd
 
 load_dotenv()
 backend = os.getenv("BACKEND")
@@ -25,7 +26,9 @@ if option != 'Select an option':
             st.text("The world is dying")
             st.text(r.status_code)
         else:
-            st.json(r.json())
+            data = r.json()
+            df = pd.DataFrame(data)
+            st.data_editor(df)
     elif option == 'status':
         st.write('Here is the status')
         r = requests.get(backend + "status",
@@ -37,14 +40,32 @@ if option != 'Select an option':
             st.json(r.json())
     elif option == 'fire':
         st.write('Congratulations! You have been fired!')
-        r = requests.get(backend + "fire",
-                         auth=HTTPBasicAuth(username, password))
-        if (r.status_code != 200):
-            st.text("The world is dying")
-            st.text(r.status_code)
-        else:
-            st.json(r.json())
 
 
 # TODO: Guts this will be the status page for current employees
 # Including hiring and firing as we talked about today
+
+# [
+# 0:{
+# "pid":2
+# "uvuid":10955272
+# "name":"Henry"
+# "lang":"Golang"
+# "aoi":"Anything"
+# "cancode":true
+# "enjoyment":4
+# "social":6
+# "score":1
+# }
+# 1:{
+# "pid":3
+# "uvuid":10810570
+# "name":"Guts"
+# "lang":"Python"
+# "aoi":"Front End"
+# "cancode":false
+# "enjoyment":2
+# "social":10
+# "score":6
+# }
+# ]
