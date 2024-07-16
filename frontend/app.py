@@ -70,6 +70,9 @@ pages = {
         ),
         st.Page("chat.py", title="AI Chat", icon=":material/chat:"),
     ],
+    "For Development": [
+        st.Page("stdataframe.py", title="jsonToDataFrame")
+    ]
 }
 
 st.sidebar.caption(f"Version: :green-background[{VERSION}]")
