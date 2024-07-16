@@ -5,7 +5,7 @@ import (
 	"errors"
 )
 
-type PotentialHire struct {
+type AllEmployee struct {
 	PID       int    `json:"pid"`
 	UvuID     int    `json:"uvuid"`
 	Name      string `json:"name"`
@@ -14,37 +14,35 @@ type PotentialHire struct {
 	CanCode   bool   `json:"cancode"`
 	Enjoyment int8   `json:"enjoyment"`
 	Social    int8   `json:"social"`
-	Score     int8   `json:"score"`
+	Status    int8   `json:"status"`
 }
 
-func GetPotentialHires() ([]PotentialHire, error) {
+func GetAllStatus() ([]AllEmployee, error) {
 	db, err := sql.Open("sqlite3", "./database/database.db")
 	if err != nil {
 		InfoLogger.Println("sql.open", err)
-		var potential []PotentialHire
+		var potential []AllEmployee
 		return potential, errors.New("Unable to open connection to db")
 	}
 	defer db.Close()
 
-	result, err := db.Query(`SELECT i.id, u.name, u.uvuid, u.aoi, i.cancode, i.enjoyment, i.social, u.lang
+	result, err := db.Query(`SELECT i.id, u.name, u.uvuid, u.aoi, i.cancode, i.enjoyment, i.social, u.lang, i.hired
 	FROM interviews i
-	JOIN users u ON i.fkuser = u.id
-	WHERE i.hired = 0`)
+	JOIN users u ON i.fkuser = u.id`)
 	if err != nil {
 		InfoLogger.Println("Unable to select people", err)
-		var potential []PotentialHire
+		var potential []AllEmployee
 		return potential, errors.New("Unable to open connection to db")
 	}
 	defer result.Close()
 
-	var users []PotentialHire
+	var users []AllEmployee
 	for result.Next() {
-		var user PotentialHire
-		GenerateScore(&user)
-		err := result.Scan(&user.PID, &user.Name, &user.UvuID, &user.AOI, &user.CanCode, &user.Enjoyment, &user.Social, &user.Lang)
+		var user AllEmployee
+		err := result.Scan(&user.PID, &user.Name, &user.UvuID, &user.AOI, &user.CanCode, &user.Enjoyment, &user.Social, &user.Lang, &user.Status)
 		if err != nil {
 			InfoLogger.Println("Unable to scan people", err)
-			var potential []PotentialHire
+			var potential []AllEmployee
 			return potential, errors.New("Unable to scan people")
 		}
 		users = append(users, user)
@@ -53,6 +51,6 @@ func GetPotentialHires() ([]PotentialHire, error) {
 		return users, nil
 	}
 	InfoLogger.Println("Didn't find anyone")
-	var potential []PotentialHire
+	var potential []AllEmployee
 	return potential, errors.New("didn't find anyone")
 }
