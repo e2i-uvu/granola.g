@@ -25,7 +25,7 @@ if option != 'Select an option':
             st.text("The world is dying")
             st.text(r.status_code)
         else:
-            st.json(r.body)
+            st.json(r.json)
     elif option == 'status':
         st.write('Here is the status')
     elif option == 'fire':
