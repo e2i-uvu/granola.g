@@ -28,8 +28,22 @@ if option != 'Select an option':
             st.json(r.json())
     elif option == 'status':
         st.write('Here is the status')
+        r = requests.get(backend + "status",
+                         auth=HTTPBasicAuth(username, password))
+        if (r.status_code != 200):
+            st.text("The world is dying")
+            st.text(r.status_code)
+        else:
+            st.json(r.json())
     elif option == 'fire':
         st.write('Congratulations! You have been fired!')
+        r = requests.get(backend + "fire",
+                         auth=HTTPBasicAuth(username, password))
+        if (r.status_code != 200):
+            st.text("The world is dying")
+            st.text(r.status_code)
+        else:
+            st.json(r.json())
 
 
 # TODO: Guts this will be the status page for current employees
