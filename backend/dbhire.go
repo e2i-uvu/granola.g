@@ -28,7 +28,7 @@ func GetPotentialHires() ([]PotentialHire, error) {
 
 	result, err := db.Query(`SELECT i.id, u.name, u.uvuid, u.aoi, i.cancode, i.enjoyment, i.social, u.lang
 	FROM interviews i
-	JOIN users u ON i.fkusers = u.id
+	JOIN users u ON i.fkuser = u.id
 	WHERE i.hired = 0`)
 	if err != nil {
 		InfoLogger.Println("Unable to select people", err)
