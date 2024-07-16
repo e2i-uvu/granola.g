@@ -30,7 +30,6 @@ if option != 'Select an option':
             df = pd.DataFrame(data)
 
             column_config = {
-                "hire": st.column_config.Column(label="Hire"),
                 "pid": st.column_config.Column(label="PID", disabled=True),
                 "uvuid": st.column_config.Column(label="UVUID", disabled=True),
                 "name": st.column_config.Column(label="Name", disabled=True),
@@ -39,6 +38,7 @@ if option != 'Select an option':
                 "cancode": st.column_config.Column(label="Can Code", disabled=True),
                 "enjoyment": st.column_config.Column(label="Enjoyment", disabled=True),
                 "social": st.column_config.Column(label="Social", disabled=True),
+                "hired": st.column_config.Column(label="Hire"),
                 "score": st.column_config.Column(label="Score", disabled=True)
             }
             
@@ -66,6 +66,10 @@ if option != 'Select an option':
     elif option == 'fire':
         st.write('Congratulations! You have been fired!')
 
+# Read everything in, if the hire is 1, if it is false then it is 0.
+# I want the hire box to appear in column 1, and I want it to be a checkbox
+# 
+
 # copy the submit code for the json post request from interview.py
 # check out the session state example that is in interview.py
 # nothing should be able to be changed except for the newly added 'hire' checkbox
@@ -86,29 +90,54 @@ if option != 'Select an option':
 # TODO: Guts this will be the status page for current employees
 # Including hiring and firing as we talked about today
 
-[
-0:{
-"pid":2
-"hire": 0
-"uvuid":10955272
-"name":"Henry"
-"lang":"Golang"
-"aoi":"Anything"
-"cancode":true
-"enjoyment":4
-"social":6
-"score":1
-}
-1:{
-"pid":3
-"hire": 0
-"uvuid":10810570
-"name":"Guts"
-"lang":"Python"
-"aoi":"Front End"
-"cancode":false
-"enjoyment":2
-"social":10
-"score":6
-}
-]
+# [
+# 0:{
+# "pid":2[
+# 0:{
+# "pid":2
+# "hire": 0
+# "uvuid":10955272
+# "name":"Henry"
+# "lang":"Golang"
+# "aoi":"Anything"
+# "cancode":true
+# "enjoyment":4
+# "social":6
+# "score":1
+# }
+# 1:{
+# "pid":3
+# "hire": 0
+# "uvuid":10810570
+# "name":"Guts"
+# "lang":"Python"
+# "aoi":"Front End"
+# "cancode":false
+# "enjoyment":2
+# "social":10
+# "score":6
+# }
+# ]
+# "hire": 0
+# "uvuid":10955272
+# "name":"Henry"
+# "lang":"Golang"
+# "aoi":"Anything"
+# "cancode":true
+# "enjoyment":4
+# "social":6
+# "score":1
+# }
+# 1:{
+# "pid":3
+# "hire": 0
+# "uvuid":10810570
+# "name":"Guts"
+# "lang":"Python"
+# "aoi":"Front End"
+# "cancode":false
+# "enjoyment":2
+# "social":10
+# "score":6
+# }
+# ]
