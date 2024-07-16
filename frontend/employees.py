@@ -28,7 +28,32 @@ if option != 'Select an option':
         else:
             data = r.json()
             df = pd.DataFrame(data)
-            st.data_editor(df)
+
+            column_config = {
+                "hire": st.column_config.Column(label="Hire"),
+                "pid": st.column_config.Column(label="PID", disabled=True),
+                "uvuid": st.column_config.Column(label="UVUID", disabled=True),
+                "name": st.column_config.Column(label="Name", disabled=True),
+                "lang": st.column_config.Column(label="Language", disabled=True),
+                "aoi": st.column_config.Column(label="Area of Interest", disabled=True),
+                "cancode": st.column_config.Column(label="Can Code", disabled=True),
+                "enjoyment": st.column_config.Column(label="Enjoyment", disabled=True),
+                "social": st.column_config.Column(label="Social", disabled=True),
+                "score": st.column_config.Column(label="Score", disabled=True)
+            }
+            
+            edited_df = st.data_editor(df, column_config=column_config)
+
+            if st.button('Save Changes'):
+                edited_data = edited_df.to_dict(orient='records')
+                response = requests.post(backend + "update",
+                                        json = edited_data,
+                                        auth=HTTPBasicAuth(username, password))
+                if response.status_code == 200:
+                    st.success("Changes saved successfully!")
+                else:
+                    st.error(f"Failed to save changes. Status code: {response.status_code}")
+
     elif option == 'status':
         st.write('Here is the status')
         r = requests.get(backend + "status",
@@ -41,31 +66,49 @@ if option != 'Select an option':
     elif option == 'fire':
         st.write('Congratulations! You have been fired!')
 
+# copy the submit code for the json post request from interview.py
+# check out the session state example that is in interview.py
+# nothing should be able to be changed except for the newly added 'hire' checkbox
+# if the 'hire' dropdown option is selected and the 'submit button is pressed',
+# then a json of the pid and the hire status will be returned
+
+# hire page should sort by the score value
+# status pages should sort by the status column
+# fire page should can sort as it currently does
+
+# steps:
+# add in a hire box on the side of each column of the dataframe
+# lock the dataframe so that only the hirebox can be altered
+# add in a submit button that will return the pid and hire statuses of each employees
+
+
 
 # TODO: Guts this will be the status page for current employees
 # Including hiring and firing as we talked about today
 
-# [
-# 0:{
-# "pid":2
-# "uvuid":10955272
-# "name":"Henry"
-# "lang":"Golang"
-# "aoi":"Anything"
-# "cancode":true
-# "enjoyment":4
-# "social":6
-# "score":1
-# }
-# 1:{
-# "pid":3
-# "uvuid":10810570
-# "name":"Guts"
-# "lang":"Python"
-# "aoi":"Front End"
-# "cancode":false
-# "enjoyment":2
-# "social":10
-# "score":6
-# }
-# ]
+[
+0:{
+"pid":2
+"hire": 0
+"uvuid":10955272
+"name":"Henry"
+"lang":"Golang"
+"aoi":"Anything"
+"cancode":true
+"enjoyment":4
+"social":6
+"score":1
+}
+1:{
+"pid":3
+"hire": 0
+"uvuid":10810570
+"name":"Guts"
+"lang":"Python"
+"aoi":"Front End"
+"cancode":false
+"enjoyment":2
+"social":10
+"score":6
+}
+]
