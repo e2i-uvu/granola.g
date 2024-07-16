@@ -4,7 +4,7 @@ import (
 	"math/rand"
 )
 
-func GenerateScore() (num int8) {
+func GenerateScore(hire *PotentialHire) {
 
-	return int8(rand.Intn(0x0F))
+	hire.Score = int8(rand.Intn(0x0F))
 }
