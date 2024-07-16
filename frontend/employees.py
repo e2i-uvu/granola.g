@@ -29,7 +29,15 @@ if option != 'Select an option':
             data = r.json()
             df = pd.DataFrame(data)
 
+            df['hired'] = df['hired'].apply(lambda x: x >= 1)
+            #^converts the 'hired' column into boolean values to show up as checkmarks
+
+            columns_order = ['hired'] + [col for col in df.columns if col != 'hired']
+            df = df[columns_order]
+            #^reorders the columns to put 'hired' column at the front of the list
+
             column_config = {
+                "hired": st.column_config.Column(label="Hire"),
                 "pid": st.column_config.Column(label="PID", disabled=True),
                 "uvuid": st.column_config.Column(label="UVUID", disabled=True),
                 "name": st.column_config.Column(label="Name", disabled=True),
@@ -38,7 +46,6 @@ if option != 'Select an option':
                 "cancode": st.column_config.Column(label="Can Code", disabled=True),
                 "enjoyment": st.column_config.Column(label="Enjoyment", disabled=True),
                 "social": st.column_config.Column(label="Social", disabled=True),
-                "hired": st.column_config.Column(label="Hire"),
                 "score": st.column_config.Column(label="Score", disabled=True)
             }
             
