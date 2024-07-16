@@ -12,13 +12,20 @@ password = os.getenv("PASSWORD")
 st.title("Employees")
 
 option = st.selectbox('Select one',
-    ('Select an option', 'hire', 'status', 'fire')
-)
+                      ('Select an option', 'hire', 'status', 'fire')
+                      )
 
 # st.write(f'You selected: {option}')
 if option != 'Select an option':
     if option == 'hire':
         st.write('You are hiring this person')
+        r = requests.get(backend + "hire",
+                         auth=HTTPBasicAuth(username, password))
+        if (r.status_code != 200):
+            st.text("The world is dying")
+            st.text(r.status_code)
+        else:
+            st.json(r.body)
     elif option == 'status':
         st.write('Here is the status')
     elif option == 'fire':
@@ -27,11 +34,3 @@ if option != 'Select an option':
 
 # TODO: Guts this will be the status page for current employees
 # Including hiring and firing as we talked about today
-
-
-r = requests.get(backend + "hire", auth=HTTPBasicAuth(username, password))
-if (r.status_code != 200):
-    st.text("The world is dying")
-    st.text(r.status_code)
-else:
-    st.json(r.body)
