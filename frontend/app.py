@@ -42,17 +42,17 @@ st.set_page_config(
 # any UI elements in this file will be rendered
 # on every page of the streamlit app
 
-# st.title("Team Building")
+# st.title("Team Building")s is an *
 
 
-st.markdown(style(), unsafe_allow_html=True)
+# st.markdown(style(), unsafe_allow_html=True)
 
 
-st.logo(
-    image="./static/innovation-academy-logo-side-green.png",
-    link="https://www.uvu.edu/innovation/e2i/",
-    icon_image="./static/uvu-logo-cropped-green.png",
-)
+# st.logo(
+#     image="./static/innovation-academy-logo-side-green.png",
+#     link="https://www.uvu.edu/innovation/e2i/",
+#     icon_image="./static/uvu-logo-cropped-green.png",
+# )
 
 # can add pages here
 pages = {
