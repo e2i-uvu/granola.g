@@ -36,4 +36,7 @@ func InitSQL() {
 	db.Exec(`INSERT INTO users (uvuid, name, lang, aoi) VALUES (?,?,?,?)`, 10976160, "Spencer", "Mystique", "Devops")
 	db.Exec(`INSERT INTO users (uvuid, name, lang, aoi) VALUES (?,?,?,?)`, 11006941, "Carlos", "Python Electric Boogaloo", "AI")
 	db.Exec(`INSERT INTO users (uvuid, name, lang, aoi) VALUES (?,?,?,?)`, 10985171, "Noble", "Project Management", "IOS App Dev")
+	db.Exec(`INSERT INTO interviews (fkuser, cancode, enjoyment, social, hired) VALUES (?,?,?,?, ?)`, 1, true, 5.0, 5.0, 0.0)
+	db.Exec(`INSERT INTO interviews (fkuser, cancode, enjoyment, social, hired) VALUES (?,?,?,?, ?)`, 2, true, 5.0, 5.0, 1.0)
+	db.Exec(`INSERT INTO interviews (fkuser, cancode, enjoyment, social, hired) VALUES (?,?,?,?, ?)`, 3, true, 5.0, 5.0, -1.0)
 }

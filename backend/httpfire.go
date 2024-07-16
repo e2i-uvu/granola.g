@@ -11,7 +11,7 @@ func FireHandler(w http.ResponseWriter, r *http.Request) {
 		// expects pid and status either set to hired(1) or anything else sets to -1(not hired)
 	}
 	if r.Method == "GET" {
-		hires, err := GetAllStatus()
+		hires, err := GetPotentialFires()
 		if err != nil {
 			InfoLogger.Println("Couldn't get potential hires")
 			http.Error(w, "Invalid input", http.StatusBadRequest)
