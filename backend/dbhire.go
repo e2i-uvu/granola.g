@@ -14,6 +14,7 @@ type PotentialHire struct {
 	CanCode   bool   `json:"cancode"`
 	Enjoyment int8   `json:"enjoyment"`
 	Social    int8   `json:"social"`
+	Hired     int8   `json:"hired"`
 	Score     int8   `json:"score"`
 }
 
@@ -26,7 +27,7 @@ func GetPotentialHires() ([]PotentialHire, error) {
 	}
 	defer db.Close()
 
-	result, err := db.Query(`SELECT i.id, u.name, u.uvuid, u.aoi, i.cancode, i.enjoyment, i.social, u.lang
+	result, err := db.Query(`SELECT i.id, u.name, u.uvuid, u.aoi, i.cancode, i.enjoyment, i.social, u.lang, i.hired
 	FROM interviews i
 	JOIN users u ON i.fkuser = u.id
 	WHERE i.hired = 0.0;`)
@@ -41,7 +42,7 @@ func GetPotentialHires() ([]PotentialHire, error) {
 	for result.Next() {
 		var user PotentialHire
 		GenerateScore(&user)
-		err := result.Scan(&user.PID, &user.Name, &user.UvuID, &user.AOI, &user.CanCode, &user.Enjoyment, &user.Social, &user.Lang)
+		err := result.Scan(&user.PID, &user.Name, &user.UvuID, &user.AOI, &user.CanCode, &user.Enjoyment, &user.Social, &user.Lang, &user.Hired)
 		if err != nil {
 			InfoLogger.Println("Unable to scan people", err)
 			var potential []PotentialHire
