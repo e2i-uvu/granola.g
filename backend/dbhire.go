@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 )
 
 type PotentialHire struct {
@@ -16,6 +17,11 @@ type PotentialHire struct {
 	Social    int8   `json:"social"`
 	Status    int8   `json:"status"`
 	Score     int8   `json:"score"`
+}
+
+type EmployeeStatus struct {
+	PID    int `json:"pid"`
+	Status int `json:"status"`
 }
 
 func GetPotentialHires() ([]PotentialHire, error) {
@@ -56,4 +62,23 @@ func GetPotentialHires() ([]PotentialHire, error) {
 	InfoLogger.Println("Didn't find anyone")
 	var potential []PotentialHire
 	return potential, errors.New("didn't find anyone")
+}
+
+func EmployeeStatusChange(changes []EmployeeStatus) error {
+	db, err := sql.Open("sqlite3", "./database/database.db")
+	if err != nil {
+		InfoLogger.Println("sql.open", err)
+		return errors.New("Unable to open connection to db")
+	}
+	defer db.Close()
+
+	query := "UPDATE employees SET status = ? WHERE id = ?"
+	for i := range changes {
+		_, err := db.Exec(query, changes[i].Status, changes[i].PID)
+		if err != nil {
+			return errors.New("Statement not executed")
+		}
+	}
+
+	return nil
 }

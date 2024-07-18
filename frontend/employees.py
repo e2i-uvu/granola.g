@@ -15,7 +15,8 @@ st.title("Employees")
 
 def main():
     option = st.selectbox('Select one',
-                          ('Select an option', 'hire', 'status', 'fire')
+                          ('Select an option', 'hire',
+                           'status', 'fire', 'all surveys')
                           )
     # st.write(f'You selected: {option}')
     if option != 'Select an option':
@@ -30,11 +31,24 @@ def option_selection(option):
     elif option == 'fire':
         show_fire()
         st.write('Congratulations! You have been fired!')
+    elif option == 'all surveys':
+        show_all_surveys()
 
 
 def show_status():
     st.write('Here is the status')
     r = requests.get(backend + "status",
+                     auth=HTTPBasicAuth(username, password))
+    if (r.status_code != 200):
+        st.text("The world is dying")
+        st.text(r.status_code)
+    else:
+        st.json(r.json())
+
+
+def show_all_surveys():
+    st.write('Here is the status')
+    r = requests.get(backend + "preinterview",
                      auth=HTTPBasicAuth(username, password))
     if (r.status_code != 200):
         st.text("The world is dying")
