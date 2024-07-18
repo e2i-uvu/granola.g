@@ -26,9 +26,9 @@ func GetAllStatus() ([]AllEmployee, error) {
 	}
 	defer db.Close()
 
-	result, err := db.Query(`SELECT i.id, u.name, u.uvuid, u.aoi, i.cancode, i.enjoyment, i.social, u.lang, i.hired
-	FROM interviews i
-	JOIN users u ON i.fkuser = u.id`)
+	result, err := db.Query(`SELECT e.id, s.name, s.uvuid, s.aoi, e.cancode, e.enjoyment, e.social, s.lang, e.status
+	FROM employees e
+	JOIN surveys s ON e.fk_survey = s.id`)
 	if err != nil {
 		InfoLogger.Println("Unable to select people", err)
 		var potential []AllEmployee

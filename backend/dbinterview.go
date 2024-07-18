@@ -3,20 +3,13 @@ package main
 import (
 	"database/sql"
 	"errors"
+	"fmt"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
-type InterviewResult struct {
-	PID       int  `json:"pid"`
-	FKUser    int  `json:"fkuser"`
-	CanCode   bool `json:"cancode"`
-	Enjoyment int8 `json:"enjoyment"`
-	Social    int8 `json:"social"`
-	Hired     int8 `json:"hired"`
-}
-
 type InterviewResultIn struct {
-	FKUser    int  `json:"fkuser"`
+	FKSurvey  int  `json:"fksurvey"`
 	CanCode   bool `json:"cancode"`
 	Enjoyment int8 `json:"enjoyment"`
 	Social    int8 `json:"social"`
@@ -29,13 +22,13 @@ func (inter InterviewResultIn) Save() error {
 	}
 	defer db.Close()
 
-	stmt, err := db.Prepare("INSERT INTO interviews (fkuser, cancode, enjoyment, social, hired) VALUES (?, ?, ?, ?, ?)")
+	stmt, err := db.Prepare("INSERT INTO employees (fk_survey, cancode, enjoyment, social, status) VALUES (?, ?, ?, ?, ?)")
 	if err != nil {
-		InfoLogger.Fatal("Unable to prepare statement to save interview result to database")
+		InfoLogger.Fatal(fmt.Sprintf("Unable to prepare statement, %s", err))
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(inter.FKUser, inter.CanCode, inter.Enjoyment, inter.Social, 0)
+	_, err = stmt.Exec(inter.FKSurvey, inter.CanCode, inter.Enjoyment, inter.Social, 0)
 	if err != nil {
 		return errors.New("Invalid information has been sent")
 	}

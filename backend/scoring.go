@@ -7,7 +7,6 @@ import (
 )
 
 // NOTE: numgo data types/arrays only accept float64 or bool values as elements. Good news: we don't need to use them to find a dot product between two arrays of int8 :D.
-// FIX: To Henry: hire.Enjoyment and hire.Social are not storing interview data. That's why the result of dot product is 0: the factors are 0.
 
 func GenerateScore(hire *PotentialHire) {
 	// Mock arrays
@@ -24,10 +23,9 @@ func GenerateScore(hire *PotentialHire) {
 	var score int8
 
 	for i := 0; i < 2; i++ {
-		score = weights[i] * candidateScores[i] // fmt.Println(score)
+		score += weights[i] * candidateScores[i] // fmt.Println(score)
 	}
 
 	//score := int8(rand.Intn(0x0F))
 	hire.Score = score
-
 }

@@ -5,7 +5,7 @@ import (
 	"errors"
 )
 
-type PotentialFire struct {
+type potentialFire struct {
 	PID       int    `json:"pid"`
 	UvuID     int    `json:"uvuid"`
 	Name      string `json:"name"`
@@ -16,33 +16,33 @@ type PotentialFire struct {
 	Social    int8   `json:"social"`
 }
 
-func GetPotentialFires() ([]PotentialFire, error) {
+func GetPotentialFires() ([]potentialFire, error) {
 	db, err := sql.Open("sqlite3", "./database/database.db")
 	if err != nil {
 		InfoLogger.Println("sql.open", err)
-		var potential []PotentialFire
+		var potential []potentialFire
 		return potential, errors.New("Unable to open connection to db")
 	}
 	defer db.Close()
 
-	result, err := db.Query(`SELECT i.id, u.name, u.uvuid, u.aoi, i.cancode, i.enjoyment, i.social, u.lang
-	FROM interviews i
-	JOIN users u ON i.fkuser = u.id
-	WHERE i.hired = 1.0;`)
+	result, err := db.Query(`SELECT e.id, s.name, s.uvuid, s.aoi, e.cancode, e.enjoyment, e.social, s.lang
+	FROM employees e
+	JOIN surveys s ON e.fk_survey = s.id
+	WHERE e.status > 0`)
 	if err != nil {
 		InfoLogger.Println("Unable to select people", err)
-		var potential []PotentialFire
+		var potential []potentialFire
 		return potential, errors.New("Unable to open connection to db")
 	}
 	defer result.Close()
 
-	var users []PotentialFire
+	var users []potentialFire
 	for result.Next() {
-		var user PotentialFire
+		var user potentialFire
 		err := result.Scan(&user.PID, &user.Name, &user.UvuID, &user.AOI, &user.CanCode, &user.Enjoyment, &user.Social, &user.Lang)
 		if err != nil {
 			InfoLogger.Println("Unable to scan people", err)
-			var potential []PotentialFire
+			var potential []potentialFire
 			return potential, errors.New("Unable to scan people")
 		}
 		users = append(users, user)
@@ -51,6 +51,6 @@ func GetPotentialFires() ([]PotentialFire, error) {
 		return users, nil
 	}
 	InfoLogger.Println("Didn't find anyone")
-	var potential []PotentialFire
+	var potential []potentialFire
 	return potential, errors.New("didn't find anyone")
 }

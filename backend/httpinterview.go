@@ -8,7 +8,6 @@ import (
 )
 
 func InterviewStartHandler(w http.ResponseWriter, r *http.Request) {
-	InfoLogger.Println("InterviewStartHandler Called")
 	if r.Method == "POST" && r.Header.Get("Content-Type") == "application/json" {
 		var data map[string]interface{}
 		err := json.NewDecoder(r.Body).Decode(&data)
@@ -24,7 +23,7 @@ func InterviewStartHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Invalid input", http.StatusNotAcceptable)
 		}
 		uvuid := int(id)
-		person, err := GetUser(uvuid)
+		person, err := GetPotential(uvuid)
 		if err != nil {
 			InfoLogger.Println("GetUser", err)
 			http.Error(w, "Invalid input", http.StatusNotAcceptable)
@@ -84,7 +83,7 @@ func InterviewFinishHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var inter InterviewResultIn
-		inter.FKUser = int(fk)
+		inter.FKSurvey = int(fk)
 		inter.CanCode = cancode
 		inter.Enjoyment = int8(enjoyment)
 		inter.Social = int8(social)
