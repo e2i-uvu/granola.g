@@ -105,7 +105,7 @@ def show_hire():
             "score": st.column_config.Column(label="Score", disabled=True)
         }
 
-        edited_df = st.data_editor(df, column_config=column_config)
+        edited_df = st.data_editor(df, column_config=column_config, hide_index = True)
 
         st.session_state['checkboxes'] = edited_df['status'].tolist()
 
