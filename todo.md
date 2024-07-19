@@ -51,9 +51,9 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
 
 ### Henry:
 - [x]  User authentication 
-- [ ]  Backend for Hiring page 
-- [ ]  Backend for Status 
-- [ ]  Backend for Firing 
+- [x]  Backend for Hiring page 
+- [x]  Backend for Status 
+- [x]  Backend for Firing 
 
 ### Spencer:
 - [ ]  Front end of the app.
