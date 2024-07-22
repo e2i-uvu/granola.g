@@ -67,7 +67,6 @@ def show_all_surveys():
 
 
 def show_fire():
-    # TODO: There is not backend for managing POST request for firing, so this code is more of a sketch
     st.write('Here is the status')
     r = requests.get(backend + "fire",
                      auth=HTTPBasicAuth(username, password))
@@ -97,7 +96,7 @@ def show_fire():
             "score": st.column_config.Column(label="Score", disabled=True)
         }
 
-        edited_df = st.data_editor(df, hide_index = True)
+        edited_df = st.data_editor(df, column_config = column_config, hide_index = True)
 
         if st.button('Save Changes'):
             edited_df['status'] = edited_df['status'].apply(lambda x: -2 if x == True else 1)
@@ -106,7 +105,7 @@ def show_fire():
 
             #st.dataframe(edited_df)
 
-            response = requests.post(backend + "update",
+            response = requests.post(backend + "hire",
                                      json=filtered_data,
                                      auth=HTTPBasicAuth(username, password))
             if response.status_code == 200:
@@ -165,7 +164,7 @@ def show_hire():
             filtered_data = edited_df[['pid', 'status']].to_dict(
                 orient='records')
 
-            response = requests.post(backend + "update",
+            response = requests.post(backend + "hire",
                                      json=filtered_data,
                                      auth=HTTPBasicAuth(username, password))
             if response.status_code == 200:

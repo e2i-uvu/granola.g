@@ -65,7 +65,7 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
 
 ### Carlos:
 - [ ]  Grading and hiring score.
-- [ ]  Displaying data with `ST.data_frame`.
+- [x]  Displaying data with `ST.data_frame`.
 - [ ]  Collaborate with Spencer on code comments.
 - [ ]  Team building algorithm.
 - [ ]  SkillKo integration.
