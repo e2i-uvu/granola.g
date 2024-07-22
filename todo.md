@@ -7,6 +7,12 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
 
 ---
 
+## Future Todos
+
+- [ ] Extend `st.column_config` to replicate when to work
+
+---
+
 ## Tasks: 6/24-7/1
 
 ### Noble:
