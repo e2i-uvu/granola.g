@@ -44,8 +44,8 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
 
 ### Noble:
 - [x]  Update TODO list.
-- [ ]  Write a proposal for the need for Open AI.
-- [ ]  Set deadline for VM setup (latest by 31st).
+- [x]  Write a proposal for the need for Open AI.
+- [x]  Set deadline for VM setup (latest by 31st).
 - [ ]  Traefik setup without VM.
 - [ ]  Need API and documentation for SkillKo ASAP.
 
@@ -64,10 +64,10 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
 - [ ]  SkillKo integration.
 
 ### Carlos:
-- [ ]  Grading and hiring score.
+- [x]  Grading and hiring score.
 - [x]  Displaying data with `ST.data_frame`.
-- [ ]  Collaborate with Spencer on code comments.
-- [ ]  Team building algorithm.
+- [x]  Collaborate with Spencer on code comments.
+- [x]  Team building algorithm.
 - [ ]  SkillKo integration.
 
 ### Guts:
