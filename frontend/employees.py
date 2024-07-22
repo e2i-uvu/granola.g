@@ -10,6 +10,14 @@ backend = os.getenv("BACKEND")
 username = os.getenv("USERNAME")
 password = os.getenv("PASSWORD")
 
+# A quick documentation for status
+# -2 = Fired
+# -1 = Not hired
+# 0 = ?
+# 1 = Hired
+#
+
+
 st.title("Employees")
 
 
@@ -43,7 +51,8 @@ def show_status():
         st.text("The world is dying")
         st.text(r.status_code)
     else:
-        st.json(r.json())
+        #st.json(r.json())
+        st.dataframe(pd.DataFrame(r.json()), hide_index = True)
 
 
 def show_all_surveys():
@@ -58,6 +67,7 @@ def show_all_surveys():
 
 
 def show_fire():
+    # TODO: There is not backend for managing POST request for firing, so this code is more of a sketch
     st.write('Here is the status')
     r = requests.get(backend + "fire",
                      auth=HTTPBasicAuth(username, password))
@@ -65,7 +75,47 @@ def show_fire():
         st.text("The world is dying")
         st.text(r.status_code)
     else:
-        st.json(r.json())
+        #st.json(r.json())
+        df = pd.DataFrame(r.json())
+
+        # Generate firing checkbox
+        df['status'] = [False for row in df.index]
+        columns_order = ['status'] + \
+            [col for col in df.columns if col != 'status']
+        df = df[columns_order]
+        
+        column_config = {
+            "status": st.column_config.CheckboxColumn(label="Fire?"),
+            "pid": st.column_config.Column(label="PID", disabled=True),
+            "uvuid": st.column_config.Column(label="UVUID", disabled=True),
+            "name": st.column_config.Column(label="Name", disabled=True),
+            "lang": st.column_config.Column(label="Language", disabled=True),
+            "aoi": st.column_config.Column(label="Area of Interest", disabled=True),
+            "cancode": st.column_config.Column(label="Can Code", disabled=True),
+            "enjoyment": st.column_config.Column(label="Enjoyment", disabled=True),
+            "social": st.column_config.Column(label="Social", disabled=True),
+            "score": st.column_config.Column(label="Score", disabled=True)
+        }
+
+        edited_df = st.data_editor(df, hide_index = True)
+
+        if st.button('Save Changes'):
+            edited_df['status'] = edited_df['status'].apply(lambda x: -2 if x == True else 1)
+            filtered_data = edited_df[['pid', 'status']].to_dict(
+                orient='records')
+
+            #st.dataframe(edited_df)
+
+            response = requests.post(backend + "update",
+                                     json=filtered_data,
+                                     auth=HTTPBasicAuth(username, password))
+            if response.status_code == 200:
+                st.success("Changes save successfully!")
+            else:
+                st.error(f"Failed to save changes. Status code: {
+                         response.status_code}")
+        #st.write(st.session_state)
+
 
 
 def show_hire():
