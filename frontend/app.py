@@ -48,11 +48,11 @@ st.set_page_config(
 # st.markdown(style(), unsafe_allow_html=True)
 
 
-# st.logo(
-#     image="./static/innovation-academy-logo-side-green.png",
-#     link="https://www.uvu.edu/innovation/e2i/",
-#     icon_image="./static/uvu-logo-cropped-green.png",
-# )
+st.logo(
+    image="./static/innovation-academy-logo-side-green.png",
+    link="https://www.uvu.edu/innovation/e2i/",
+    icon_image="./static/uvu-logo-cropped-green.png",
+)
 
 # can add pages here
 pages = {
@@ -70,12 +70,11 @@ pages = {
         ),
         st.Page("chat.py", title="AI Chat", icon=":material/chat:"),
     ],
-    "For Development": [
-        st.Page("stdataframe.py", title="jsonToDataFrame")
-    ]
+    "For Development": [st.Page("stdataframe.py", title="jsonToDataFrame")],
 }
 
 st.sidebar.caption(f"Version: :green-background[{VERSION}]")
 
 pg = st.navigation(pages, position="sidebar")
 pg.run()
+
