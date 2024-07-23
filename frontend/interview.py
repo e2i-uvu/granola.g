@@ -34,8 +34,6 @@ else:
                 'fkuser': str(st.session_state["data"]["pid"]),
                 'cancode': q1, 'enjoyment': q2, 'social': q3
             }
-
-            print(interview_data)
             post = requests.post(
                 backend + "interviewFinish", auth=HTTPBasicAuth(username, password),
                 json=interview_data, headers={"Content-Type": "application/json"})
