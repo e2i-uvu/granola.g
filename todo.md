@@ -10,6 +10,7 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
 ## Future Todos
 
 - [ ] Extend `st.column_config` to replicate when to work
+- [ ] What ports need to be open to traefik on backend?
 
 ---
 

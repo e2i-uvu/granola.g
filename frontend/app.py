@@ -77,4 +77,3 @@ st.sidebar.caption(f"Version: :green-background[{VERSION}]")
 
 pg = st.navigation(pages, position="sidebar")
 pg.run()
-

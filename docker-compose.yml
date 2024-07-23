@@ -1,10 +1,42 @@
 services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    restart: unless-stopped
+    command:
+      # [Optional] Dashboard
+      # - --api.insecure=true
+      - --providers.docker=true
+      - --entrypoints.web.address=:80
+    ports:
+      - 80:80
+      - 443:443
+      # [Optional] Dashboard
+      # - 8080:8080
+    volumes:
+      # so that traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yaml:ro
+      - ./traefik/conf/:/etc/traefik/conf/
+      - ./traefik/certs/:/etc/traefik/certs/
+      # - /etc/traefik:/etc/traefik
+    networks: [web]
+
   go_server:
     build:
       context: ./backend/
       dockerfile: ./Dockerfile
     volumes:
       - db:/usr/src/app/database
+    networks:
+      - web
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.chat.entrypoints=web,websecure
+      # - traefik.http.routers.chat.rule=Host(`your.domain.here`) # insert domain here
+      - traefik.http.routers.chat.tls=true
+      - traefik.http.routers.chat.tls.certresolver=production
+      # - traefik.http.services.chat.loadbalancer.server.port=8080 # what port?
 
   streamlit:
     build:
@@ -14,11 +46,25 @@ services:
       - "8080:8080"
     depends_on:
       - go_server
+    networks:
+      - web
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.chat.entrypoints=web,websecure
+      # - traefik.http.routers.chat.rule=Host(`your.domain.here`) # insert domain here
+      - traefik.http.routers.chat.tls=true
+      - traefik.http.routers.chat.tls.certresolver=production
+      - traefik.http.services.chat.loadbalancer.server.port=8080
+
+# for traefik but idk why
+networks:
+  web:
+    external: false
 
 volumes:
   db:
     driver: local
     driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: './backend/database'
+      type: "none"
+      o: "bind"
+      device: "./backend/database"
