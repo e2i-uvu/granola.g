@@ -27,7 +27,7 @@ def style(filename: str = "./styles/main.css"):
 st.set_page_config(
     page_title="E2i",
     page_icon=":material/school:",
-    layout="wide",
+    layout="centered",
     initial_sidebar_state="expanded",
     menu_items={
         # TODO: Guts take a look at this
@@ -70,7 +70,8 @@ pages = {
         ),
         st.Page("chat.py", title="AI Chat", icon=":material/chat:"),
     ],
-    "For Development": [st.Page("stdataframe.py", title="jsonToDataFrame")],
+    "For Development": [st.Page("stdataframe.py", title="jsonToDataFrame"),
+                        st.Page("myAvailability.py", title="My Availability")],
 }
 
 st.sidebar.caption(f"Version: :green-background[{VERSION}]")
