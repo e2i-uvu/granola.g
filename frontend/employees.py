@@ -111,20 +111,20 @@ def show_fire():
             if response.status_code == 200:
                 st.success("Changes save successfully!")
             else:
-                st.error(f"Failed to save changes. Status code: {
-                         response.status_code}")
-        #st.write(st.session_state)
-
+                st.error(f"Failed to save changes. Status code: {response.status_code}")
 
 
 def show_hire():
-    st.write('You are hiring this person')
     r = requests.get(backend + "hire",
                      auth=HTTPBasicAuth(username, password))
-    if (r.status_code != 200):
+    if (r.status_code == 400):
+        st.text("There is currently no one to hire")
+        st.text(r.status_code)
+    elif (r.status_code != 200):
         st.text("The world is dying")
         st.text(r.status_code)
     else:
+        st.write('You are hiring this person')
         data = r.json()
         df = pd.DataFrame(data)
 
@@ -170,9 +170,11 @@ def show_hire():
             if response.status_code == 200:
                 st.success("Changes save successfully!")
             else:
-                st.error(f"Failed to save changes. Status code: {
-                         response.status_code}")
-        st.write(st.session_state)
+                st.error(f"Failed to save changes. Status code: {response.status_code}")
+                st.write(f"Error: {response.text}")
+
+        if st.button('Show session state'):
+            st.write(st.session_state)
 
 
 main()

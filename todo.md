@@ -47,7 +47,12 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
 - [x] Work on database integration
 
 ---
-## Tasks: 7/15-7/22
+## Tasks: 7/15-7/22 
+# General:
+
+- [ ]  Describe what our website is actually doing in markdown on the guide page
+- [ ]  We just need to build out the pages
+- [ ]  ???layer of abstraction for making requests to the backend (so that we can run it in dev mode to make it faster for prototyping)
 
 ### Noble:
 - [x]  Update TODO list.
@@ -58,9 +63,9 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
 
 ### Henry:
 - [x]  User authentication 
-- [x]  Backend for Hiring page 
-- [x]  Backend for Status 
-- [x]  Backend for Firing 
+- [ ]  Backend for Hiring page 
+- [ ]  Backend for Status 
+- [ ]  Backend for Firing 
 
 ### Spencer:
 - [ ]  Front end of the app.
