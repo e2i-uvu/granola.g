@@ -7,6 +7,24 @@ import sys
 
 VERSION = 0.1
 
+if "role" not in st.session_state:
+    st.session_state.role = None
+
+ROLES = [None, "Requester", "Responder", "Admin"]
+
+def login():
+    st.header("Log in")
+
+    role = st.selectbox("Choose your role", ROLES)
+
+    if st.button("Log in"):
+        st.session_state.role = role
+        st.rerun()
+
+def logout():
+    st.session_state.role = None
+    st.rerun()
+
 try:
     if sys.argv[1] == "dev":
         st.session_state["dev"] = True
@@ -38,6 +56,7 @@ st.set_page_config(
         "About": "# This is a header. This is an *extremely* cool app!",
     },
 )
+
 
 # any UI elements in this file will be rendered
 # on every page of the streamlit app
