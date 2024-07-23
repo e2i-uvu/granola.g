@@ -7,24 +7,6 @@ import sys
 
 VERSION = 0.1
 
-if "role" not in st.session_state:
-    st.session_state.role = None
-
-ROLES = [None, "Requester", "Responder", "Admin"]
-
-def login():
-    st.header("Log in")
-
-    role = st.selectbox("Choose your role", ROLES)
-
-    if st.button("Log in"):
-        st.session_state.role = role
-        st.rerun()
-
-def logout():
-    st.session_state.role = None
-    st.rerun()
-
 try:
     if sys.argv[1] == "dev":
         st.session_state["dev"] = True
@@ -57,6 +39,34 @@ st.set_page_config(
     },
 )
 
+st.logo(
+    image="./static/innovation-academy-logo-side-green.png",
+    link="https://www.uvu.edu/innovation/e2i/",
+    icon_image="./static/uvu-logo-cropped-green.png",
+)
+
+
+if "user" not in st.session_state:
+    st.session_state.user = {"id": None, "name": None, "role": None}
+
+ROLES = [None, "student", "admin", "developer"]
+
+
+def login():
+    st.header("Log in")
+
+    # role = st.selectbox("Choose your role", ROLES)
+
+    if st.button("Log in"):
+        # st.session_state.user["role"] = role
+        st.session_state.user["role"] = "admin"
+        st.rerun()
+
+
+def logout():
+    st.session_state.user["role"] = None
+    st.rerun()
+
 
 # any UI elements in this file will be rendered
 # on every page of the streamlit app
@@ -66,12 +76,6 @@ st.set_page_config(
 
 # st.markdown(style(), unsafe_allow_html=True)
 
-
-st.logo(
-    image="./static/innovation-academy-logo-side-green.png",
-    link="https://www.uvu.edu/innovation/e2i/",
-    icon_image="./static/uvu-logo-cropped-green.png",
-)
 
 # can add pages here
 pages = {
@@ -89,11 +93,50 @@ pages = {
         ),
         st.Page("chat.py", title="AI Chat", icon=":material/chat:"),
     ],
-    "For Development": [st.Page("stdataframe.py", title="jsonToDataFrame"),
-                        st.Page("myAvailability.py", title="My Availability")],
+    "For Development": [
+        st.Page("stdataframe.py", title="jsonToDataFrame"),
+        st.Page("myAvailability.py", title="My Availability"),
+    ],
 }
 
 st.sidebar.caption(f"Version: :green-background[{VERSION}]")
 
-pg = st.navigation(pages, position="sidebar")
+account_pages = [st.Page(logout, title="Log out", icon=":material/logout:")]
+info_pages = [
+    st.Page("about.py", title="About", icon=":material/info:", default=False),
+    st.Page("guide.py", title="How to", icon=":material/help:"),
+]
+teams_pages = [
+    st.Page("interview.py", title="Interview", icon=":material/person_add:"),
+    st.Page("employees.py", title="Employees", icon=":material/groups:"),
+    st.Page(
+        "teams.py",
+        title="Team Building",
+        icon=":material/reduce_capacity:",
+    ),
+    st.Page("chat.py", title="AI Chat", icon=":material/chat:"),
+]
+dev_pages = [
+    st.Page("stdataframe.py", title="jsonToDataFrame"),
+    st.Page("myAvailability.py", title="My Availability"),
+]
+
+pages = {}
+
+if st.session_state.user["role"] in ["student", "admin"]:
+    pages["Info"] = info_pages
+    pg = st.navigation({"Account": account_pages} | pages)
+
+if st.session_state.user["role"] == "admin":
+    pages["Teams"] = teams_pages
+
+
+if st.session_state.user["role"] is None:
+    pg = st.navigation([st.Page(login)])
+
+else:
+    pg = st.navigation({"Account": account_pages} | pages)
+
+# pg = st.navigation(pages, position="sidebar")
 pg.run()
+print(st.session_state)
