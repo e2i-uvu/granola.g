@@ -3,12 +3,22 @@
   display: none;
 }
 
+.reportview-container {
+  margin-top: -2em;
+}
+
 #MainMenu {
   visibility: hidden;
 }
+
+.stDeployButton {
+  display: none;
+}
+
 footer {
   visibility: hidden;
 }
-header {
-  visibility: hidden;
+
+#stDecoration {
+  display: none;
 }
