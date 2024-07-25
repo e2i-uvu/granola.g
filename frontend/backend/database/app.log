@@ -1,9 +1,0 @@
-INFO: 2024/07/25 16:04:10 main.go:42: Initialized:
-INFO: 2024/07/25 16:04:10 main.go:52: View Server at Localhost:8081
-INFO: 2024/07/25 16:04:11 httpinterview.go:28: GetUser No users match ID
-INFO: 2024/07/25 16:04:36 httpinterview.go:28: GetUser No users match ID
-INFO: 2024/07/25 16:04:41 httpinterview.go:28: GetUser No users match ID
-INFO: 2024/07/25 16:04:56 httpsurvey.go:20: {4 10976160 Spencer Mystique Devops 99 nerd@nerd.com}
-INFO: 2024/07/25 16:05:12 httpinterview.go:28: GetUser No users match ID
-INFO: 2024/07/25 16:05:18 httpinterview.go:28: GetUser No users match ID
-INFO: 2024/07/25 16:05:36 httpinterview.go:28: GetUser No users match ID
