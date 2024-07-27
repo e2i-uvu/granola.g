@@ -3,5 +3,14 @@
 backend/database/*
 frontend/.env
 
+# streamlit secrets
+*/.streamlit/secrets.toml
+
 # Python virtual environments
 .venv/
+
+
+# Byte-compiled / optimized / DLL files | more python stuff
+__pycache__/
+*.py[cod]
+*$py.class

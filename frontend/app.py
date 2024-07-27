@@ -2,8 +2,8 @@
 Entrypoint for the streamlit frontend
 """
 
-from numpy import place
 import streamlit as st
+import hmac
 import sys
 
 VERSION = 0.101
@@ -30,10 +30,18 @@ def style(filename: str = "./styles/main.css"):
     return f"<style>{css}</style>"
 
 
+# if "center" not in st.session_state:
+#     layout = "wide"
+# else:
+#     layout = "centered" if st.session_state.center else "wide"
+
+if "layout" not in st.session_state:
+    st.session_state.layout = "centered"
+
 st.set_page_config(
     page_title="E2i",
     page_icon=":material/school:",
-    layout="centered",
+    layout=st.session_state.layout,
     initial_sidebar_state="expanded",
     menu_items={
         "Get Help": None,  # url
@@ -42,6 +50,8 @@ st.set_page_config(
         Version: {VERSION} """,
     },
 )
+
+# st.checkbox("widness", key="center", value=st.session_state.get("center", False))
 
 st.markdown(style(), unsafe_allow_html=True)
 
@@ -56,6 +66,30 @@ if "user" not in st.session_state:
     st.session_state.user = {"id": None, "name": None, "role": None}
 
 ROLES = [None, "student", "admin", "developer"]
+
+
+def check_password():
+    """Returns `True` if the user had the correct password."""
+
+    def password_entered():
+        """Checks whether a password entered by the user is correct."""
+        if hmac.compare_digest(st.session_state["password"], st.secrets["password"]):
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # Don't store the password.
+        else:
+            st.session_state["password_correct"] = False
+
+    # Return True if the password is validated.
+    if st.session_state.get("password_correct", False):
+        return True
+
+    # Show input for password.
+    st.text_input(
+        "Password", type="password", on_change=password_entered, key="password"
+    )
+    if "password_correct" in st.session_state:
+        st.error("😕 Password incorrect")
+    return False
 
 
 def login():
@@ -149,6 +183,8 @@ teams_pages = [
     st.Page("chat.py", title="AI Chat", icon=":material/chat:"),
 ]
 
+admin_pages = [st.Page("payroll.py", title="Payroll", icon=":material/local_atm:")]
+
 dev_pages = [
     st.Page("stdataframe.py", title="jsonToDataFrame"),
     st.Page("myAvailability.py", title="My Availability"),
@@ -162,6 +198,7 @@ if st.session_state.user["role"] in ["student", "admin", "developer"]:
 
 if st.session_state.user["role"] in ["admin", "developer"]:
     pages["Teams"] = teams_pages
+    pages["Admin"] = admin_pages
 
 if st.session_state.user["role"] == "developer":
     pages["Development"] = dev_pages
@@ -173,6 +210,18 @@ if len(pages) > 0:
 else:
     pg = st.navigation([st.Page(login)])
 
-# pg = st.navigation(pages, position="sidebar")
+
+# Dynamicly change to wide if going to payroll page
+if pg.title == "Payroll":
+    if st.session_state.layout == "centered":
+        st.session_state.layout = "wide"
+        st.rerun()
+
+else:
+    if st.session_state.layout == "wide":
+        st.session_state.layout = "centered"
+        st.rerun()
+
+
 pg.run()
 # print(st.session_state)

@@ -1,27 +1,4 @@
 services:
-  # traefik:
-  #   image: traefik:latest
-  #   container_name: traefik
-  #   restart: unless-stopped
-  #   command:
-  #     # [Optional] Dashboard
-  #     # - --api.insecure=true
-  #     - --providers.docker=true
-  #     - --entrypoints.web.address=:80
-  #   ports:
-  #     - 80:80
-  #     - 443:443
-  #     # [Optional] Dashboard
-  #     # - 8080:8080
-  #   volumes:
-  #     # so that traefik can listen to the Docker events
-  #     - /var/run/docker.sock:/var/run/docker.sock:ro
-  #     - ./traefik/traefik.yml:/etc/traefik/traefik.yaml:ro
-  #     - ./traefik/conf/:/etc/traefik/conf/
-  #     - ./traefik/certs/:/etc/traefik/certs/
-  #     # - /etc/traefik:/etc/traefik
-  #   networks: [web]
-
   go_server:
     build:
       context: ./backend/
@@ -56,7 +33,6 @@ services:
       - traefik.http.routers.chat.tls.certresolver=production
       - traefik.http.services.chat.loadbalancer.server.port=8080
 
-# for traefik but idk why
 networks:
   web:
     external: false
