@@ -7,13 +7,13 @@ services:
       - db:/usr/src/app/database
     networks:
       - web
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.chat.entrypoints=web,websecure
-      # - traefik.http.routers.chat.rule=Host(`your.domain.here`) # insert domain here
-      - traefik.http.routers.chat.tls=true
-      - traefik.http.routers.chat.tls.certresolver=production
-      # - traefik.http.services.chat.loadbalancer.server.port=8080 # what port?
+    # labels:
+    # - traefik.enable=true
+    # - traefik.http.routers.chat.entrypoints=web,websecure
+    # - traefik.http.routers.chat.rule=Host(`your.domain.here`) # insert domain here
+    # - traefik.http.routers.chat.tls=true
+    # - traefik.http.routers.chat.tls.certresolver=production
+    # - traefik.http.services.chat.loadbalancer.server.port=8080 # what port?
 
   streamlit:
     build:
@@ -25,17 +25,23 @@ services:
       - go_server
     networks:
       - web
+      - traefik-network
     labels:
       - traefik.enable=true
-      - traefik.http.routers.chat.entrypoints=web,websecure
-      # - traefik.http.routers.chat.rule=Host(`your.domain.here`) # insert domain here
-      - traefik.http.routers.chat.tls=true
-      - traefik.http.routers.chat.tls.certresolver=production
-      - traefik.http.services.chat.loadbalancer.server.port=8080
+      - traefik.http.routers.streamlit.entrypoints=web,websecure
+      - traefik.http.routers.streamlit.rule=Host(`${DOMAIN}`)
+      - traefik.http.routers.streamlit.tls=true
+      - traefik.http.routers.streamlit.tls.certresolver=production
+      - traefik.http.services.streamlit.loadbalancer.server.port=8080
 
 networks:
   web:
     external: false
+
+
+networks:
+  traefik-network:
+    external: true
 
 volumes:
   db:
@@ -44,3 +50,4 @@ volumes:
       type: "none"
       o: "bind"
       device: "./backend/database"
+

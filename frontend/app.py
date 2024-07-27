@@ -16,6 +16,7 @@ try:
             "name": "Stinky Developer",
             "role": "developer",
         }
+        st.session_state["password_correct"] = True
     else:
         st.session_state["dev"] = False
 
@@ -43,15 +44,13 @@ st.set_page_config(
     page_icon=":material/school:",
     layout=st.session_state.layout,
     initial_sidebar_state="expanded",
-    menu_items={
+    menu_items={  # currently hidden
         "Get Help": None,  # url
         "Report a bug": None,  # url
         "About": f"""# E2i Hub
         Version: {VERSION} """,
     },
 )
-
-# st.checkbox("widness", key="center", value=st.session_state.get("center", False))
 
 st.markdown(style(), unsafe_allow_html=True)
 
@@ -68,12 +67,15 @@ if "user" not in st.session_state:
 ROLES = [None, "student", "admin", "developer"]
 
 
-def check_password():
+def check_password(role):
     """Returns `True` if the user had the correct password."""
 
-    def password_entered():
+    def password_entered(role):
         """Checks whether a password entered by the user is correct."""
-        if hmac.compare_digest(st.session_state["password"], st.secrets["password"]):
+        if hmac.compare_digest(
+            st.session_state["password"],
+            st.secrets.passwords[role],
+        ):
             st.session_state["password_correct"] = True
             del st.session_state["password"]  # Don't store the password.
         else:
@@ -85,7 +87,11 @@ def check_password():
 
     # Show input for password.
     st.text_input(
-        "Password", type="password", on_change=password_entered, key="password"
+        "Password",
+        type="password",
+        on_change=password_entered,
+        args=(role,),
+        key="password",
     )
     if "password_correct" in st.session_state:
         st.error("😕 Password incorrect")
@@ -95,44 +101,50 @@ def check_password():
 def login():
     st.header("Log in")
 
-    def check_password():
-        """Insert secure password checking here"""
-        pass
+    # def check_password():
+    #     """Insert secure password checking here"""
+    #     pass
 
-    st.text_input(
-        label="Username / UVID",
-        disabled=True,  # remove upon implementation
-        max_chars=8,
-        placeholder="Username / UVID",
-        label_visibility="hidden",
-    )
-    st.text_input(
-        label="Password",
-        disabled=True,  # remove upon implementation
-        type="password",
-        on_change=check_password,
-        key="password",
-        placeholder="Password",
-        label_visibility="hidden",
-    )
-    st.caption("Username and Password currently not needed")
+    # st.text_input(
+    #     label="Username / UVID",
+    #     disabled=True,  # remove upon implementation
+    #     max_chars=8,
+    #     placeholder="Username / UVID",
+    #     label_visibility="hidden",
+    # )
+    # st.text_input(
+    #     label="Password",
+    #     disabled=True,  # remove upon implementation
+    #     type="password",
+    #     on_change=check_password,
+    #     key="password",
+    #     placeholder="Password",
+    #     label_visibility="hidden",
+    # )
+
+    # st.caption("Username and Password currently not needed")
 
     # TODO: Will change to username and password
-    col1, col2 = st.columns([3, 1], vertical_alignment="bottom")
-    role = col1.selectbox(
+    # col1, col2 = st.columns([3, 1], vertical_alignment="bottom")
+    role = st.selectbox(
         label="Choose your role (temporary)",
         placeholder="Choose your role (temporary)",
         options=ROLES,
         label_visibility="visible",
     )
 
-    if col2.button("Log in", use_container_width=True):
+    if role == "admin" or role == "developer":
+        if not check_password(role):
+            st.stop()
+
+    if role is not None:
         st.session_state.user["role"] = role
-        # st.session_state.user["role"] = "admin"
         st.rerun()
 
 
 def logout():
+    if "password_correct" in st.session_state:
+        del st.session_state["password_correct"]
     st.session_state.user["role"] = None
     st.rerun()
 
@@ -188,6 +200,7 @@ admin_pages = [st.Page("payroll.py", title="Payroll", icon=":material/local_atm:
 dev_pages = [
     st.Page("stdataframe.py", title="jsonToDataFrame"),
     st.Page("myAvailability.py", title="My Availability"),
+    st.Page("sessionstate.py", title="Session State"),
 ]
 
 pages = {}
@@ -211,7 +224,7 @@ else:
     pg = st.navigation([st.Page(login)])
 
 
-# Dynamicly change to wide if going to payroll page
+# Dynamically change to wide if going to payroll page
 if pg.title == "Payroll":
     if st.session_state.layout == "centered":
         st.session_state.layout = "wide"
