@@ -35,13 +35,10 @@ services:
       - traefik.http.services.streamlit.loadbalancer.server.port=8080
 
 networks:
-  web:
-    external: false
-
-
-networks:
   traefik-network:
     external: true
+  web:
+    external: false
 
 volumes:
   db:
@@ -50,4 +47,3 @@ volumes:
       type: "none"
       o: "bind"
       device: "./backend/database"
-
