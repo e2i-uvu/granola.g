@@ -1,10 +1,10 @@
 package main
 
-import (
+// import (
 // "github.com/Kunde21/numgo"
 // "math/rand"
 // "fmt"
-)
+// )
 
 // NOTE: numgo data types/arrays only accept float64 or bool values as elements. Good news: we don't need to use them to find a dot product between two arrays of int8 :D.
 

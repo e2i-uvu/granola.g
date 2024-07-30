@@ -43,6 +43,7 @@ func InitSQL() {
 	}
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS projects
 		(id INTEGER PRIMARY KEY, 
+		status INTEGER,
 		name TEXT,
 		description TEXT,
 		frontend INTEGER,
@@ -63,16 +64,19 @@ func InitSQL() {
 		InfoLogger.Println("team table did not setup")
 	}
 
-	_, err = db.Exec(`INSERT INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 10955272, "Henry", "Golang", "Anything", 99.0, "nerd@nerd.com")
-	db.Exec(`INSERT INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 42069, "John Doe", "Javascript Quiche Eater", "Web Dev", 99.0, "nerd@nerd.com")
-	db.Exec(`INSERT INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 10810570, "Guts", "Python", "Front End", 99.0, "nerd@nerd.com")
-	db.Exec(`INSERT INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 10976160, "Spencer", "Mystique", "Devops", 99.0, "nerd@nerd.com")
-	db.Exec(`INSERT INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 11006941, "Carlos", "Python Electric Boogaloo", "AI", 99.0, "nerd@nerd.com")
-	db.Exec(`INSERT INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 10985171, "Noble", "Project Management", "IOS App Dev", 99.0, "nerd@nerd.com")
-	_, err = db.Exec(`INSERT INTO employees (fk_survey, cancode, enjoyment, social, status) VALUES (?,?,?,?,?)`, 1, true, 5.0, 5.0, 0.0)
+	_, err = db.Exec(`INSERT OR IGNORE INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 10955272, "Henry", "Golang", "Anything", 99.0, "nerd@nerd.com")
+	db.Exec(`INSERT OR IGNORE INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 42069, "John Doe", "Javascript Quiche Eater", "Web Dev", 99.0, "nerd@nerd.com")
+	db.Exec(`INSERT OR IGNORE INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 10810570, "Guts", "Python", "Front End", 99.0, "nerd@nerd.com")
+	db.Exec(`INSERT OR IGNORE INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 10976160, "Spencer", "Mystique", "Devops", 99.0, "nerd@nerd.com")
+	db.Exec(`INSERT OR IGNORE INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 11006941, "Carlos", "Python Electric Boogaloo", "AI", 99.0, "nerd@nerd.com")
+	db.Exec(`INSERT OR IGNORE INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 10985171, "Noble", "Project Management", "IOS App Dev", 99.0, "nerd@nerd.com")
+	db.Exec(`INSERT OR IGNORE INTO employees (fk_survey, cancode, enjoyment, social, status) VALUES (?,?,?,?,?)`, 1, true, 5.0, 5.0, 0.0)
+	db.Exec(`INSERT OR IGNORE INTO employees (fk_survey, cancode, enjoyment, social, status) VALUES (?,?,?,?,?)`, 2, true, 5.0, 5.0, 1.0)
+	db.Exec(`INSERT OR IGNORE INTO employees (fk_survey, cancode, enjoyment, social, status) VALUES (?,?,?,?,?)`, 3, true, 5.0, 5.0, -1.0)
+	_, err = db.Exec(`INSERT OR IGNORE INTO projects (status, name, description, frontend, backend, database, game_dev, embedded) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, 0, "Test", "Example", 1, 1, 1, 1, 1)
+
 	if err != nil {
-		InfoLogger.Println(err)
+		InfoLogger.Printf("Didn't insert into projects %s", err)
 	}
-	db.Exec(`INSERT INTO employees (fk_survey, cancode, enjoyment, social, status) VALUES (?,?,?,?,?)`, 2, true, 5.0, 5.0, 1.0)
-	db.Exec(`INSERT INTO employees (fk_survey, cancode, enjoyment, social, status) VALUES (?,?,?,?,?)`, 3, true, 5.0, 5.0, -1.0)
+	db.Exec(`INSERT OR IGNORE INTO projects (status, name, description, frontend, backend, database, game_dev, embedded) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, 0, "Test1", "Example1", 2, 2, 2, 2, 2)
 }

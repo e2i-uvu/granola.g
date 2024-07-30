@@ -63,15 +63,15 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
 
 ### Henry:
 - [x]  User authentication 
-- [ ]  Backend for Hiring page 
-- [ ]  Backend for Status 
-- [ ]  Backend for Firing 
+- [x]  Backend for Hiring page 
+- [x]  Backend for Status 
+- [x]  Backend for Firing 
 
 ### Spencer:
-- [ ]  Front end of the app.
-- [ ]  Front end AI chat page and manual entry.
-- [ ]  Front end Hiring and Status page.
-- [ ]  Front end Firing page.
+- [x]  Front end of the app.
+- [x]  Front end AI chat page and manual entry.
+- [x]  Front end Hiring and Status page.
+- [x]  Front end Firing page.
 - [ ]  Team building algorithm.
 - [ ]  SkillKo integration.
 
@@ -83,8 +83,34 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
 - [ ]  SkillKo integration.
 
 ### Guts:
-- [ ]  User experience for the front end.
-- [ ]  Development of pages.
-- [ ]  Collaborate with Spencer on code comments.
+- [x]  User experience for the front end.
+- [x]  Development of pages.
+- [x]  Collaborate with Spencer on code comments.
 - [ ]  Team building algorithm.
+
+---
+### Tasks: 7/29/24 - 8/5/24
+
+### Spencer:
+  - [ ] Finish deployment
+  - [ ] Chat interface for AI
+  - [ ] Team building algorithm
+
+### Henry:
+  - [ ] Team building algorithm
+  - [ ] Back end for availability
+  - [ ] GO Tests
+
+### Carlos:
+  - [ ] Polish up front end
+  - [ ] Write tests
+  - [ ] Interviewing
+
+### Guts:
+  - [ ] Polish front end
+  - [ ] Front end availability
+
+### Noble:
+  - [ ] Send message to Nicole and Jeremiah about SkillKo not happening
+  - [ ] Finish deployment
 
