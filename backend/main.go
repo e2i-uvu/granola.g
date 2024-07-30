@@ -47,6 +47,7 @@ func main() {
 	mux.Handle("/hire", authMiddleWare(http.HandlerFunc(HiringHandler)))
 	mux.Handle("/status", authMiddleWare(http.HandlerFunc(StatusHandler)))
 	mux.Handle("/preinterview", authMiddleWare(http.HandlerFunc(SurveyHandler)))
+	mux.Handle("/project", authMiddleWare(http.HandlerFunc(ProjectHandler)))
 	mux.Handle("/fire", authMiddleWare(http.HandlerFunc(FireHandler)))
 	go http.ListenAndServe(":8081", mux)
 	InfoLogger.Println("View Server at Localhost:8081")

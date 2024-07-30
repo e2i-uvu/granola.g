@@ -24,7 +24,7 @@ st.title("Employees")
 def main():
     option = st.selectbox('Select one',
                           ('Select an option', 'hire',
-                           'status', 'fire', 'all surveys')
+                           'status', 'fire', 'all surveys', 'pending projects')
                           )
     # st.write(f'You selected: {option}')
     if option != 'Select an option':
@@ -41,6 +41,20 @@ def option_selection(option):
         st.write('Congratulations! You have been fired!')
     elif option == 'all surveys':
         show_all_surveys()
+    if option == 'pending projects':
+        show_pending_projects()
+
+
+def show_pending_projects():
+    st.write('Here is the status')
+    r = requests.get(backend + "project",
+                     auth=HTTPBasicAuth(username, password))
+    if (r.status_code != 200):
+        st.text("The world is dying")
+        st.text(r.status_code)
+    else:
+        # st.json(r.json())
+        st.dataframe(pd.DataFrame(r.json()), hide_index=True)
 
 
 def show_status():
@@ -51,8 +65,8 @@ def show_status():
         st.text("The world is dying")
         st.text(r.status_code)
     else:
-        #st.json(r.json())
-        st.dataframe(pd.DataFrame(r.json()), hide_index = True)
+        # st.json(r.json())
+        st.dataframe(pd.DataFrame(r.json()), hide_index=True)
 
 
 def show_all_surveys():
@@ -74,7 +88,7 @@ def show_fire():
         st.text("The world is dying")
         st.text(r.status_code)
     else:
-        #st.json(r.json())
+        # st.json(r.json())
         df = pd.DataFrame(r.json())
 
         # Generate firing checkbox
@@ -82,7 +96,7 @@ def show_fire():
         columns_order = ['status'] + \
             [col for col in df.columns if col != 'status']
         df = df[columns_order]
-        
+
         column_config = {
             "status": st.column_config.CheckboxColumn(label="Fire?"),
             "pid": st.column_config.Column(label="PID", disabled=True),
@@ -96,14 +110,16 @@ def show_fire():
             "score": st.column_config.Column(label="Score", disabled=True)
         }
 
-        edited_df = st.data_editor(df, column_config = column_config, hide_index = True)
+        edited_df = st.data_editor(
+            df, column_config=column_config, hide_index=True)
 
         if st.button('Save Changes'):
-            edited_df['status'] = edited_df['status'].apply(lambda x: -2 if x == True else 1)
+            edited_df['status'] = edited_df['status'].apply(
+                lambda x: -2 if x == True else 1)
             filtered_data = edited_df[['pid', 'status']].to_dict(
                 orient='records')
 
-            #st.dataframe(edited_df)
+            # st.dataframe(edited_df)
 
             response = requests.post(backend + "hire",
                                      json=filtered_data,
@@ -111,7 +127,8 @@ def show_fire():
             if response.status_code == 200:
                 st.success("Changes save successfully!")
             else:
-                st.error(f"Failed to save changes. Status code: {response.status_code}")
+                st.error(f"Failed to save changes. Status code: {
+                         response.status_code}")
 
 
 def show_hire():
@@ -154,7 +171,8 @@ def show_hire():
             "score": st.column_config.Column(label="Score", disabled=True)
         }
 
-        edited_df = st.data_editor(df, column_config=column_config, hide_index = True)
+        edited_df = st.data_editor(
+            df, column_config=column_config, hide_index=True)
 
         st.session_state['checkboxes'] = edited_df['status'].tolist()
 
@@ -170,7 +188,8 @@ def show_hire():
             if response.status_code == 200:
                 st.success("Changes save successfully!")
             else:
-                st.error(f"Failed to save changes. Status code: {response.status_code}")
+                st.error(f"Failed to save changes. Status code: {
+                         response.status_code}")
                 st.write(f"Error: {response.text}")
 
         if st.button('Show session state'):
