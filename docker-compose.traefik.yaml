@@ -20,7 +20,7 @@ services:
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.production.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
+      # - "--certificatesresolvers.production.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
       - "--certificatesresolvers.production.acme.email=${ACME_EMAIL}"
       - "--certificatesresolvers.production.acme.storage=/letsencrypt/acme.json"
       - "--certificatesresolvers.production.acme.httpchallenge=true"
