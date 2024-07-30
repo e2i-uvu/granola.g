@@ -24,6 +24,7 @@ services:
       - "--certificatesresolvers.production.acme.email=${ACME_EMAIL}"
       - "--certificatesresolvers.production.acme.storage=/letsencrypt/acme.json"
       - "--certificatesresolvers.production.acme.httpchallenge=true"
+      - "--certificatesresolvers.production.acme.tlschallenge=true"
       - "--certificatesresolvers.production.acme.httpchallenge.entrypoint=web"
 
     ports:
