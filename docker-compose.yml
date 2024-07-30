@@ -22,7 +22,7 @@ services:
     env_file:
       - .env.traefik
     ports:
-      - "8080:8080"
+      - "8501:8501"
     depends_on:
       - go_server
     networks:
@@ -34,7 +34,7 @@ services:
       - traefik.http.routers.streamlit.rule=Host(`${DOMAIN}`)
       - traefik.http.routers.streamlit.tls=true
       - traefik.http.routers.streamlit.tls.certresolver=production
-      - traefik.http.services.streamlit.loadbalancer.server.port=8080
+      - traefik.http.services.streamlit.loadbalancer.server.port=8501
 
 networks:
   traefik-network:
