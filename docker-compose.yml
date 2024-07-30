@@ -30,7 +30,8 @@ services:
       - traefik-network
     labels:
       - traefik.enable=true
-      - traefik.http.routers.streamlit.entrypoints=web,websecure
+      # - traefik.http.routers.streamlit.entrypoints=web,websecure
+      - traefik.http.routers.streamlit.entrypoints=websecure
       - traefik.http.routers.streamlit.rule=Host(`${DOMAIN}`)
       - traefik.http.routers.streamlit.tls=true
       - traefik.http.routers.streamlit.tls.certresolver=production
