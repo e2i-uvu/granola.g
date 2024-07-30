@@ -9,6 +9,8 @@ frontend/.env
 # Python virtual environments
 .venv/
 
+.env
+.env.traefik
 
 # Byte-compiled / optimized / DLL files | more python stuff
 __pycache__/
