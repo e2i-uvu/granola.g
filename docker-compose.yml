@@ -7,6 +7,7 @@ services:
       - db:/usr/src/app/database
     networks:
       - web
+      - traefik-network
     # labels:
     # - traefik.enable=true
     # - traefik.http.routers.chat.entrypoints=web,websecure
@@ -19,6 +20,7 @@ services:
     build:
       context: ./frontend/
       dockerfile: Dockerfile
+    command: streamlit run app.py --server.port=8501 --server.address=0.0.0.0
     env_file:
       - .env.traefik
     ports:
