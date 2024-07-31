@@ -16,3 +16,6 @@ frontend/.env
 __pycache__/
 *.py[cod]
 *$py.class
+
+# certs
+letsencrypt/acme.json
