@@ -34,7 +34,7 @@ services:
       - traefik.enable=true
       # - traefik.http.routers.streamlit.entrypoints=web,websecure
       - traefik.http.routers.streamlit.entrypoints=websecure
-      - traefik.http.routers.streamlit.rule=Host(`login${DOMAIN}`)
+      - traefik.http.routers.streamlit.rule=Host(`login.${DOMAIN}`)
       - traefik.http.routers.streamlit.tls=true
       - traefik.http.routers.streamlit.tls.certresolver=production
       - traefik.http.services.streamlit.loadbalancer.server.port=8501
