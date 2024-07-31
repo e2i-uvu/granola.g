@@ -41,7 +41,7 @@ if "layout" not in st.session_state:
 
 st.set_page_config(
     page_title="E2i",
-    page_icon=":material/school:",
+    page_icon=":material/school:",  # add e2i logo here
     layout=st.session_state.layout,
     initial_sidebar_state="expanded",
     menu_items={  # currently hidden

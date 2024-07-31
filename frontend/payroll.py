@@ -14,6 +14,7 @@ def process_tims(df: pd.DataFrame) -> pd.DataFrame:
     """
     df = df.loc[:, ~df.columns.str.contains("^Unnamed")]  # Clean data
     df["POSN"] = df["POSN"].str[-2:]
+    df = df.dropna(how="all")
 
     return df
 
@@ -33,7 +34,7 @@ def process_key(df: pd.DataFrame) -> pd.DataFrame:
             else:
                 return str(num_val)[-2:]
         except ValueError:
-            return "00"
+            return "99"
 
     df = df.dropna(how="all")
     df = df.loc[:, ~df.columns.str.contains("^Unnamed")]  # Clean data
@@ -47,10 +48,39 @@ def process_key(df: pd.DataFrame) -> pd.DataFrame:
 
 def merge_data(tims: pd.DataFrame, key: pd.DataFrame) -> dict:
 
-    combined = pd.merge(key, tims, on=["UVID", "POSN"])
+    # combined = pd.merge(key, tims, how="left", on=["UVID", "POSN"], indicator=True)
+    combined = pd.merge(key, tims, how="outer", on=["UVID", "POSN"], indicator=True)
 
     ordering = ["UVID", "LAST", "FIRST", "Name", "POSN", "DATE", "HOURS", "TEAM"]
-    return {team: info for team, info in combined.groupby("TEAM")[ordering]}
+    # ordering_plus = [
+    #     "UVID",
+    #     "LAST",
+    #     "FIRST",
+    #     "Name",
+    #     "POSN",
+    #     "DATE",
+    #     "HOURS",
+    #     "TEAM",
+    #     "_merge",
+    # ]
+
+    combined_both = combined[combined["_merge"] == "both"]
+    combined_both["TEAM"] = combined_both["TEAM"].fillna("UNKNOWN PAYROLL")
+
+    # combined_left = combined[combined["_merge"] == "left_only"]
+
+    combined_right = combined[combined["_merge"] == "right_only"]
+    combined_right["TEAM"] = combined_right["TEAM"].fillna("UNKNOWN TIMS")
+
+    combined_total = pd.concat([combined_both, combined_right])
+
+    # st.dataframe(combined[ordering_plus])
+    # st.dataframe(combined_left[ordering_plus])
+    # st.dataframe(combined_right[ordering_plus])
+    # st.dataframe(combined_both[ordering_plus])
+    # st.dataframe(combined_total[ordering_plus])
+
+    return {team: info for team, info in combined_total.groupby("TEAM")[ordering]}
 
 
 # --- UI ---
@@ -74,6 +104,7 @@ with col2:
         help="This is the excel doc (converted to csv) of who is on which team, only csv files are supported",
     )
 
+st.write("---")
 
 if tims is not None and key is not None:
 
@@ -95,6 +126,12 @@ if tims is not None and key is not None:
     processed_key = process_key(key)
 
     teams = merge_data(tims=processed_tims, key=processed_key)
+
+    # DEBUG
+    # st.dataframe(processed_key)
+    # st.dataframe(processed_tims)
+    # st.dataframe(teams)
+    # st.write("---")
 
     # summary = pd.DataFrame(
     #     {t: d.groupby(["UVID", "Name"])["HOURS"].sum() for t, d in teams.items()}
@@ -120,7 +157,7 @@ if tims is not None and key is not None:
     output = BytesIO()
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
         for team, info in teams.items():
-            info = info.astype(str)
+            # info = info.astype(str)
             info.to_excel(writer, sheet_name=team, index=False)
             info.groupby(["UVID", "Name"])["HOURS"].sum().to_frame(
                 name="TOTAL HOURS"
@@ -130,6 +167,8 @@ if tims is not None and key is not None:
     formatted_date = current_date.strftime("%m-%d-%y")
 
     team_names = list(teams.keys())
+
+    st.write("---")
 
     col1, col2, col3 = st.columns([1, 2, 1], vertical_alignment="bottom")
 
@@ -143,12 +182,12 @@ if tims is not None and key is not None:
     )
 
     team_selection = col2.multiselect(
-        label="Select Team",
+        label="Select Team(s)",
         options=team_names,
         default=None,
         help="See more information about each team",
         placeholder="Select Team",
-        label_visibility="hidden",
+        label_visibility="visible",
     )
 
     if len(team_selection) >= 1:
@@ -163,7 +202,7 @@ if tims is not None and key is not None:
 
         selection_output = BytesIO()
         with pd.ExcelWriter(selection_output, engine="openpyxl") as writer:
-            selection_df = selection_df.astype(str)
+            # selection_df = selection_df.astype(str)
             selection_df.to_excel(writer, index=False)
             selection_df.groupby(["UVID", "Name"])["HOURS"].sum().to_frame(
                 name="TOTAL HOURS"
@@ -173,7 +212,7 @@ if tims is not None and key is not None:
         formatted_date = current_date.strftime("%m-%d-%y")
 
         col3.download_button(
-            label="Download Spreadsheet for Selected Teams",
+            label="Download Spreadsheet for Selected Team(s)",
             data=selection_output.getvalue(),
             file_name=f"{formatted_date}-{'-'.join(team_selection)}-e2i-tims-report.xlsx",
             help="Get fancy excel sheet, file name is formatted as the current date",
@@ -181,6 +220,21 @@ if tims is not None and key is not None:
             use_container_width=True,
         )
 
+        selection_df["FULL NAME"] = selection_df["FIRST"] + " " + selection_df["LAST"]
+        temp = selection_df.groupby("UVID", as_index=False).agg({"HOURS": "sum"})
+
+        result_df = temp.merge(
+            selection_df[["UVID", "FIRST", "LAST", "FULL NAME"]].drop_duplicates(),
+            on="UVID",
+        )
+        result_df = result_df[["FULL NAME", "HOURS"]]
+
         col1, col2 = st.columns(2)
-        col1.bar_chart(selection_df, x="FIRST", y="HOURS", horizontal=False)
+        col1.bar_chart(
+            result_df,
+            x="FULL NAME",
+            y="HOURS",
+            x_label="NAME",
+            horizontal=False,
+        )
         col2.line_chart(selection_df, x="DATE", y="HOURS", color="FIRST")
