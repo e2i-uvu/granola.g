@@ -2,6 +2,8 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -64,13 +66,27 @@ func InitSQL() {
 		InfoLogger.Println("team table did not setup")
 	}
 
-	_, err = db.Exec(`INSERT OR IGNORE INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 10955272, "Henry", "Golang", "Anything", 99.0, "nerd@nerd.com")
-	db.Exec(`INSERT OR IGNORE INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 42069, "John Doe", "Javascript Quiche Eater", "Web Dev", 99.0, "nerd@nerd.com")
-	db.Exec(`INSERT OR IGNORE INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 10810570, "Guts", "Python", "Front End", 99.0, "nerd@nerd.com")
-	db.Exec(`INSERT OR IGNORE INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 10976160, "Spencer", "Mystique", "Devops", 99.0, "nerd@nerd.com")
-	db.Exec(`INSERT OR IGNORE INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 11006941, "Carlos", "Python Electric Boogaloo", "AI", 99.0, "nerd@nerd.com")
-	db.Exec(`INSERT OR IGNORE INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 10985171, "Noble", "Project Management", "IOS App Dev", 99.0, "nerd@nerd.com")
+	_, err = db.Exec(`INSERT OR IGNORE INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 10955272, "Henry", "Golang", "frontend", 99.0, "nerd@nerd.com")
+	if err != nil {
+		fmt.Println("Did not insert 1")
+	}
+	_, err = db.Exec(`INSERT OR IGNORE INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 42069, "John Doe", "Javascript Quiche Eater", "backend", 99.0, "nerd@nerd.com")
+	if err != nil {
+		fmt.Println("Did not insert 2")
+	}
+	_, err = db.Exec(`INSERT OR IGNORE INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 10810570, "Guts", "Python", "game_dev", 99.0, "nerd@nerd.com")
+	if err != nil {
+		fmt.Println("Did not insert 3")
+	}
+	_, err = db.Exec(`INSERT OR IGNORE INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 10976160, "Spencer", "Mystique", "frontend, backend", 99.0, "nerd@nerd.com")
+	if err != nil {
+		fmt.Println("Did not insert 4")
+	}
+	db.Exec(`INSERT OR IGNORE INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 11006941, "Carlos", "Python Electric Boogaloo", "embedded", 99.0, "nerd@nerd.com")
+	db.Exec(`INSERT OR IGNORE INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 10985171, "Noble", "Project Management", "database", 99.0, "nerd@nerd.com")
 	db.Exec(`INSERT OR IGNORE INTO employees (fk_survey, cancode, enjoyment, social, status) VALUES (?,?,?,?,?)`, 1, true, 5.0, 5.0, 0.0)
+	db.Exec(`INSERT OR IGNORE INTO employees (fk_survey, cancode, enjoyment, social, status) VALUES (?,?,?,?,?)`, 4, true, 5.0, 5.0, 1.0)
+	db.Exec(`INSERT OR IGNORE INTO employees (fk_survey, cancode, enjoyment, social, status) VALUES (?,?,?,?,?)`, 5, true, 5.0, 5.0, 1.0)
 	db.Exec(`INSERT OR IGNORE INTO employees (fk_survey, cancode, enjoyment, social, status) VALUES (?,?,?,?,?)`, 2, true, 5.0, 5.0, 1.0)
 	db.Exec(`INSERT OR IGNORE INTO employees (fk_survey, cancode, enjoyment, social, status) VALUES (?,?,?,?,?)`, 3, true, 5.0, 5.0, -1.0)
 	_, err = db.Exec(`INSERT OR IGNORE INTO projects (status, name, description, frontend, backend, database, game_dev, embedded) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, 0, "Test", "Example", 1, 1, 1, 1, 1)

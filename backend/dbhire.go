@@ -23,6 +23,45 @@ type EmployeeStatus struct {
 	Status int `json:"status"`
 }
 
+func GetPendingEmployee() ([]PotentialHire, error) {
+	db, err := sql.Open("sqlite3", "./database/database.db")
+	if err != nil {
+		InfoLogger.Println("sql.open", err)
+		var potential []PotentialHire
+		return potential, errors.New("Unable to open connection to db")
+	}
+	defer db.Close()
+
+	result, err := db.Query(`SELECT e.id, s.name, s.uvuid, s.aoi, e.cancode, e.enjoyment, e.social, s.lang, e.status
+	FROM employees e
+	JOIN surveys s ON e.fk_survey = s.id
+	WHERE e.status = 1`)
+	if err != nil {
+		InfoLogger.Println("Unable to select people", err)
+		var potential []PotentialHire
+		return potential, errors.New("Unable to open connection to db")
+	}
+	defer result.Close()
+
+	var users []PotentialHire
+	for result.Next() {
+		var user PotentialHire
+		err := result.Scan(&user.PID, &user.Name, &user.UvuID, &user.AOI, &user.CanCode, &user.Enjoyment, &user.Social, &user.Lang, &user.Status)
+		if err != nil {
+			InfoLogger.Println("Unable to scan people", err)
+			var potential []PotentialHire
+			return potential, errors.New("Unable to scan people")
+		}
+		GenerateScore(&user)
+		users = append(users, user)
+	}
+	if len(users) > 0 {
+		return users, nil
+	}
+	InfoLogger.Println("Didn't find anyone")
+	var potential []PotentialHire
+	return potential, errors.New("didn't find anyone")
+}
 func GetPotentialHires() ([]PotentialHire, error) {
 	db, err := sql.Open("sqlite3", "./database/database.db")
 	if err != nil {
