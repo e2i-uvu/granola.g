@@ -37,6 +37,8 @@ services:
       - "./letsencrypt:/letsencrypt"
       - ./conf/:/etc/traefik/conf/
       - ./certs/:/etc/traefik/certs/
+    networks:
+      - traefik-network
 
 networks:
   traefik-network:
