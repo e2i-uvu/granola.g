@@ -12,6 +12,9 @@ frontend/.env
 .env
 .env.traefik
 
+# Test log for the requests
+frontend/test/test.log
+
 # Byte-compiled / optimized / DLL files | more python stuff
 __pycache__/
 *.py[cod]
