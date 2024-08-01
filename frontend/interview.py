@@ -12,9 +12,6 @@ password = os.getenv("PASSWORD")
 
 st.title("Interview App")
 
-
-import streamlit as st
-
 if "IDs_entered" not in st.session_state:
     st.session_state.IDs_entered = []
 
