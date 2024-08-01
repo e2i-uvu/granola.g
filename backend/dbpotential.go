@@ -75,7 +75,7 @@ func GetPotential(uvuid int) (Survey, error) {
 	if err != nil {
 		InfoLogger.Println("db.prepare", err)
 		var person Survey
-		return person, errors.New("No users match ID")
+		return person, errors.New("No users match ID, query")
 	}
 	defer stmt.Close()
 
@@ -95,7 +95,7 @@ func GetPotential(uvuid int) (Survey, error) {
 		if err != nil {
 			InfoLogger.Println("Rows.scan", err)
 			var person Survey
-			return person, errors.New("No users match ID")
+			return person, errors.New("No users match ID, scanning")
 		}
 		users = append(users, user)
 	}
@@ -103,7 +103,7 @@ func GetPotential(uvuid int) (Survey, error) {
 		return users[len(users)-1], nil
 	}
 	var person Survey
-	return person, errors.New("No users match ID")
+	return person, errors.New("No users match ID at all")
 }
 
 func (user Survey) Save() error {
