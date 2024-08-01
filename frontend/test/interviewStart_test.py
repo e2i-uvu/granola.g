@@ -44,6 +44,8 @@ if __name__ == "__main__":
     # Expected output: 406 - Fail
     test_interviewStart_request(1000003, 406, "non-JSON value.")
 
+    # FIX: The following test cases don't work
+
     # . JSON argument, empty
     # Expected output: 406 - Fail
     #test_interviewStart_request({}, 406, "Empty JSON.")
