@@ -23,7 +23,7 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       # - "--certificatesresolvers.production.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
-      - "--certificatesresolvers.production.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      # - "--certificatesresolvers.production.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
       - "--certificatesresolvers.production.acme.email=${ACME_EMAIL}"
       - "--certificatesresolvers.production.acme.storage=/letsencrypt/acme.json"
       # - "--certificatesresolvers.production.acme.httpchallenge=true"
@@ -38,7 +38,7 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./letsencrypt:/letsencrypt"
-      # - ./conf/:/etc/traefik/conf/
+      - ./conf/:/etc/traefik/conf/
       # - ./certs/:/etc/traefik/certs/
     networks:
       - traefik-network
