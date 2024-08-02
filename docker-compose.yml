@@ -21,8 +21,8 @@ services:
       context: ./frontend/
       dockerfile: Dockerfile
     command: streamlit run app.py --server.port=8501 --server.address=0.0.0.0
-    env_file:
-      - .env.traefik
+    # env_file:
+    #   - .env.traefik
     ports:
       - "8501:8501"
     depends_on:

@@ -3,8 +3,8 @@ services:
     image: traefik:latest
     container_name: traefik
     restart: unless-stopped
-    env_file:
-      - .env.traefik
+    # env_file:
+    #   - .env.traefik
     command:
       # [Optional] Dashboard
       - "--log.level=DEBUG"
