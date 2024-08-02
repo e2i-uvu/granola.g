@@ -75,7 +75,13 @@ func InitSQL() {
 		InfoLogger.Println("team table did not setup")
 	}
 
-	_, err = db.Exec(`INSERT OR IGNORE INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 10955272, "Henry", "Golang", "frontend", 99.0, "nerd@nerd.com")
+	TestInserts()
+}
+
+func TestInserts() {
+	db := OpenDB()
+	defer db.Close()
+	_, err := db.Exec(`INSERT OR IGNORE INTO surveys (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)`, 10955272, "Henry", "Golang", "frontend", 99.0, "nerd@nerd.com")
 	if err != nil {
 		fmt.Println("Did not insert 1")
 	}
@@ -104,4 +110,5 @@ func InitSQL() {
 		InfoLogger.Printf("Didn't insert into projects %s", err)
 	}
 	db.Exec(`INSERT OR IGNORE INTO projects (status, name, description, frontend, backend, database, game_dev, embedded) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, 0, "Test1", "Example1", 2, 2, 2, 2, 2)
+
 }
