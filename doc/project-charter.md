@@ -62,6 +62,6 @@ To develop an AI-driven platform to streamline and enhance the recruitment proce
 - User adoption risks if the interface is not user-friendly.
 
 ## 13. Approval and Signatures
-- **Project Sponsor**: [Signature]
-- **Project Manager**: [Signature]
-- **Date**: [Date]
+- **Project Sponsor**: 
+- **Project Manager**: 
+- **Date**: 
