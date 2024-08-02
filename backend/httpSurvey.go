@@ -7,12 +7,21 @@ import (
 
 func SurveyHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" && r.Header.Get("Content-Type") == "application/json" {
-		// expects pid and status either set to hired(1) or anything else sets to -1(not hired)
+		var changes Survey
+		decoder := json.NewDecoder(r.Body)
+		err := decoder.Decode(&changes)
+		if err != nil {
+			InfoLogger.Println(err)
+		}
+		err = changes.Save()
+		if err != nil {
+			InfoLogger.Println(err)
+		}
 	}
 	if r.Method == "GET" {
 		hires, err := GetAllSurveys()
 		if err != nil {
-			InfoLogger.Println("Couldn't get potential hires")
+			InfoLogger.Println("Unable to collect surveys")
 			http.Error(w, "Invalid input", http.StatusBadRequest)
 			return
 		}

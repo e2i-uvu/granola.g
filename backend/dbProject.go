@@ -17,6 +17,7 @@ type Project struct {
 }
 
 func GetAllProjects() ([]Project, error) {
+	// returns all projects where the status is currently 0
 	db := OpenDB()
 	defer db.Close()
 
