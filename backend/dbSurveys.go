@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 )
@@ -16,13 +15,9 @@ type Survey struct {
 	Email  string `json:"email"`
 }
 
-func GetAllPotentialInterviewees() ([]Survey, error) {
-	db, err := sql.Open("sqlite3", "./database/database.db")
-	if err != nil {
-		InfoLogger.Println("sql.open", err)
-		var potential []Survey
-		return potential, errors.New("Unable to open connection to db")
-	}
+func GetAllSurveys() ([]Survey, error) {
+	// Returns all surveys, does not return duplicates if they have matching UVUid, does not return entries if it is referenced from employees table
+	db := OpenDB()
 	defer db.Close()
 
 	result, err := db.Query(`SELECT *
@@ -61,13 +56,8 @@ func GetAllPotentialInterviewees() ([]Survey, error) {
 	InfoLogger.Println("Didn't find anyone")
 	return users, errors.New("didn't find anyone")
 }
-func GetPotential(uvuid int) (Survey, error) {
-	db, err := sql.Open("sqlite3", "./database/database.db")
-	if err != nil {
-		InfoLogger.Println("sql.open", err)
-		var person Survey
-		return person, errors.New("Unable to open connection to db")
-	}
+func GetSurveyByUVUID(uvuid int) (Survey, error) {
+	db := OpenDB()
 	defer db.Close()
 
 	query := "SELECT * FROM surveys WHERE uvuid = ?"
@@ -75,7 +65,7 @@ func GetPotential(uvuid int) (Survey, error) {
 	if err != nil {
 		InfoLogger.Println("db.prepare", err)
 		var person Survey
-		return person, errors.New("No users match ID, query")
+		return person, errors.New("No users match ID")
 	}
 	defer stmt.Close()
 
@@ -95,7 +85,7 @@ func GetPotential(uvuid int) (Survey, error) {
 		if err != nil {
 			InfoLogger.Println("Rows.scan", err)
 			var person Survey
-			return person, errors.New("No users match ID, scanning")
+			return person, errors.New("No users match ID")
 		}
 		users = append(users, user)
 	}
@@ -103,13 +93,11 @@ func GetPotential(uvuid int) (Survey, error) {
 		return users[len(users)-1], nil
 	}
 	var person Survey
-	return person, errors.New("No users match ID at all")
+	return person, errors.New("No users match ID")
 }
 
 func (user Survey) Save() error {
-	db, err := sql.Open("sqlite3", "./database/database.db")
-	if err != nil {
-	}
+	db := OpenDB()
 	defer db.Close()
 
 	stmt, err := db.Prepare("INSERT INTO users (uvuid, name, lang, aoi, degree, email) VALUES (?,?,?,?,?,?)")

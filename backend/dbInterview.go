@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 )
@@ -14,10 +13,7 @@ type InterviewResultIn struct {
 }
 
 func (inter InterviewResultIn) Save() error {
-	db, err := sql.Open("sqlite3", "./database/database.db")
-	if err != nil {
-		InfoLogger.Fatal("Unable to connect to database")
-	}
+	db := OpenDB()
 	defer db.Close()
 
 	stmt, err := db.Prepare("INSERT INTO employees (fk_survey, cancode, enjoyment, social, status) VALUES (?, ?, ?, ?, ?)")

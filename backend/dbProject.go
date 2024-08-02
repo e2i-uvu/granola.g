@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"errors"
 )
 
@@ -18,12 +17,7 @@ type Project struct {
 }
 
 func GetAllProjects() ([]Project, error) {
-	db, err := sql.Open("sqlite3", "./database/database.db")
-	if err != nil {
-		InfoLogger.Println("sql.open", err)
-		var projects []Project
-		return projects, errors.New("Unable to open connection to db")
-	}
+	db := OpenDB()
 	defer db.Close()
 
 	result, err := db.Query(`SELECT *

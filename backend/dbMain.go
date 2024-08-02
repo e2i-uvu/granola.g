@@ -7,6 +7,15 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+func OpenDB() *sql.DB {
+	// Returns a database object, make sure you defer close it
+	db, err := sql.Open("sqlite3", "./database/database.db")
+	if err != nil {
+		panic("Database not initiated properly")
+	}
+	return db
+}
+
 func InitSQL() {
 	db, err := sql.Open("sqlite3", "./database/database.db")
 	if err != nil {

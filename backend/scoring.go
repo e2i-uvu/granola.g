@@ -8,7 +8,7 @@ package main
 
 // NOTE: numgo data types/arrays only accept float64 or bool values as elements. Good news: we don't need to use them to find a dot product between two arrays of int8 :D.
 
-func GenerateScore(hire *PotentialHire) {
+func GenerateScore(hire *Employee) {
 	// Mock arrays
 	weights := [2]int8{3, 2}
 	candidateScores := [2]int8{hire.Enjoyment, hire.Social}

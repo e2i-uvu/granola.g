@@ -7,17 +7,17 @@ import (
 )
 
 type Assignment struct {
-	Person   PotentialHire `json:"person"`
-	Position string        `json:"position"`
+	Person   Employee `json:"person"`
+	Position string   `json:"position"`
 }
 
-type sortPendingEmployee []PotentialHire
+type sortPendingEmployee []Employee
 
 func (p sortPendingEmployee) Len() int           { return len(p) }
 func (p sortPendingEmployee) Less(i, j int) bool { return p[i].Score > p[j].Score }
 func (p sortPendingEmployee) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 
-func BuildTeams(people []PotentialHire, projects []Project) (map[int][]Assignment, error) {
+func BuildTeams(people []Employee, projects []Project) (map[int][]Assignment, error) {
 	teams := make(map[int][]Assignment)
 	InfoLogger.Println(people[0])
 	sort.Sort(sortPendingEmployee(people))

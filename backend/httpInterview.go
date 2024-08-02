@@ -23,7 +23,7 @@ func InterviewStartHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Invalid input", http.StatusNotAcceptable)
 		}
 		uvuid := int(id)
-		person, err := GetPotential(uvuid)
+		person, err := GetSurveyByUVUID(uvuid)
 		if err != nil {
 			InfoLogger.Println("GetUser", err)
 			http.Error(w, "Invalid input", http.StatusNotAcceptable)
