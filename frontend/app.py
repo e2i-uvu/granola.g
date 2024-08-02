@@ -198,7 +198,6 @@ teams_pages = [
 admin_pages = [st.Page("payroll.py", title="Payroll", icon=":material/local_atm:")]
 
 dev_pages = [
-    st.Page("stdataframe.py", title="jsonToDataFrame"),
     st.Page("myAvailability.py", title="My Availability"),
     st.Page("sessionstate.py", title="Session State"),
 ]
