@@ -111,6 +111,6 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
   - [ ] Front end availability
 
 ### Noble:
-  - [ ] Send message to Nicole and Jeremiah about SkillKo not happening
+  - [x] Send message to Nicole and Jeremiah about SkillKo not happening
   - [ ] Finish deployment
 
