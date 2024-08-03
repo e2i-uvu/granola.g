@@ -1,6 +1,7 @@
 """
 Entrypoint for the streamlit frontend
 """
+
 import streamlit as st
 import hmac
 import sys
@@ -36,7 +37,10 @@ def style(filename: str = "./styles/main.css"):
 #     layout = "centered" if st.session_state.center else "wide"
 
 if "layout" not in st.session_state:
-    st.session_state.layout = "centered"
+    if "mobile" in st.context.headers["User-Agent"].lower():  # TODO: add regex here 🤫
+        st.session_state.layout = "wide"
+    else:
+        st.session_state.layout = "centered"
 
 st.set_page_config(
     page_title="E2i",
