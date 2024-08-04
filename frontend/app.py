@@ -5,8 +5,9 @@ Entrypoint for the streamlit frontend
 import streamlit as st
 import hmac
 import sys
+import re
 
-VERSION = 0.101
+VERSION = 0.102
 
 try:
     if sys.argv[1] == "dev":
@@ -36,8 +37,14 @@ def style(filename: str = "./styles/main.css"):
 # else:
 #     layout = "centered" if st.session_state.center else "wide"
 
+st.session_state.mobile_pat = re.compile(r"[mM]obile|iPhone|iPad|iPod|Android|webOS")
+
+if "user" not in st.session_state:
+    st.session_state.user = {"id": None, "name": None, "role": None, "mobile": False}
+
 if "layout" not in st.session_state:
-    if "mobile" in st.context.headers["User-Agent"].lower():  # TODO: add regex here 🤫
+    if st.session_state.mobile_pat.search(st.context.headers["User-Agent"]):
+        st.session_state.user["mobile"] = True
         st.session_state.layout = "wide"
     else:
         st.session_state.layout = "centered"
@@ -63,9 +70,6 @@ st.logo(
     icon_image="./static/uvu-logo-cropped-green.png",
 )
 
-
-if "user" not in st.session_state:
-    st.session_state.user = {"id": None, "name": None, "role": None}
 
 ROLES = [None, "student", "admin", "developer"]
 
@@ -226,17 +230,18 @@ else:
     pg = st.navigation([st.Page(login)])
 
 
-# Dynamically change to wide if going to payroll page
-if pg.title == "Payroll":
-    if st.session_state.layout == "centered":
-        st.session_state.layout = "wide"
-        st.rerun()
+if not st.session_state.user["mobile"]:
 
-else:
-    if st.session_state.layout == "wide":
-        st.session_state.layout = "centered"
-        st.rerun()
+    # Dynamically change to wide if going to payroll page
+    if pg.title == "Payroll":
+        if st.session_state.layout == "centered":
+            st.session_state.layout = "wide"
+            st.rerun()
+
+    else:
+        if st.session_state.layout == "wide":
+            st.session_state.layout = "centered"
+            st.rerun()
 
 
 pg.run()
-# print(st.session_state)
