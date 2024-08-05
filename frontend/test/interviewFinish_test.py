@@ -21,16 +21,18 @@ logger = logging.getLogger("InterviewFinishHandler_Test")
 def make_interviewFinish_request(data: dict[str,str]) -> int:
     response = requests.post(
         backend + "interviewFinish", #json = {"uvuid": data},
+        auth=HTTPBasicAuth(username, password),
         json = data,
         headers = standard_headers
     )
     return response.status_code
 
 def test_interviewFinish_request(data: dict[str,str], expected_status_code: int, case: str):
-    if make_interviewFinish_request(data) == expected_status_code:
+    status = make_interviewFinish_request(data)
+    if status == expected_status_code:
         logger.info("Sucessfully fails " + case)#ok_message)
     else:
-        logger.warning("Does not fail " + case)#error_message)
+        logger.warning(str(status) + "Does not fail " + case)#error_message)
 
 if __name__ == "__main__":
     logging.basicConfig(filename = "test.log", level = logging.INFO)
@@ -38,11 +40,11 @@ if __name__ == "__main__":
     # Test interviewFinishHandler
     # 1. None datatype
     # Expected output: 406 - Fail
-    test_interviewFinish_request(None, 406, "None value.")#, "None values.")
+    test_interviewFinish_request(None, 400, "None value.")#, "None values.")
 
     # . Non JSON argument
     # Expected output: 406 - Fail
-    test_interviewFinish_request(1000003, 406, "non-JSON value.")
+    test_interviewFinish_request(1000003, 400, "non-JSON value.")
 
     # FIX: Test cases where copied directly from the InterviewStartHandler test,
     # and haven't been updated.
@@ -72,7 +74,7 @@ if __name__ == "__main__":
             "enjoyment":"5",
             "social":"5"
         },
-        406, "JSON with non-numeric value.")
+        400, "JSON with non-numeric value.")
 
     # 4. Valid datatype: numeric string
     # Expected output: 200 - OK

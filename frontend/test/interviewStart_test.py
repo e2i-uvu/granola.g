@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     # . JSON argument, empty
     # Expected output: 406 - Fail
-    #test_interviewStart_request({}, 406, "Empty JSON.")
+    # test_interviewStart_request({}, 406, "Empty JSON.")
 
     # . JSON argument, key is in wrong datatype
     # Expected output: 406 - Fail
