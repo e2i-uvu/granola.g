@@ -5,6 +5,7 @@ import os
 
 #import pytest
 import logging
+import testutils
 #import time
 
 load_dotenv()
@@ -13,12 +14,13 @@ username = os.getenv("USERNAME")
 password = os.getenv("PASSWORD")
 standard_headers = {"Content-Type": "application/json"}
 
-logger = logging.getLogger("InterviewFinishHandler_Test")
+module_logger = logging.getLogger("InterviewFinishHandler_Test")
 
 # TODO: Change parameter from string to dictionary/json
 
 #def test_interviewFinish( data: dict[str,str] #data: str
-def make_interviewFinish_request(data: dict[str,str]) -> int:
+#def make_interviewFinish_request(data: dict[str,str]) -> int:
+def status_code(data: dict[str,str]) -> int:
     response = requests.post(
         backend + "interviewFinish", #json = {"uvuid": data},
         auth=HTTPBasicAuth(username, password),
@@ -27,24 +29,29 @@ def make_interviewFinish_request(data: dict[str,str]) -> int:
     )
     return response.status_code
 
-def test_interviewFinish_request(data: dict[str,str], expected_status_code: int, case: str):
-    status = make_interviewFinish_request(data)
-    if status == expected_status_code:
-        logger.info("Sucessfully fails " + case)#ok_message)
-    else:
-        logger.warning(str(status) + "Does not fail " + case)#error_message)
+#def test_interviewFinish_request(data: dict[str,str], expected_status_code: int, case: str):
+#    status = make_interviewFinish_request(data)
+#    if status == expected_status_code:
+#        module_logger.info("Sucessfully fails " + case)#ok_message)
+#    else:
+#        module_logger.warning(str(status) + "Does not fail " + case)#error_message)
 
-if __name__ == "__main__":
+def run_tests() -> None:
+#if __name__ == "__main__":
     logging.basicConfig(filename = "test.log", level = logging.INFO)
+
+    test = lambda x,y,z: testutils.test_request(module_logger, status_code, x, y, z)
 
     # Test interviewFinishHandler
     # 1. None datatype
     # Expected output: 406 - Fail
-    test_interviewFinish_request(None, 400, "None value.")#, "None values.")
+    #test_interviewFinish_request(
+    test(None, 400, "None value.")#, "None values.")
 
     # . Non JSON argument
     # Expected output: 406 - Fail
-    test_interviewFinish_request(1000003, 400, "non-JSON value.")
+    #test_interviewFinish_request(
+    test(1000003, 400, "non-JSON value.")
 
     # FIX: Test cases where copied directly from the InterviewStartHandler test,
     # and haven't been updated.
@@ -67,7 +74,8 @@ if __name__ == "__main__":
 
     # 3. Valid datatype: Non-numeric string
     # Expected output: 406 - Fail
-    test_interviewFinish_request(
+    #test_interviewFinish_request(
+    test(
         {
             "fkuser": "lore ipsum",
             "cancode": "True",
@@ -79,13 +87,17 @@ if __name__ == "__main__":
     # 4. Valid datatype: numeric string
     # Expected output: 200 - OK
     # FIX: Returning error. Is the "cancode" value wrong?
-    if make_interviewFinish_request(
+    #if make_interviewFinish_request(
+    if status_code(
         {
             "fkuser": "11006941",
             "cancode": "True",
             "enjoyment": "5",
             "social": "5"
         },) == 200: 
-        logger.info("InterviewFinishHandler succesfully manages ")
+        module_logger.info("succesfully manages valid input")
     else:
-        logger.error("InterviewFinishHandler fails to manage valid input.")
+        module_logger.error("fails to manage valid input.")
+
+if __name__ == "__main__":
+    run_tests()
