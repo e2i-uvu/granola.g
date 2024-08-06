@@ -1,10 +1,12 @@
-import employee_status_test
-import interviewFinish_test
-import interviewStart_test
+import employee_status
+import interviewFinish
+import interviewStart
 
 import logging
 
+# TODO: Add SQL Injection tests???
+
 if __name__ == "__main__":
-    interviewStart_test.run_tests()
-    interviewFinish_test.run_tests()
-    employee_status_test.run_tests()
+    interviewStart.run_tests()
+    interviewFinish.run_tests()
+    employee_status.run_tests()

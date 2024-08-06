@@ -11,7 +11,7 @@ import testutils
 #backend = os.getenv("BACKEND")
 #username = os.getenv("USERAME")
 #password = os.getenv("PASSWORD")
-backend, username, password, _ = testutils.set_basic_state()
+backend, username, password, standard_header = testutils.set_basic_state()
 
 #module_logger = logging.getLogger("employee_statusHandler_Test")
 
@@ -26,7 +26,8 @@ def post_employee_status(url: str, data: dict[str,str]) -> int:
     response = requests.post(
         backend + url,
         auth = HTTPBasicAuth(username, password),
-        json = data
+        json = data,
+        headers = standard_header
     )
     return response.status_code
 
@@ -52,7 +53,16 @@ def run_tests():
     test_get("hire")
     test_get("fire")
 
+    # Post tests
+    post_data: dict[str,str] ={
+            {
+            "uvuid": "11006941",
+            "status": "1"
+        }
+    }
+    test_post("hire")
+    test_post("fire")
+
 
 if __name__ == "__main__":
     run_tests()
-
