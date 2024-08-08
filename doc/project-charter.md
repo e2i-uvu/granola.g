@@ -7,7 +7,7 @@
 To develop an AI-driven platform to streamline and enhance the recruitment process, reducing time-to-hire and improving team organization.
 
 ## 3. Project Objectives
-- Reduce time-to-hire by 30% 
+- Reduce time-to-hire by ?% 
 - Achieve a candidate 
 - Integrate AI-driven
 
@@ -60,6 +60,8 @@ To develop an AI-driven platform to streamline and enhance the recruitment proce
 ## 12. Risks
 - Potential delays in AI model training due to data issues.
 - User adoption risks if the interface is not user-friendly.
+- Resource allocation delays
+-  
 
 ## 13. Approval and Signatures
 - **Project Sponsor**: 
