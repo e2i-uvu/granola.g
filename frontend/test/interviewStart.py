@@ -1,11 +1,11 @@
 import requests
-from requests.auth import HTTPBasicAuth
 from dotenv import load_dotenv
 import os
 
 #import pytest
 import logging
 import testutils
+from testutils import url, data, code
 #import time
 
 load_dotenv()
@@ -20,7 +20,7 @@ module_logger = logging.getLogger("InterviewStartHandler_Test")
 
 #def test_interviewStart( data: dict[str,str] #data: str
 #def make_interviewStart_request(data: dict[str,str]) -> int:
-def status_code(data: dict[str,str]) -> int:
+def status_code(url: url, data: data) -> code:
     response = requests.post(
         backend + "interviewStart", #json = {"uvuid": data},
         json = data,
@@ -38,7 +38,7 @@ def run_tests() -> None:
 #if __name__ == "__main__":
     logging.basicConfig(filename = "test.log", level = logging.INFO)
 
-    test = lambda x,y,z: testutils.test_request(module_logger, status_code, x, y, z)
+    test = lambda x,y,z: testutils.test_request(module_logger, x, y, z, url = "interviewStart", request_function = status_code)
 
     # Test interviewStartHandler
     # 1. None datatype
@@ -78,7 +78,7 @@ def run_tests() -> None:
     # 4. Valid datatype: numeric string
     # Expected output: 200 - OK
     #if make_interviewStart_request({"uvuid": "11006941"}) == 200:
-    if status_code({"uvuid": "11006941"}) == 200:
+    if status_code("interviewStart",{"uvuid": "11006941"}) == 200:
         module_logger.info("succesfully manages valid input")
     else:
         module_logger.error("fails to manage valid input.")

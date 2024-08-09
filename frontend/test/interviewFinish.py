@@ -20,12 +20,12 @@ module_logger = logging.getLogger("InterviewFinishHandler_Test")
 
 #def test_interviewFinish( data: dict[str,str] #data: str
 #def make_interviewFinish_request(data: dict[str,str]) -> int:
-def status_code(data: dict[str,str]) -> int:
+def status_code(url: str, data: dict[str,str]) -> int:
     response = requests.post(
         backend + "interviewFinish", #json = {"uvuid": data},
         auth=HTTPBasicAuth(username, password),
-        json = data,
-        headers = standard_headers
+        json=data,
+        headers=standard_headers
     )
     return response.status_code
 
@@ -40,7 +40,7 @@ def run_tests() -> None:
 #if __name__ == "__main__":
     logging.basicConfig(filename = "test.log", level = logging.INFO)
 
-    test = lambda x,y,z: testutils.test_request(module_logger, status_code, x, y, z)
+    test = lambda x,y,z: testutils.test_request(module_logger, x, y, z, url = "interviewFinish")
 
     # Test interviewFinishHandler
     # 1. None datatype
@@ -88,7 +88,7 @@ def run_tests() -> None:
     # Expected output: 200 - OK
     # FIX: Returning error. Is the "cancode" value wrong?
     #if make_interviewFinish_request(
-    if status_code(
+    if testutils.get_status_code("interviewFinish",
         {
             "fkuser": "11006941",
             "cancode": "True",
