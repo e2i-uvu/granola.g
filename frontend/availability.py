@@ -11,7 +11,8 @@ time_slots = ['07:00 AM', '07:30 AM', '08:00 AM', '08:30 AM',
               '07:00 PM', '07:30 PM', '08:00 PM', '08:30 PM', '09:00 PM',
               '09:30 PM', '10:00 PM']
 
-data = {
+# Default data where all checkboxes are set to False
+default_data = {
     "Mon": [False] * len(time_slots),
     "Tue": [False] * len(time_slots),
     "Wed": [False] * len(time_slots),
@@ -20,7 +21,13 @@ data = {
     "Sat": [False] * len(time_slots),
     "Sun": [False] * len(time_slots),
 }
-df = pd.DataFrame(data, index=time_slots)
+
+# Initialize the DataFrame in session state if not already present
+if 'df' not in st.session_state:
+    st.session_state.df = pd.DataFrame(default_data, index=time_slots)
+
+# Use the DataFrame from session state
+df = st.session_state.df
 
 col0, col1, col2, col3 = st.columns([.55, .2, .2, .15], vertical_alignment='bottom')
 
@@ -50,8 +57,24 @@ with col3:
             st.error("Start time must be before end time.")
         else:
             for day in options:
-                df.loc[start_time:end_time, day] = True
+                df.loc[time_slots[start_idx:end_idx+1], day] = True
 
-edited_df = st.data_editor(df, height=1125, width=1000)
+        # Save the updated DataFrame back to session state
+        st.session_state.df = df
 
-df.update(edited_df)
+        # Print the updated DataFrame as JSON to the terminal
+        print(df.to_json())
+
+# Generate custom checkboxes for each cell
+for time in time_slots:
+    cols = st.columns([1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], gap= 'small')
+    cols[0].text(time)
+    for i, day in enumerate(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]):
+        label = f"{time}_{day}"
+        checked = cols[i + 1].checkbox(label, value=df.loc[time, day], key=label, label_visibility='collapsed')
+        if checked != df.loc[time, day]:
+            df.loc[time, day] = checked
+            st.session_state.df = df
+
+# Display the updated DataFrame
+st.write(df)
