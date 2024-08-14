@@ -97,7 +97,7 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
   - [ ] Team building algorithm
 
 ### Henry:
-  - [ ] Team building algorithm
+  - [x] Team building algorithm
   - [ ] Back end for availability
   - [ ] GO Tests
 

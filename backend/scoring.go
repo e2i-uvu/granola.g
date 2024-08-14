@@ -1,3 +1,4 @@
+// TODO: Delete scoring algorith
 package main
 
 // import (

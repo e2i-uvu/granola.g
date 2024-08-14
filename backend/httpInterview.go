@@ -1,3 +1,4 @@
+// TODO: Get Rid of all this
 package main
 
 import (
