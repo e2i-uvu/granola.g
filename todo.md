@@ -40,7 +40,8 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
 ### Spencer:
 - [x] Develop Docker containers
 - [ ] Work on Streamlit integration
-- [ ] Ensure everything works on the VM
+- [x] Ensure everything works on the VM
+- [ ] Get let's encrypt certs working
 
 ### Henry:
 - [x] Implement server communication using Go
@@ -93,8 +94,8 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
 
 ### Spencer:
   - [ ] Finish deployment
-  - [ ] Chat interface for AI
-  - [ ] Team building algorithm
+  - [x] Chat interface for AI
+  - [x] Team building algorithm
 
 ### Henry:
   - [x] Team building algorithm
@@ -121,7 +122,7 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
   - [ ] Make Data Pipeline
   - [ ] Add to database
   - [ ] Refactor
-  - [ ] Open AI Chat bot
+  - [x] Open AI Chat bot
 
 ### Henry:
   - [ ] 
