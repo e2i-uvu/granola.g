@@ -51,7 +51,7 @@ if "layout" not in st.session_state:
 
 st.set_page_config(
     page_title="E2i",
-    page_icon=":material/school:",  # add e2i logo here
+    page_icon=":trophy:",  # add e2i logo here
     layout=st.session_state.layout,
     initial_sidebar_state="expanded",
     menu_items={  # currently hidden
@@ -134,8 +134,8 @@ def login():
     # TODO: Will change to username and password
     # col1, col2 = st.columns([3, 1], vertical_alignment="bottom")
     role = st.selectbox(
-        label="Choose your role (temporary)",
-        placeholder="Choose your role (temporary)",
+        label="Choose your role",
+        placeholder="Choose your role",
         options=ROLES,
         label_visibility="visible",
     )
@@ -149,9 +149,16 @@ def login():
         st.rerun()
 
 
-def logout():
+def logout():  # need to be careful to reset session_state
+    """Logs the user out of the website,
+    reset some parts of session_state"""
+
     if "password_correct" in st.session_state:
         del st.session_state["password_correct"]
+
+    if "gpt" in st.session_state:
+        del st.session_state.gpt
+
     st.session_state.user["role"] = None
     st.rerun()
 
@@ -183,6 +190,12 @@ info_pages = [
 
 teams_pages = [
     st.Page(
+        "chat.py",
+        title="AI Chat",
+        icon=":material/chat:",
+        default=(st.session_state.user["role"] == "admin"),
+    ),
+    st.Page(
         "interview.py",
         title="Interview",
         icon=":material/person_add:",
@@ -192,14 +205,13 @@ teams_pages = [
         "employees.py",
         title="Employees",
         icon=":material/groups:",
-        default=(st.session_state.user["role"] == "admin"),
+        # default=(st.session_state.user["role"] == "admin"),
     ),
     st.Page(
         "teams.py",
         title="Team Building",
         icon=":material/reduce_capacity:",
     ),
-    st.Page("chat.py", title="AI Chat", icon=":material/chat:"),
 ]
 
 admin_pages = [st.Page("payroll.py", title="Payroll", icon=":material/local_atm:")]
@@ -233,6 +245,7 @@ else:
 if not st.session_state.user["mobile"]:
 
     # Dynamically change to wide if going to payroll page
+    #  FIX: add Mobile check -> st.session_state.user["mobile"]
     if pg.title == "Payroll":
         if st.session_state.layout == "centered":
             st.session_state.layout = "wide"
