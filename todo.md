@@ -143,5 +143,6 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
   - [ ] Message each team member
   - [ ] Update TODO
   - [ ] Update timeline
-  - [ ] Make documents explaining project scope changes 
+  - [ ] Make documents explaining project scope changes
+  - [ ] Unblock e2i.live website on uvu wifi 
 
