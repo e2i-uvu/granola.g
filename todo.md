@@ -41,7 +41,7 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
 - [x] Develop Docker containers
 - [ ] Work on Streamlit integration
 - [x] Ensure everything works on the VM
-- [ ] Get let's encrypt certs working
+- [x] Get let's encrypt certs working
 
 ### Henry:
 - [x] Implement server communication using Go
@@ -121,8 +121,9 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
   - [ ] Create CSV data from Qualtrics survey
   - [ ] Make Data Pipeline
   - [ ] Add to database
-  - [ ] Refactor
+  - [x] Refactor
   - [x] Open AI Chat bot
+  - [x] Unblock e2i.live website on uvu wifi 
 
 ### Henry:
   - [ ] 
@@ -144,5 +145,4 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
   - [ ] Update TODO
   - [ ] Update timeline
   - [ ] Make documents explaining project scope changes
-  - [ ] Unblock e2i.live website on uvu wifi 
 
