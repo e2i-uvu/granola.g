@@ -12,6 +12,38 @@ Here’s the list formatted with checkboxes for GitHub Markdown:
 - [ ] Extend `st.column_config` to replicate when to work
 - [ ] What ports need to be open to traefik on backend?
 
+
+---
+
+All **TODO** ... **FIX** comments throughout project:
+
+```
+frontend/app.py|134 col 7| TODO: Will change to username and password
+frontend/test/interviewFinish.py|19 col 3| TODO: Change parameter from string to dictionary/json
+frontend/test/interviewFinish.py|56 col 7| FIX: Test cases where copied directly from the InterviewStartHandler test,
+frontend/test/interviewFinish.py|89 col 7| FIX: Returning error. Is the "cancode" value wrong?
+frontend/test/main.py|7 col 3| TODO: Add SQL Injection tests???
+frontend/test/interviewStart.py|19 col 3| TODO: Change parameter from string to dictionary/json
+frontend/test/interviewStart.py|55 col 7| FIX: The following test cases don't work
+frontend/employees.py|220 col 3| TODO: Guts this will be the status page for current employees
+frontend/weightConfig.py|8 col 3| TODO: Add logging functionality?
+frontend/weightConfig.py|11 col 3| TODO:  Maybe make this configFilePath a env?
+frontend/weightConfig.py|63 col 3| FIX: Couldn't find a way to modify the value of the sliders from outside of the sliders object
+frontend/ai.py|137 col 25| TODO:
+frontend/chat.py|60 col 58| TODO:
+backend/teambuilding.go|1 col 4| TODO: Replace algorithm to include one carry over employee and the rest as randomized
+backend/httpHire.go|1 col 4| TODO: update post so that there's additional checking logic
+backend/scoring.go|1 col 4| TODO: Delete scoring algorith
+backend/httpInterview.go|1 col 4| TODO: Get Rid of all this
+backend/main.go|40 col 30| INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+backend/dbInterview.go|1 col 4| TODO: Delete all of this
+backend/dbSurveys.go|1 col 4| TODO: Update to update instead of reinsert information
+backend/dbMain.go|1 col 4| TODO: edit surveys table to include qualtrics info and delete employees
+backend/dbMain.go|2 col 4| TODO: create status table -2: fired; -1: not invited back; 0: Complted Surveyed; 1: Pending team; 2: Assigned to team
+backend/dbMain.go|3 col 4| TODO: create project status 0: Waiting for paperwork; 1: Waiting for team; 2: Active with team assigned; 3: Finished
+```
+
+
 ---
 
 ## Tasks: 6/24-7/1
