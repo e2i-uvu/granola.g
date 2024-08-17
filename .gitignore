@@ -9,6 +9,7 @@ frontend/.env
 # Python virtual environments
 .venv/
 
+.envrc
 .env
 .env.traefik
 
