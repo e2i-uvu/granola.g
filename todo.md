@@ -173,9 +173,10 @@ backend/dbMain.go|3 col 4| TODO: create project status 0: Waiting for paperwork;
   - [ ] Refactor code
 
 ### Noble:
-  - [ ] Message each team member
+  - [x] Message each team member
   - [x] Update TODO
   - [ ] Update timeline
   - [ ] Make documents explaining project scope changes
-  - [ ] Message Alsharif about getting website approved for UVU wifi
+  - [x] Message Alsharif about getting website approved for UVU wifi
+  - [ ] Contact Aaron Barrett about E2i Domain
 
