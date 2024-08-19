@@ -16,6 +16,8 @@ frontend/.env
 # Test log for the requests
 frontend/test/*.log
 frontend/test/*.json
+frontend/test/*.png
+
 
 # Byte-compiled / optimized / DLL files | more python stuff
 __pycache__/
