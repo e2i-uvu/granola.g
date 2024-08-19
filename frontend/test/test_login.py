@@ -3,34 +3,22 @@ from playwright.async_api import async_playwright, Page#, _generated.BrowserType
 from playwright.async_api._generated import BrowserType
 import time
 #import pytest
-
-async def fill_password(page: Page, role: str) -> None:
-    if role not in ('developer', 'admin'):
-        raise ValueError
-    else:
-        await page.get_by_label('Password', exact=True).click()
-        if role == 'developer':
-            await page.get_by_label('Password', exact=True).fill('arch')
-        else:
-            await page.get_by_label('Password', exact=True).fill('innovation')
-        await page.get_by_label('Password', exact=True).press("Enter")
-        time.sleep(1)
-
-
+from testutils import *
 
 async def test_roles(browser: BrowserType, role: str) -> None:
     browser = await browser.launch()
-    page = await browser.new_page()
-    await page.goto('localhost:8080')
-    #assert page.title() == ""
-    time.sleep(1)
-    await page.get_by_test_id("stSelectbox").locator("div").filter(has_text="None").nth(2).click()
-    await page.get_by_label("Selected None. Choose your").fill("")
-    await page.get_by_role("option", name=role).click()
-    time.sleep(1)
-    if role in ('developer', 'admin'):
-        await fill_password(page, role)
-    await page.screenshot(path=f'test_role_{role}.png')
+    page = await access_website(browser, role)
+#    page = await browser.new_page()
+#    await page.goto('localhost:8080')
+#    #assert page.title() == ""
+#    time.sleep(1)
+#    await page.get_by_test_id("stSelectbox").locator("div").filter(has_text="None").nth(2).click()
+#    await page.get_by_label("Selected None. Choose your").fill("")
+#    await page.get_by_role("option", name=role).click()
+#    time.sleep(1)
+#    if role in ('developer', 'admin'):
+#        await fill_password(page, role)
+    await page.screenshot(path=f'screenshots/test_role_{role}.png')
     await browser.close()
 
 async def main() -> None:

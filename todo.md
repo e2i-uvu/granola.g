@@ -135,9 +135,9 @@ backend/dbMain.go|3 col 4| TODO: create project status 0: Waiting for paperwork;
   - [ ] GO Tests
 
 ### Carlos:
-  - [ ] Polish up front end
-  - [ ] Write tests
-  - [ ] Interviewing
+  - [x] Polish up front end
+  - [x] Write tests
+  - [x] Interviewing
 
 ### Guts:
   - [ ] Polish front end
@@ -163,8 +163,8 @@ backend/dbMain.go|3 col 4| TODO: create project status 0: Waiting for paperwork;
   - [ ] 
 
 ### Carlos:
-  - [ ] Playwright Testing
-  - [ ] Refactor Tests
+  - [x] Playwright Testing
+  - [x] Refactor Tests
   - [ ] Make bot to test AI chat bot
 
 ### Guts:
