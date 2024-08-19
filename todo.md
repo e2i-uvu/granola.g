@@ -174,7 +174,8 @@ backend/dbMain.go|3 col 4| TODO: create project status 0: Waiting for paperwork;
 
 ### Noble:
   - [ ] Message each team member
-  - [ ] Update TODO
+  - [x] Update TODO
   - [ ] Update timeline
   - [ ] Make documents explaining project scope changes
+  - [ ] Message Alsharif about getting website approved for UVU wifi
 
