@@ -9,17 +9,17 @@ type EmployeeStatus struct {
 	PID    int `json:"pid"`
 	Status int `json:"status"`
 }
+
 type Employee struct {
-	PID       int    `json:"pid"`
-	UvuID     int    `json:"uvuid"`
-	Name      string `json:"name"`
-	Lang      string `json:"lang"`
-	AOI       string `json:"aoi"`
-	CanCode   bool   `json:"cancode"`
-	Enjoyment int8   `json:"enjoyment"`
-	Social    int8   `json:"social"`
-	Status    int8   `json:"status"`
-	Score     int8   `json:"score"`
+	PID      int    `json:"pid"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	UvuID    int    `json:"uvuid"`
+	PrevTeam bool   `json:"prevteam"`
+	Major    string `json:"major"`
+	AOI      string `json:"aoi"`
+	Social   int8   `json:"social"`
+	Status   int8   `json:"status"`
 }
 
 func GetEmployees(operator string, parameter int) ([]Employee, error) {
@@ -29,10 +29,9 @@ func GetEmployees(operator string, parameter int) ([]Employee, error) {
 	db := OpenDB()
 	defer db.Close()
 
-	query := fmt.Sprintf(`SELECT e.id, s.uvuid, s.name, s.lang, s.aoi, e.cancode, e.enjoyment, e.social, e.status
-	FROM employees e
-	JOIN surveys s ON e.fk_survey = s.id
-	WHERE e.status %s ?`, operator)
+	query := fmt.Sprintf(`SELECT id, name, email, uvuid, prevteam, major, aoi, social, status
+	FROM employees
+	WHERE status %s ?`, operator)
 
 	result, err := db.Query(query, parameter)
 	if err != nil {
@@ -45,13 +44,12 @@ func GetEmployees(operator string, parameter int) ([]Employee, error) {
 	var users []Employee
 	for result.Next() {
 		var user Employee
-		err := result.Scan(&user.PID, &user.UvuID, &user.Name, &user.Lang, &user.AOI, &user.CanCode, &user.Enjoyment, &user.Social, &user.Status)
+		err := result.Scan(&user.PID, &user.Name, &user.Email, &user.UvuID, &user.PrevTeam, &user.Major, &user.AOI, &user.Social, &user.Status)
 		if err != nil {
 			InfoLogger.Println("Unable to scan people", err)
 			var potential []Employee
 			return potential, errors.New("Unable to scan people")
 		}
-		GenerateScore(&user)
 		users = append(users, user)
 	}
 	if len(users) > 0 {
@@ -72,6 +70,22 @@ func EmployeeStatusChange(changes []EmployeeStatus) error {
 		if err != nil {
 			return errors.New("Statement not executed")
 		}
+	}
+
+	return nil
+}
+
+func (user Employee) SaveNew() error {
+	db := OpenDB()
+	defer db.Close()
+
+	stmt, err := db.Prepare("INSERT INTO employees (name, email, uvuid, prevteam, major, aoi, social, status) VALUES (?,?,?,?,?,?,?,?)")
+	if err != nil {
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(user.Name, user.Email, user.UvuID, user.PrevTeam, user.Major, user.AOI, user.Social, 0)
+	if err != nil {
 	}
 
 	return nil

@@ -7,19 +7,9 @@ import (
 
 func SurveyHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" && r.Header.Get("Content-Type") == "application/json" {
-		var changes Survey
-		decoder := json.NewDecoder(r.Body)
-		err := decoder.Decode(&changes)
-		if err != nil {
-			InfoLogger.Println(err)
-		}
-		err = changes.Save()
-		if err != nil {
-			InfoLogger.Println(err)
-		}
 	}
 	if r.Method == "GET" {
-		hires, err := GetAllSurveys()
+		hires, err := GetEmployees("<", 9999)
 		if err != nil {
 			InfoLogger.Println("Unable to collect surveys")
 			http.Error(w, "Invalid input", http.StatusBadRequest)

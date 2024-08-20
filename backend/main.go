@@ -42,8 +42,6 @@ func main() {
 	InfoLogger.Println("Initialized:")
 	go InitSQL()
 	mux := http.NewServeMux()
-	mux.HandleFunc("/interviewStart", InterviewStartHandler)
-	mux.Handle("/interviewFinish", authMiddleWare(http.HandlerFunc(InterviewFinishHandler)))
 	mux.Handle("/hire", authMiddleWare(http.HandlerFunc(HireHandler)))
 	mux.Handle("/status", authMiddleWare(http.HandlerFunc(StatusHandler)))
 	mux.Handle("/preinterview", authMiddleWare(http.HandlerFunc(SurveyHandler)))
