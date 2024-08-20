@@ -5,6 +5,8 @@ import time
 
 from testutils import *
 
+# FIX: Need openai key for testing in localhost???
+
 async def test_chatbox(browser: BrowserType, role: str):
     browser = await browser.launch()
     page = await access_website(browser, role)

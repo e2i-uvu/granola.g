@@ -31,12 +31,19 @@ async def access_website(browser: BrowserType, role: str) -> Page:
     return page
 
 async def access_page(page: Page, page_title: str) -> None:
-    pass
+    #if page
+    #_ = ""
+    #if page.heading.name != page_title:
+    await page.get_by_role("link", name=page_title).click()
+    #await page.get_by_role("link", name="groups Employees").click()
+
 
 async def _main():
     async with async_playwright() as p:
         browser = await p.firefox.launch()
-        await access_website(browser, 'developer')
+        page = await access_website(browser, 'developer')
+        #await access_page(page, "reduce_capacity Team Building")
+        await page.screenshot(path='screenshots/page.png')
         await browser.close()
 
 if __name__ == "__main__":
