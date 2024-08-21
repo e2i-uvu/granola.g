@@ -166,6 +166,11 @@ backend/dbMain.go|3 col 4| TODO: create project status 0: Waiting for paperwork;
   - [x] Playwright Testing
   - [x] Refactor Tests
   - [ ] Make bot to test AI chat bot
+  - [ ] Ai chat box tests
+  - [ ] Employee page tests
+  - [ ] Availability tests
+  - [ ] Team building tests
+  - [ ] Payroll tests
 
 ### Guts:
   - [ ] Help Spencer make Data pipeline
