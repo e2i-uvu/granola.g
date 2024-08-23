@@ -22,34 +22,40 @@ st.title("Employees")
 
 
 def main():
-    option = st.selectbox('Select one',
-                          ('Select an option', 'hire',
-                           'status', 'fire', 'all surveys', 'pending projects')
-                          )
+    option = st.selectbox(
+        "Select one",
+        (
+            "Select an option",
+            "hire",
+            "status",
+            "fire",
+            "all surveys",
+            "pending projects",
+        ),
+    )
     # st.write(f'You selected: {option}')
-    if option != 'Select an option':
+    if option != "Select an option":
         option_selection(option)
 
 
 def option_selection(option):
-    if option == 'hire':
+    if option == "hire":
         show_hire()
-    elif option == 'status':
+    elif option == "status":
         show_status()
-    elif option == 'fire':
+    elif option == "fire":
         show_fire()
-        st.write('Congratulations! You have been fired!')
-    elif option == 'all surveys':
+        st.write("Congratulations! You have been fired!")
+    elif option == "all surveys":
         show_all_surveys()
-    if option == 'pending projects':
+    if option == "pending projects":
         show_pending_projects()
 
 
 def show_pending_projects():
-    st.write('Here is the status')
-    r = requests.get(backend + "project",
-                     auth=HTTPBasicAuth(username, password))
-    if (r.status_code != 200):
+    st.write("Here is the status")
+    r = requests.get(backend + "project", auth=HTTPBasicAuth(username, password))
+    if r.status_code != 200:
         st.text("The world is dying")
         st.text(r.status_code)
     else:
@@ -58,10 +64,9 @@ def show_pending_projects():
 
 
 def show_status():
-    st.write('Here is the status')
-    r = requests.get(backend + "status",
-                     auth=HTTPBasicAuth(username, password))
-    if (r.status_code != 200):
+    st.write("Here is the status")
+    r = requests.get(backend + "status", auth=HTTPBasicAuth(username, password))
+    if r.status_code != 200:
         st.text("The world is dying")
         st.text(r.status_code)
     else:
@@ -70,10 +75,9 @@ def show_status():
 
 
 def show_all_surveys():
-    st.write('Here is the status')
-    r = requests.get(backend + "preinterview",
-                     auth=HTTPBasicAuth(username, password))
-    if (r.status_code != 200):
+    st.write("Here is the status")
+    r = requests.get(backend + "preinterview", auth=HTTPBasicAuth(username, password))
+    if r.status_code != 200:
         st.text("The world is dying")
         st.text(r.status_code)
     else:
@@ -81,10 +85,9 @@ def show_all_surveys():
 
 
 def show_fire():
-    st.write('Here is the status')
-    r = requests.get(backend + "fire",
-                     auth=HTTPBasicAuth(username, password))
-    if (r.status_code != 200):
+    st.write("Here is the status")
+    r = requests.get(backend + "fire", auth=HTTPBasicAuth(username, password))
+    if r.status_code != 200:
         st.text("The world is dying")
         st.text(r.status_code)
     else:
@@ -92,9 +95,8 @@ def show_fire():
         df = pd.DataFrame(r.json())
 
         # Generate firing checkbox
-        df['status'] = [False for row in df.index]
-        columns_order = ['status'] + \
-            [col for col in df.columns if col != 'status']
+        df["status"] = [False for row in df.index]
+        columns_order = ["status"] + [col for col in df.columns if col != "status"]
         df = df[columns_order]
 
         column_config = {
@@ -107,54 +109,57 @@ def show_fire():
             "cancode": st.column_config.Column(label="Can Code", disabled=True),
             "enjoyment": st.column_config.Column(label="Enjoyment", disabled=True),
             "social": st.column_config.Column(label="Social", disabled=True),
-            "score": st.column_config.Column(label="Score", disabled=True)
+            "score": st.column_config.Column(label="Score", disabled=True),
         }
 
-        edited_df = st.data_editor(
-            df, column_config=column_config, hide_index=True)
+        edited_df = st.data_editor(df, column_config=column_config, hide_index=True)
 
-        if st.button('Save Changes'):
-            edited_df['status'] = edited_df['status'].apply(
-                lambda x: -2 if x == True else 1)
-            filtered_data = edited_df[['pid', 'status']].to_dict(
-                orient='records')
+        if st.button("Save Changes"):
+            edited_df["status"] = edited_df["status"].apply(
+                lambda x: -2 if x == True else 1
+            )
+            filtered_data = edited_df[["pid", "status"]].to_dict(orient="records")
 
             # st.dataframe(edited_df)
 
-            response = requests.post(backend + "hire",
-                                     json=filtered_data,
-                                     auth=HTTPBasicAuth(username, password))
+            response = requests.post(
+                backend + "hire",
+                json=filtered_data,
+                auth=HTTPBasicAuth(username, password),
+            )
             if response.status_code == 200:
                 st.success("Changes save successfully!")
             else:
-                st.error(f"Failed to save changes. Status code: {
-                         response.status_code}")
+                st.error(
+                    f"Failed to save changes. Status code: {
+                         response.status_code}"
+                )
 
 
 def show_hire():
-    r = requests.get(backend + "hire",
-                     auth=HTTPBasicAuth(username, password))
-    if (r.status_code == 400):
+    r = requests.get(backend + "hire", auth=HTTPBasicAuth(username, password))
+    # FIX: this ->   ^^^^^^^^^^^^^^^^  is broken
+
+    if r.status_code == 400:
         st.text("There is currently no one to hire")
         st.text(r.status_code)
-    elif (r.status_code != 200):
+    elif r.status_code != 200:
         st.text("The world is dying")
         st.text(r.status_code)
     else:
-        st.write('You are hiring this person')
+        st.write("You are hiring this person")
         data = r.json()
         df = pd.DataFrame(data)
 
-        df['status'] = df['status'].apply(lambda x: x >= 1)
+        df["status"] = df["status"].apply(lambda x: x >= 1)
         # ^converts the 'hired' column into boolean values to show up as checkmarks
 
-        if 'checkboxes' not in st.session_state:
-            st.session_state['checkboxes'] = df['status'].tolist()
+        if "checkboxes" not in st.session_state:
+            st.session_state["checkboxes"] = df["status"].tolist()
 
-        df['status'] = st.session_state['checkboxes']
+        df["status"] = st.session_state["checkboxes"]
 
-        columns_order = ['status'] + \
-            [col for col in df.columns if col != 'status']
+        columns_order = ["status"] + [col for col in df.columns if col != "status"]
         df = df[columns_order]
         # ^reorders the columns to put 'hired' column at the front of the list
 
@@ -168,31 +173,32 @@ def show_hire():
             "cancode": st.column_config.Column(label="Can Code", disabled=True),
             "enjoyment": st.column_config.Column(label="Enjoyment", disabled=True),
             "social": st.column_config.Column(label="Social", disabled=True),
-            "score": st.column_config.Column(label="Score", disabled=True)
+            "score": st.column_config.Column(label="Score", disabled=True),
         }
 
-        edited_df = st.data_editor(
-            df, column_config=column_config, hide_index=True)
+        edited_df = st.data_editor(df, column_config=column_config, hide_index=True)
 
-        st.session_state['checkboxes'] = edited_df['status'].tolist()
+        st.session_state["checkboxes"] = edited_df["status"].tolist()
 
-        if st.button('Save Changes'):
-            edited_df['status'] = edited_df['status'].apply(
-                lambda x: 1 if x else 0)
-            filtered_data = edited_df[['pid', 'status']].to_dict(
-                orient='records')
+        if st.button("Save Changes"):
+            edited_df["status"] = edited_df["status"].apply(lambda x: 1 if x else 0)
+            filtered_data = edited_df[["pid", "status"]].to_dict(orient="records")
 
-            response = requests.post(backend + "hire",
-                                     json=filtered_data,
-                                     auth=HTTPBasicAuth(username, password))
+            response = requests.post(
+                backend + "hire",
+                json=filtered_data,
+                auth=HTTPBasicAuth(username, password),
+            )
             if response.status_code == 200:
                 st.success("Changes save successfully!")
             else:
-                st.error(f"Failed to save changes. Status code: {
-                         response.status_code}")
+                st.error(
+                    f"Failed to save changes. Status code: {
+                         response.status_code}"
+                )
                 st.write(f"Error: {response.text}")
 
-        if st.button('Show session state'):
+        if st.button("Show session state"):
             st.write(st.session_state)
 
 
