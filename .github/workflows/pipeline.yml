@@ -18,7 +18,7 @@ jobs:
     steps:
     # Build environment for testing
     #- uses: actions/checkout@v2
-    - name: Set up backend
+    - name: Docker Build
     -
 
     # Tests
