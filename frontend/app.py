@@ -193,14 +193,17 @@ teams_pages = [
         "chat.py",
         title="AI Chat",
         icon=":material/chat:",
-        default=(st.session_state.user["role"] == "admin"),
+        default=(
+            st.session_state.user["role"] == "admin"
+            or st.session_state.user["role"] == "developer"
+        ),
     ),
-    st.Page(
-        "interview.py",
-        title="Interview",
-        icon=":material/person_add:",
-        default=(st.session_state.user["role"] == "developer"),
-    ),
+    # st.Page(
+    #     "interview.py",
+    #     title="Interview",
+    #     icon=":material/person_add:",
+    #     default=(st.session_state.user["role"] == "developer"),
+    # ),
     st.Page(
         "employees.py",
         title="Employees",
