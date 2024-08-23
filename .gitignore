@@ -16,6 +16,7 @@ frontend/.env
 # Test log for the requests
 frontend/test/*.log
 frontend/test/*.json
+frontend/test/*.csv
 frontend/test/*.png
 frontend/test/.async/
 
