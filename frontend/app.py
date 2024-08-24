@@ -156,9 +156,8 @@ def login():
         if uvid in st.secrets.user_index and hmac.compare_digest(password, st.secrets.passwords[st.secrets.user_index[uvid]]):
         #if st.session_state["uvid"] in st.secrets.user_index and st.session_state["password"] == st.secrets.password[st.session_state["uvid"]]:
             st.session_state["password_correct"] = True
-            return False
+            return True
             #st.session_state["user"] = st.secrets.user[uvid]
-        return True
 
     st.header("Log in")
     uvid: str = st.text_input(
@@ -177,6 +176,7 @@ def login():
 
     if uvid and password:
         if not valid_credentials(uvid, password):
+            st.error("Invalid credentials")
             st.stop()
         else:
             st.session_state.user = st.secrets.users[uvid]
