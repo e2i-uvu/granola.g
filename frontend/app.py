@@ -160,12 +160,12 @@ def login():
             #st.session_state["user"] = st.secrets.user[uvid]
 
     st.header("Log in")
-    uvid: str = st.text_input(
+    id: str = st.text_input(
         label = "UVID",
         label_visibility = "visible"
     )
 
-    if uvid:
+    if id:
         password: str = st.text_input(
             label = "Password",
             type = "password",
@@ -174,12 +174,14 @@ def login():
             key = "password"
         )
 
-    if uvid and password:
-        if not valid_credentials(uvid, password):
+    if id and password:
+        if not valid_credentials(id, password):
             st.error("Invalid credentials")
             st.stop()
         else:
-            st.session_state.user = st.secrets.users[uvid]
+            st.session_state.user["id"] = st.secrets.users[id]["uvid"]
+            st.session_state.user["name"] = st.secrets.users[id]["name"]
+            st.session_state.user["role"] = st.secrets.users[id]["role"]
             st.rerun()
 
 
