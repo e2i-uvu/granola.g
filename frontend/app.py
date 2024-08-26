@@ -153,11 +153,11 @@ ROLES = [None, "student", "admin", "developer"]
 
 def login():
     def valid_credentials(uvid: str, password: str):    #uvid, password):
-        if uvid in st.secrets.user_index and hmac.compare_digest(password, st.secrets.passwords[st.secrets.user_index[uvid]]):
-        #if st.session_state["uvid"] in st.secrets.user_index and st.session_state["password"] == st.secrets.password[st.session_state["uvid"]]:
-            st.session_state["password_correct"] = True
-            return True
-            #st.session_state["user"] = st.secrets.user[uvid]
+        for user in st.secrets.users:
+            if user["id"] == uvid and password == st.secrets.passwords[user["role"]]:
+                st.session_state["password_correct"] = True
+                return True
+        #if uvid in st.secrets.user_index and hmac.compare_digest(password, st.secrets.passwords[st.secrets.user_index[uvid]]):
 
     st.header("Log in")
     id: str = st.text_input(
@@ -179,9 +179,12 @@ def login():
             st.error("Invalid credentials")
             st.stop()
         else:
-            st.session_state.user["id"] = st.secrets.users[id]["uvid"]
-            st.session_state.user["name"] = st.secrets.users[id]["name"]
-            st.session_state.user["role"] = st.secrets.users[id]["role"]
+            for user in st.secrets.users:
+                if user["id"] == id:
+                    st.session_state.user["id"] = user["id"]
+                    st.session_state.user["name"] = user["name"]
+                    st.session_state.user["role"] = user["role"]
+                    break
             st.rerun()
 
 
