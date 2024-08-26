@@ -31,13 +31,15 @@ def build_new_team(
     project_name: str, project_type: str, employees: list, total_employees: int
 ):
     st.toast(
-        f"New {project_type} Project!\nName: {project_name}, {total_employees}, {employees}"
+        f"New {project_type} Project!\nName: {
+            project_name}, {total_employees}, {employees}"
     )
 
     return "Sucess!"
 
 
-employee_types = ["Embedded", "Frontend", "Game dev", "Web dev"]
+employee_types = ["Full stack", "Frontend", "Backend",
+                  "Database", "Embedded", "Game Development"]
 
 create_team = {
     "name": "create_team",
