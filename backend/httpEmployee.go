@@ -5,8 +5,16 @@ import (
 	"net/http"
 )
 
-func SurveyHandler(w http.ResponseWriter, r *http.Request) {
+func EmployeeHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" && r.Header.Get("Content-Type") == "application/json" {
+		// takes in qualtric survey data transforms it into something useful and then saves it to DB
+		var changes []EmployeeStatus
+		decoder := json.NewDecoder(r.Body)
+		err := decoder.Decode(&changes)
+		if err != nil {
+			InfoLogger.Println(err)
+		}
+		EmployeeStatusChange(changes)
 	}
 	if r.Method == "GET" {
 		hires, err := GetEmployees("<", 9999)
