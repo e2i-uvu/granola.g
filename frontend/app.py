@@ -8,6 +8,7 @@ import sys
 import re
 
 VERSION = 0.102
+SECRETS = "./.streamlit/secrets.toml"
 
 try:
     if sys.argv[1] == "dev":
@@ -39,8 +40,18 @@ def style(filename: str = "./styles/main.css"):
 
 st.session_state.mobile_pat = re.compile(r"[mM]obile|iPhone|iPad|iPod|Android|webOS")
 
+if "attempts" not in st.session_state:
+    st.session_state.attempts = 0
+
 if "user" not in st.session_state:
-    st.session_state.user = {"id": None, "name": None, "role": None, "mobile": False}
+    st.session_state.user = {
+        "id": None,
+        "first": None,
+        "last": None,
+        # "name": None,
+        "role": None,
+        "mobile": False,
+    }
 
 if "layout" not in st.session_state:
     if st.session_state.mobile_pat.search(st.context.headers["User-Agent"]):
@@ -74,118 +85,103 @@ st.logo(
 ROLES = [None, "student", "admin", "developer"]
 
 
-#
-#def check_password(role) -> bool:
-#    """Returns `True` if the user had the correct password."""
-#
-#    def password_entered(role) -> None:
-#        """Checks whether a password entered by the user is correct."""
-#        if hmac.compare_digest(
-#            st.session_state["password"],
-#            st.secrets.passwords[role],
-#        ):
-#            st.session_state["password_correct"] = True
-#            del st.session_state["password"]  # Don't store the password.
-#        else:
-#            st.session_state["password_correct"] = False
-#
-#    # Return True if the password is validated.
-#    if st.session_state.get("password_correct", False):
-#        return True
-#
-#    # Show input for password.
-#    st.text_input(
-#        "Password",
-#        type="password",
-#        on_change=password_entered,
-#        args=(role,),
-#        key="password",
-#    )
-#    if "password_correct" in st.session_state:
-#        st.error("😕 Password incorrect")
-#    return False
-#
-#
-#def login():
-#    st.header("Log in")
-#
-#    # def check_password():
-#    #     """Insert secure password checking here"""
-#    #     pass
-#
-#    # st.text_input(
-#    #     label="Username / UVID",
-#    #     disabled=True,  # remove upon implementation
-#    #     max_chars=8,
-#    #     placeholder="Username / UVID",
-#    #     label_visibility="hidden",
-#    # )
-#    # st.text_input(
-#    #     label="Password",
-#    #     disabled=True,  # remove upon implementation
-#    #     type="password",
-#    #     on_change=check_password,
-#    #     key="password",
-#    #     placeholder="Password",
-#    #     label_visibility="hidden",
-#    # )
-#
-#    # st.caption("Username and Password currently not needed")
-#
-#    # TODO: Will change to username and password
-#    # col1, col2 = st.columns([3, 1], vertical_alignment="bottom")
-#    role = st.selectbox(
-#        label="Choose your role",
-#        placeholder="Choose your role",
-#        options=ROLES,
-#        label_visibility="visible",
-#    )
-#
-#    if role == "admin" or role == "developer":
-#        if not check_password(role):
-#            st.stop()
-#
-#    if role is not None:
-#        st.session_state.user["role"] = role
-#        st.rerun()
-#
+def check_password(role) -> bool:
+    """Returns `True` if the user had the correct password."""
+
+    def password_entered(role) -> None:
+        """Checks whether a password entered by the user is correct."""
+        if hmac.compare_digest(
+            st.session_state["password"],
+            st.secrets.passwords[role],
+        ):
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # Don't store the password.
+        else:
+            st.session_state["password_correct"] = False
+
+    # Return True if the password is validated.
+    if st.session_state.get("password_correct", False):
+        return True
+
+    # Show input for password.
+    st.text_input(
+        "Password",
+        type="password",
+        on_change=password_entered,
+        args=(role,),
+        key="password",
+    )
+    if "password_correct" in st.session_state:
+        st.error("😕 Password incorrect")
+    return False
 
 
 def login():
-    def valid_credentials(uvid: str, password: str):    #uvid, password):
-        for user in st.secrets.users:
-            if user["id"] == uvid and password == st.secrets.passwords[user["role"]]:
-                st.session_state["password_correct"] = True
-                return True
-        #if uvid in st.secrets.user_index and hmac.compare_digest(password, st.secrets.passwords[st.secrets.user_index[uvid]]):
-
     st.header("Log in")
-    id: str = st.text_input(
-        label = "UVID",
-        label_visibility = "visible"
+
+    uvid = st.text_input(
+        label="Username / UVID",
+        # disabled=True,  # remove upon implementation
+        max_chars=8,
+        placeholder="Username / UVID",
+        label_visibility="visible",
     )
 
-    if id:
-        password: str = st.text_input(
-            label = "Password",
-            type = "password",
-            on_change = None,
-            #args = (uvid),
-            key = "password"
-        )
+    if uvid:  # and st.session_state.user["id"] is not None:
 
-    if id and password:
-        if not valid_credentials(id, password):
-            st.error("Invalid credentials")
-            st.stop()
-        else:
-            for user in st.secrets.users:
-                if user["id"] == id:
-                    st.session_state.user["id"] = user["id"]
-                    st.session_state.user["name"] = user["name"]
-                    st.session_state.user["role"] = user["role"]
-                    break
-            st.rerun()
+        for user in st.secrets.users:
+            if str(user["id"]) == uvid:
+
+                if not user["verified"]:
+                    st.warning("Waiting for verification", icon=":material/hourglass:")
+                    # TODO: Add cookies here
+                    # to stop spamming
+                    st.stop()
+
+                if not check_password(user["role"]):
+                    st.session_state.attempts += 1
+                    # TODO: Add cookies here
+                    # just to stop bad actors
+                    st.stop()
+
+                st.session_state.user["id"] = user["id"]
+                # st.session_state.user["name"] = user["name"]
+                st.session_state.user["first"] = user["first"]
+                st.session_state.user["last"] = user["last"]
+                st.session_state.user["role"] = user["role"]
+                st.rerun()
+
+            # else:
+        with st.form("register-new-uvid", clear_on_submit=True):
+
+            st.subheader("UVID Not Found")
+            st.write("Register")
+            col1, col2 = st.columns(2)
+
+            first = col1.text_input("First Name")
+            last = col2.text_input("Last Name")
+
+            role = st.selectbox(
+                label="Choose your role",
+                placeholder="Choose your role",
+                options=ROLES,
+                label_visibility="visible",
+            )
+
+            submitted = st.form_submit_button("Update map")
+            if submitted:
+                with open(SECRETS, "a") as f:
+                    f.write(
+                        f"""
+[[users]]
+id = {uvid}
+first = "{first}"
+last = "{last}"
+role = "{role}"
+verified = false
+"""
+                    )
+                st.rerun()
 
 
 def logout():  # need to be careful to reset session_state
@@ -261,6 +257,7 @@ admin_pages = [st.Page("payroll.py", title="Payroll", icon=":material/local_atm:
 dev_pages = [
     st.Page("myAvailability.py", title="My Availability"),
     st.Page("sessionstate.py", title="Session State"),
+    st.Page("users.py", title="Verification", icon=":material/verified:"),
 ]
 
 pages = {}

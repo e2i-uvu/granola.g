@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -15,10 +14,9 @@ data = {
     "Thursday": [False] * len(time_slots),
     "Friday": [False] * len(time_slots),
     "Saturday": [False] * len(time_slots),
-    "Sunday": [False] * len(time_slots)
+    "Sunday": [False] * len(time_slots),
 }
 
 df = pd.DataFrame(data, index=time_slots)
 
 st.data_editor(df, height=1125, width=1000)
-
