@@ -2,12 +2,15 @@ import streamlit as st
 
 import os
 import json
+import toml
 
 from openai import OpenAI
 
 from datetime import datetime
 
 # --- tool stuff --- #
+
+ai_config = toml.load("./ai.toml")
 
 
 def test():
@@ -38,8 +41,18 @@ def build_new_team(
     return "Sucess!"
 
 
-employee_types = ["Full stack", "Frontend", "Backend",
-                  "Database", "Embedded", "Game Development"]
+employee_types = [
+    "Full stack",
+    "Frontend",
+    "Backend",
+    "Database",
+    "Embedded",
+    "Game Development",
+]
+
+project_types = ai_config["project_types"]
+employee_types = ai_config["employee_types"]
+
 
 create_team = {
     "name": "create_team",
@@ -62,7 +75,7 @@ create_team = {
                     "project_type": {
                         "type": "string",
                         "description": "The type of project",
-                        "enum": ["Tech", "Marketing"],
+                        "enum": project_types,
                     },
                     "employees": {
                         "type": "array",

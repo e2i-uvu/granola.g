@@ -3,6 +3,7 @@ Entrypoint for the streamlit frontend
 """
 
 import streamlit as st
+import toml
 import hmac
 import sys
 import re
@@ -131,7 +132,7 @@ def login():
 
         users = toml.load(USERS)
 
-        for user in users:
+        for user in users["users"]:
             if str(user["id"]) == uvid:
 
                 if not user["verified"]:
