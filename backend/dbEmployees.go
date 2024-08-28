@@ -11,15 +11,18 @@ type EmployeeStatus struct {
 }
 
 type Employee struct {
-	PID      int    `json:"pid"`
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	UvuID    int    `json:"uvuid"`
-	PrevTeam bool   `json:"prevteam"`
-	Major    string `json:"major"`
-	AOI      string `json:"aoi"`
-	Social   int8   `json:"social"`
-	Status   int8   `json:"status"`
+	Id            string `json:"id"`
+	Name          string `json:"name"`
+	Email         string `json:"email"`
+	UVID          string `json:"uvid"`
+	DegreePercent int    `json:"degreepercent"`
+	TeamBefore    bool   `json:"teambefore"`
+	Speciality    string `json:"speciality"`
+	Major         string `json:"major"`
+	MajorAlt      string `json:"majoralt"`
+	AOI           string `json:"aoi"`
+	Social        int    `json:"social"`
+	Status        int    `json:"status"`
 }
 
 func GetEmployees(operator string, parameter int) ([]Employee, error) {
@@ -29,7 +32,7 @@ func GetEmployees(operator string, parameter int) ([]Employee, error) {
 	db := OpenDB()
 	defer db.Close()
 
-	query := fmt.Sprintf(`SELECT id, name, email, uvuid, prevteam, major, aoi, social, status
+	query := fmt.Sprintf(`SELECT id, name, email, uvid, degree, prevteam, speciality, major, aoi, social, status
 	FROM employees
 	WHERE status %s ?`, operator)
 
@@ -44,7 +47,7 @@ func GetEmployees(operator string, parameter int) ([]Employee, error) {
 	var users []Employee
 	for result.Next() {
 		var user Employee
-		err := result.Scan(&user.PID, &user.Name, &user.Email, &user.UvuID, &user.PrevTeam, &user.Major, &user.AOI, &user.Social, &user.Status)
+		err := result.Scan(&user.Id, &user.Name, &user.Email, &user.UVID, &user.DegreePercent, &user.TeamBefore, &user.Speciality, &user.Major, &user.MajorAlt, &user.AOI, &user.Social, &user.Status)
 		if err != nil {
 			InfoLogger.Println("Unable to scan people", err)
 			var potential []Employee
@@ -79,12 +82,12 @@ func (user Employee) SaveNew() error {
 	db := OpenDB()
 	defer db.Close()
 
-	stmt, err := db.Prepare("INSERT INTO employees (name, email, uvuid, prevteam, major, aoi, social, status) VALUES (?,?,?,?,?,?,?,?)")
+	stmt, err := db.Prepare("INSERT OR REPLACE INTO employees (id, name, email, uvid, degree, prevteam, speciality, major, majoralt, aoi, social, status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)")
 	if err != nil {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(user.Name, user.Email, user.UvuID, user.PrevTeam, user.Major, user.AOI, user.Social, 0)
+	_, err = stmt.Exec(user.Id, user.Name, user.Email, user.UVID, user.DegreePercent, user.TeamBefore, user.Speciality, user.Major, user.MajorAlt, user.AOI, user.Social, user.Status)
 	if err != nil {
 	}
 

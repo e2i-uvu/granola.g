@@ -35,26 +35,20 @@ func InitSQL() {
 	// 	InfoLogger.Println("Users table did not setup")
 	// }
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS employees 
-		(id INTEGER PRIMARY KEY, 
+		(id TEXT PRIMARY KEY, 
 		name TEXT, 
 		email TEXT,
-		uvuid INTEGER, 
-		prevTeam TINYINT,
-		major TEXT,
+		uvid INT, 
 		degree DECIMAL(3,0),
+		prevTeam TINYINT,
+		speciality TEXT,
+		major TEXT,
+		majorAlt TEXT,
 		aoi TEXT,
 		social Decimal(2,0),
 		status INTEGER)`)
 	if err != nil {
 		InfoLogger.Println("Employees table did not setup")
-	}
-	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS hours
-		(fk_employee INTEGER, 
-		start INTEGER,
-		end INTEGER,
-		CONSTRAINT fk_employee FOREIGN KEY (fk_employee) REFERENCES employees(id))`)
-	if err != nil {
-		InfoLogger.Println("hours table did not setup")
 	}
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS projects
 		(id INTEGER PRIMARY KEY, 

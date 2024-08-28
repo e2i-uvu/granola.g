@@ -41,6 +41,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.Handle("/hire", authMiddleWare(http.HandlerFunc(HireHandler)))
 	mux.Handle("/status", authMiddleWare(http.HandlerFunc(StatusHandler)))
+	mux.Handle("/employeesIngest", authMiddleWare(http.HandlerFunc(EmployeeIngestHandler)))
 	mux.Handle("/employees", authMiddleWare(http.HandlerFunc(EmployeeHandler)))
 	mux.Handle("/project", authMiddleWare(http.HandlerFunc(ProjectHandler)))
 	mux.Handle("/fire", authMiddleWare(http.HandlerFunc(FireHandler)))
