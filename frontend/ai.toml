@@ -1,11 +1,10 @@
-project_types = ["Tech", "Marketing"]
+project_types = ["Tech/Computer Science", "Marketing"]
 
 
 employee_types = [
-  "Full stack",
-  "Frontend",
-  "Backend",
-  "Database",
-  "Embedded",
-  "Game Development",
+  "Fullstack", "Frontend", "Backend", "Database", "Embedded", "Game"
+]
+
+market_types = [
+  "Branding", "ContentCreation", "DigitalMarketing", "GraphicDesign", "SocialMediaManagement", "VideoPhotography"
 ]
