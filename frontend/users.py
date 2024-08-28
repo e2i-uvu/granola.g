@@ -4,6 +4,10 @@ import toml
 
 SECRETS = "./.streamlit/secrets.toml"
 
+# TODO: So after reading the docs, we can't update `secrets.toml`
+# and work with the updates without restarting the app.
+# So I am thinking we might as well just change the file
+
 user_data = toml.load(SECRETS)
 
 st.header("Users")
