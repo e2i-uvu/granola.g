@@ -24,6 +24,16 @@ func InitSQL() {
 		panic("Database not initiated properly")
 	}
 	defer db.Close()
+	// _, err = db.Exec(`CREATE TABLE IF NOT EXISTS users
+	// 	(id INTEGER PRIMARY KEY,
+	// 	uvuid INTEGER,
+	// 	first TEXT,
+	// 	last TEXT,
+	// 	role TEXT default "student",
+	// 	verified TINYINT`)
+	// if err != nil {
+	// 	InfoLogger.Println("Users table did not setup")
+	// }
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS employees 
 		(id INTEGER PRIMARY KEY, 
 		name TEXT, 

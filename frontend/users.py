@@ -3,6 +3,7 @@ import streamlit as st
 import toml
 
 SECRETS = "./.streamlit/secrets.toml"
+USERS = "./.streamlit/users.toml"
 
 # TODO: So after reading the docs, we can't update `secrets.toml`
 # and work with the updates without restarting the app.
