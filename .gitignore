@@ -5,6 +5,7 @@ frontend/.env
 
 # streamlit secrets
 */.streamlit/secrets.toml
+*/.streamlit/users.toml
 
 # Python virtual environments
 .venv/
