@@ -35,10 +35,10 @@ func InitSQL() {
 	// 	InfoLogger.Println("Users table did not setup")
 	// }
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS employees 
-		(id TEXT PRIMARY KEY, 
-		name TEXT, 
+		(id TEXT PRIMARY KEY,
+		name TEXT,
 		email TEXT,
-		uvid INT, 
+		uvid INT,
 		degree DECIMAL(3,0),
 		prevTeam TINYINT,
 		speciality TEXT,
@@ -54,12 +54,7 @@ func InitSQL() {
 		(id INTEGER PRIMARY KEY, 
 		status INTEGER,
 		name TEXT,
-		description TEXT,
-		frontend INTEGER,
-		backend INTEGER,
-		database INTEGER,
-		game_dev INTEGER,
-		embedded INTEGER)`)
+		type TEXT)`)
 	if err != nil {
 		InfoLogger.Println("projects table did not setup")
 	}
