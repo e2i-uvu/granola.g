@@ -3,12 +3,13 @@ Entrypoint for the streamlit frontend
 """
 
 import streamlit as st
+import toml
 import hmac
 import sys
 import re
 
 VERSION = 0.102
-SECRETS = "./.streamlit/secrets.toml"
+USERS = "./.streamlit/users.toml"
 
 try:
     if sys.argv[1] == "dev":
@@ -129,7 +130,9 @@ def login():
 
     if uvid:  # and st.session_state.user["id"] is not None:
 
-        for user in st.secrets.users:
+        users = toml.load(USERS)
+
+        for user in users["users"]:
             if str(user["id"]) == uvid:
 
                 if not user["verified"]:
@@ -170,7 +173,7 @@ def login():
 
             submitted = st.form_submit_button("Update map")
             if submitted:
-                with open(SECRETS, "a") as f:
+                with open(USERS, "a") as f:
                     f.write(
                         f"""
 [[users]]

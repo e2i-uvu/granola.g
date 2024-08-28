@@ -1,0 +1,11 @@
+project_types = ["Tech", "Marketing"]
+
+
+employee_types = [
+  "Full stack",
+  "Frontend",
+  "Backend",
+  "Database",
+  "Embedded",
+  "Game Development",
+]
