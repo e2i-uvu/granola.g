@@ -1,43 +1,60 @@
 package main
 
 import (
-	"encoding/json"
 	"net/http"
 )
 
 func TeamsHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" && r.Header.Get("Content-Type") == "application/json" {
-		// expects pid and status either set to hired(1) or anything else sets to -1(not hired)
+		// Takes in
+		//{
+		//   "project_name": "Video Game and Website",
+		//   "project_type": "Tech",
+		//   "employees": [
+		//   "id":""
+		//   "id":""
+		//   "id":""
+		//   ]
+		// }
+		// saves project to projects and then adds the employee ids and project ids to many to many table
 	}
-	if r.Method == "GET" {
-		hires, err := GetEmployees("=", 1)
-		if err != nil {
-			InfoLogger.Println("Teambuild error 1")
-			http.Error(w, "Invalid input", http.StatusBadRequest)
-			return
-
-		}
-		projects, err := GetAllProjects()
-		if err != nil {
-			InfoLogger.Println("Teambuild error 2")
-			http.Error(w, "Invalid input", http.StatusBadRequest)
-			return
-		}
-		teams, err := BuildTeams(hires, projects)
-		if err != nil {
-			InfoLogger.Println("Teambuild error 3")
-			http.Error(w, "Invalid input", http.StatusBadRequest)
-			return
-		}
-
-		response, err := json.Marshal(teams)
-		if err != nil {
-			InfoLogger.Println("Couldn't marshal data for hires")
-			http.Error(w, "Invalid input", http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(response)
+	if r.Method == "GET" && r.Header.Get("Content-Type") == "application/json" {
+		// Takes in
+		// 		{
+		//   "project_name": "Video Game and Website",
+		//   "project_type": "Tech",
+		//   "employees": [
+		//     {
+		//       "employee": "Game dev",
+		//       "amount": 2
+		//     },
+		//     {
+		//       "employee": "Frontend",
+		//       "amount": 2
+		//     },
+		//     {
+		//       "employee": "Web dev",
+		//       "amount": 1
+		//     }
+		//   ],
+		//   "total_employees": 5
+		// }
+		// and returns
+		// 		{
+		//   "employee":[
+		//     "id":string
+		//     "name":string
+		//     "email":string
+		//     "uvid":string
+		//     "degreepercent":int
+		//     "teambefore":bool
+		//     "speciality":string
+		//     "major":string
+		//     "majoralt":string
+		//     "aoi":string
+		//     "social":int
+		//     "status":int
+		//     ]
+		// }
 	}
 }
