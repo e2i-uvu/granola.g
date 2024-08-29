@@ -8,7 +8,6 @@ def display_data_editor(data):
     if 'Remove' not in df.columns:
         df.insert(0, 'Remove', False)
 
-    # return st.data_editor(df.to_dict('records'))
 
 def display_team(team_json):
     if 'team_data' not in st.session_state:
@@ -40,4 +39,13 @@ def display_team(team_json):
 
     except st.errors.DuplicateWidgetID:
         st.toast("No Changes detected")
+
+# Next steps:
+# Rename placeholder and other values
+# Create a text input box
+# Create a dummy person's list
+# Search by name
+# Toggle to search by UVID
+# automatically pull up anything that matches the string input
+# Create an add button and the multi-select will allow for multiple people to be selected at a time
 
