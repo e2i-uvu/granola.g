@@ -20,6 +20,7 @@ func EmployeeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	if name := r.URL.Query().Get("name"); r.Method == "GET" && name != "" {
 		hires, err := GetEmployee(name)
+
 		if err != nil {
 			InfoLogger.Println("Unable to collect surveys")
 			http.Error(w, "Invalid input", http.StatusBadRequest)
