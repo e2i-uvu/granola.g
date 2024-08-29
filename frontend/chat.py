@@ -4,9 +4,21 @@ import os
 import json
 import toml
 
+import requests
+from requests.auth import HTTPBasicAuth
+from dotenv import load_dotenv
+
 from openai import OpenAI
 
 from datetime import datetime
+
+from ai import display_team
+
+
+load_dotenv()
+backend = os.getenv("BACKEND")
+username = os.getenv("USERNAME")
+password = os.getenv("PASSWORD")
 
 # --- tool stuff --- #
 
@@ -19,6 +31,7 @@ def test():
 
 respond = {
     "name": "test",
+    "local": True,
     "func": test,
     "tool": {
         "type": "function",
@@ -31,12 +44,25 @@ respond = {
 
 
 def build_new_team(
-    project_name: str, project_type: str, employees: list, total_employees: int
+    # project_name: str, project_type: str, employees: list, total_employees: int
+    request_json: str,
 ):
-    st.toast(
-        f"New {project_type} Project!\nName: {
-            project_name}, {total_employees}, {employees}"
+    # st.toast(
+    #     f"New {project_type} Project!\nName: {
+    #         project_name}, {total_employees}, {employees}"
+    # )
+
+    r = requests.post(
+        backend + "teams", json=request_json, auth=HTTPBasicAuth(username, password)
     )
+
+    if r.status_code == 200:
+        # Successful request
+        response_data = r.json()
+        print(response_data)
+    else:
+        # Handle the error
+        print(f"Error: {r.status_code}")
 
     return "Sucess!"
 
@@ -56,6 +82,7 @@ employee_types = ai_config["employee_types"]
 
 create_team = {
     "name": "create_team",
+    "local": False,
     "func": build_new_team,
     "tool": {
         "type": "function",
@@ -231,14 +258,25 @@ def ai(query: str = ""):
             # normally surround in try except, gonna try without it
 
             print(tc["function"]["arguments"])  # for testing only
-            if tc["function"]["arguments"]:
-                function_args = json.loads(tc["function"]["arguments"])
-            else:
-                function_args = {}
 
-            function_response = st.session_state.gpt["tools"][function_name]["func"](
-                **function_args
-            )
+            if st.session_state.gpt["tools"][function_name]["local"]:
+
+                if tc["function"]["arguments"]:
+                    function_args = json.loads(tc["function"]["arguments"])
+                else:
+                    function_args = {}
+
+                function_response = st.session_state.gpt["tools"][function_name][
+                    "func"
+                ](**function_args)
+
+            else:
+
+                function_args_json = tc["function"]["arguments"]
+
+                function_response = st.session_state["tools"][function_name]["func"](
+                    function_args_json
+                )
 
             # TODO: give better value back to ai
             # call backend here to get team
@@ -257,11 +295,12 @@ def ai(query: str = ""):
             {"role": "assistant", "content": completion}
         )
 
-    # if query:
+    # if query: # recursive
     #     yield ai()
 
 
 def render_messages():
+    display_team()  # testing
     for message in st.session_state.gpt["messages"]:
         if not message["content"]:
             continue
