@@ -41,9 +41,11 @@
 import streamlit as st
 import json
 
-def display_team(team_json={"this": "here"}):
-    json_data = json.loads(team_json)
-    # finished team json
-    st.markdown(
-    "This should appear on screen"
-    )
+def display_team(team_json):
+    # st.markdown(
+    #     f"{team_json}This now should appear on screen"
+    # )
+    st.json(team_json)
+    st.data_editor(team_json)
+
+    print(team_json)
