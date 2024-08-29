@@ -300,7 +300,6 @@ def ai(query: str = ""):
 
 
 def render_messages():
-    display_team(r'{team: ["Spencer", "Henry", "Guts", "Carlos"]}')  # testing
     for message in st.session_state.gpt["messages"]:
         if not message["content"]:
             continue
@@ -314,6 +313,16 @@ def render_messages():
         # TODO: @Guts this is where we will put the selector
 
         # TODO: also need to not render tool calls
+
+    with st.chat_message("assistant"):
+        display_team(
+            [
+                {"id": 1, "uvid": 10976160, "name": "Spencer Thompson"},
+                {"id": 2, "uvid": 10976161, "name": "Guts Wright"},
+                {"id": 3, "uvid": 10976162, "name": "Henry Hutchinson"},
+                {"id": 4, "uvid": 10976163, "name": "Carlos Sturmagen"},
+            ]
+        )  # testing
 
 
 st.title("AI Chat :brain:")
