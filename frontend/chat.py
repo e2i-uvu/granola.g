@@ -300,7 +300,7 @@ def ai(query: str = ""):
 
 
 def render_messages():
-    display_team()  # testing
+    display_team(r'{team: ["Spencer", "Henry", "Guts", "Carlos"]}')  # testing
     for message in st.session_state.gpt["messages"]:
         if not message["content"]:
             continue
