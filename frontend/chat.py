@@ -52,7 +52,7 @@ def build_new_team(
     #         project_name}, {total_employees}, {employees}"
     # )
 
-    r = requests.post(
+    r = requests.get(
         backend + "teams", json=request_json, auth=HTTPBasicAuth(username, password)
     )
 
@@ -279,9 +279,9 @@ def ai(query: str = ""):
 
                 function_args_json = tc["function"]["arguments"]
 
-                function_response = st.session_state["tools"][function_name]["func"](
-                    function_args_json
-                )
+                function_response = st.session_state.gpt["tools"][function_name][
+                    "func"
+                ](function_args_json)
 
             # TODO: give better value back to ai
             # call backend here to get team
@@ -322,10 +322,102 @@ def render_messages():
     with st.chat_message("assistant"):
         display_team(
             [
-                {"id": 1, "uvid": 10976160, "name": "Spencer Thompson"},
-                {"id": 2, "uvid": 10976161, "name": "Guts Wright"},
-                {"id": 3, "uvid": 10976162, "name": "Henry Hutchinson"},
-                {"id": 4, "uvid": 10976163, "name": "Carlos Sturmagen"},
+                {
+                    0: {
+                        "id": "E001",
+                        "name": "Alice Johnson",
+                        "email": "alice.johnson@uvu.edu",
+                        "uvid": "U12345678",
+                        "degreepercent": 85,
+                        "teambefore": True,
+                        "speciality": "Software Engineering",
+                        "major": "Computer Science",
+                        "majoralt": "Mathematics",
+                        "aoi": "Artificial Intelligence",
+                        "social": 5,
+                        "status": 1,
+                    }
+                },
+                {
+                    1: {
+                        "id": "E002",
+                        "name": "Bob Smith",
+                        "email": "bob.smith@uvu.edu",
+                        "uvid": "U87654321",
+                        "degreepercent": 90,
+                        "teambefore": False,
+                        "speciality": "Data Analysis",
+                        "major": "Information Systems",
+                        "majoralt": "Statistics",
+                        "aoi": "Big Data",
+                        "social": 7,
+                        "status": 2,
+                    }
+                },
+                {
+                    2: {
+                        "id": "E003",
+                        "name": "Catherine Lee",
+                        "email": "catherine.lee@uvu.edu",
+                        "uvid": "U11223344",
+                        "degreepercent": 75,
+                        "teambefore": True,
+                        "speciality": "Cybersecurity",
+                        "major": "Computer Science",
+                        "majoralt": "Criminal Justice",
+                        "aoi": "Network Security",
+                        "social": 6,
+                        "status": 1,
+                    }
+                },
+                {
+                    3: {
+                        "id": "E004",
+                        "name": "David Brown",
+                        "email": "david.brown@uvu.edu",
+                        "uvid": "U44332211",
+                        "degreepercent": 80,
+                        "teambefore": False,
+                        "speciality": "Project Management",
+                        "major": "Business Administration",
+                        "majoralt": "Management",
+                        "aoi": "Agile Methodologies",
+                        "social": 8,
+                        "status": 2,
+                    }
+                },
+                {
+                    4: {
+                        "id": "E005",
+                        "name": "Eva Green",
+                        "email": "eva.green@uvu.edu",
+                        "uvid": "U55667788",
+                        "degreepercent": 95,
+                        "teambefore": True,
+                        "speciality": "Machine Learning",
+                        "major": "Computer Engineering",
+                        "majoralt": "Data Science",
+                        "aoi": "Deep Learning",
+                        "social": 9,
+                        "status": 1,
+                    }
+                },
+                {
+                    5: {
+                        "id": "E006",
+                        "name": "Frank White",
+                        "email": "frank.white@uvu.edu",
+                        "uvid": "U99887766",
+                        "degreepercent": 70,
+                        "teambefore": False,
+                        "speciality": "Web Development",
+                        "major": "Information Technology",
+                        "majoralt": "Graphic Design",
+                        "aoi": "Frontend Development",
+                        "social": 4,
+                        "status": 2,
+                    }
+                },
             ]
         )  # testing
 
@@ -357,4 +449,3 @@ if user_input := st.chat_input("Send a message"):
         st.write_stream(ai(user_input))
 
         # st.rerun()
-
