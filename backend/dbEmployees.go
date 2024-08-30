@@ -25,6 +25,40 @@ type Employee struct {
 	Status        int    `json:"status"`
 }
 
+func GetEmployeeArbitrary(where string) ([]Employee, error) {
+	// WARNING: Can be used in unsafe matter, does not check contents of querry included
+	db := OpenDB()
+	defer db.Close()
+
+	query := fmt.Sprintf(`SELECT id, name, email, uvid, degree, prevteam, speciality, major, majoralt, aoi, social, status
+	FROM employees %s LIMIT 10`, where)
+
+	result, err := db.Query(query)
+	if err != nil {
+		InfoLogger.Println("Unable to select people", err)
+		var potential []Employee
+		return potential, errors.New("Unable to open connection to db")
+	}
+	defer result.Close()
+
+	var users []Employee
+	for result.Next() {
+		var user Employee
+		err := result.Scan(&user.Id, &user.Name, &user.Email, &user.UVID, &user.DegreePercent, &user.TeamBefore, &user.Speciality, &user.Major, &user.MajorAlt, &user.AOI, &user.Social, &user.Status)
+		if err != nil {
+			InfoLogger.Println("Unable to scan people", err)
+			var potential []Employee
+			return potential, errors.New("Unable to scan people")
+		}
+		users = append(users, user)
+	}
+	if len(users) > 0 {
+		return users, nil
+	}
+	InfoLogger.Println("Didn't find anyone")
+	var potential []Employee
+	return potential, errors.New("didn't find anyone")
+}
 func GetEmployee(name string) ([]Employee, error) {
 	// Returns a short list of employees based on a name
 	db := OpenDB()
