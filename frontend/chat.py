@@ -178,7 +178,12 @@ if "gpt" not in st.session_state:
         "system_message": [{"role": "system", "content": SYSTEM_MESSAGE}],
         "messages": [],
         "tools": {
-            t.get("name"): {"tool": t.get("tool"), "func": t.get("func")} for t in TOOLS
+            t.get("name"): {
+                "tool": t.get("tool"),
+                "func": t.get("func"),
+                "local": t.get("local"),
+            }
+            for t in TOOLS
         },
     }
 
@@ -352,3 +357,4 @@ if user_input := st.chat_input("Send a message"):
         st.write_stream(ai(user_input))
 
         # st.rerun()
+

@@ -73,6 +73,8 @@ services:
       - "8501:8501"
     depends_on:
       - go_server
+    # volumes:
+    #   - "./frontend/.streamlit/:"
     networks:
       - web
       - traefik-network
