@@ -8,7 +8,6 @@ def display_data_editor(data):
     if 'Remove' not in df.columns:
         df.insert(0, 'Remove', False)
 
-    return st.data_editor(df.to_dict('records'))
 
 def display_team(team_json):
     if 'team_data' not in st.session_state:
@@ -22,17 +21,31 @@ def display_team(team_json):
 
     data_editor_placeholder = st.empty() # this holds the data_editor container
 
-    if st.session_state['team_data']:
-        edited_df = data_editor_placeholder.data_editor(st.session_state['team_data'])
-    else:
-        data_editor_placeholder.write("Team is empty")
-
-    if st.button('Save'):
-        st.session_state['team_data'] = edited_df
-
-        st.session_state['team_data'] = [row for row in st.session_state['team_data'] if not row['Remove']]
-
+    try:
         if st.session_state['team_data']:
-            data_editor_placeholder.data_editor(st.session_state['team_data'])
+            edited_df = data_editor_placeholder.data_editor(st.session_state['team_data'])
         else:
             data_editor_placeholder.write("Team is empty")
+
+        if st.button('Save'):
+            st.session_state['team_data'] = edited_df
+
+            st.session_state['team_data'] = [row for row in st.session_state['team_data'] if not row['Remove']]
+
+            if st.session_state['team_data']:
+                data_editor_placeholder.data_editor(st.session_state['team_data'])
+            else:
+                data_editor_placeholder.write("Team is empty")
+
+    except st.errors.DuplicateWidgetID:
+        st.toast("No Changes detected")
+
+# Next steps:
+# Rename placeholder and other values
+# Create a text input box
+# Create a dummy person's list
+# Search by name
+# Toggle to search by UVID
+# automatically pull up anything that matches the string input
+# Create an add button and the multi-select will allow for multiple people to be selected at a time
+
