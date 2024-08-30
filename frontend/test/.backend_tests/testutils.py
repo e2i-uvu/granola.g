@@ -13,6 +13,7 @@ url = str
 data = dict[str,str]
 
 def set_basic_state() -> tuple[str,str,str,str]:
+    """Load environment variables and other useful state."""
     load_dotenv()
     logging.basicConfig(filename = "test.log", level = logging.INFO)
     return os.getenv("BACKEND"), os.getenv("USERNAME"), os.getenv("PASSWORD"), {"Content-Type": "application/json"}

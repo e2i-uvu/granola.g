@@ -20,6 +20,7 @@ frontend/test/*.json
 frontend/test/*.csv
 frontend/test/*.png
 frontend/test/.async/
+frontend/screenshots/
 
 
 # Byte-compiled / optimized / DLL files | more python stuff
