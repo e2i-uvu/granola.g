@@ -2,9 +2,8 @@ import streamlit as st
 import pandas as pd
 import json
 
-def filter_to_small_df(person):
+def filter_to_small_df(person, key_names=['name', 'speciality', 'aoi']):
     small_df_list = []
-    key_names = ['name', 'speciality', 'aoi']
     for key in person.keys():
         for column in key_names:
             if key == column:
@@ -16,29 +15,44 @@ def filter_to_small_df(person):
 def display_team(team_json):
     team_json_list = []
     team_json_partial = []
+    example_team_json_list = []
 
     for item in team_json:
-        # st.markdown(item)
         for key in item:
-            # st.markdown(key)
             team_json_partial.append(filter_to_small_df(item[key]))
             team_json_list.append(item[key])
+            example_team_json_list.append(filter_to_small_df(item[key], ['uvid', 'name', 'speciality']))
 
     
     df = pd.DataFrame(team_json_list)
     df_small = pd.DataFrame(team_json_partial)
+    df_example = pd.DataFrame(example_team_json_list)
 
-    st.dataframe(df)
-    st.dataframe(df_small)
-    print("\n")
-    print(team_json, "\n\n")
+    df_small.columns = ['Name', 'Specialty', 'Area of Interest']
+    df_example.columns = ['uvid', 'name', 'speciality']
+
+
+    st.dataframe(df_small, hide_index=True)
+    if st.button('Edit'):
+        edit_dialog(df_example)
+
+@st.dialog("Edit Data", width="large")
+def edit_dialog(df):
+    st.write("Something")
+    st.dataframe(df, hide_index=True)
+    df.insert(0, 'Remove', False)
+
+    name = st.text_input("Name")
+
+    if st.button("Save"):
+        st.write(f"Saved {name}")
+
 
 
 # import streamlit as st
 # import pandas as pd
 
 # def display_data_editor(data):
-
 #     df = pd.DataFrame(data)
 
 #     if 'Remove' not in df.columns:
