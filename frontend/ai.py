@@ -50,7 +50,10 @@ def get_partial_matches(input_str, data):
     partial_matches = []
     for item in data:
         person = list(item.values())[0]
-        if input_str.lower() in person['name'].lower() and not person['name'].lower().startswith(input_str.lower()):
+        name_lower = person['name'].lower()
+        input_lower = input_str.lower()
+
+        if input_lower in name_lower and not person['name'].lower().startswith(input_str.lower()):
             partial_matches.append(item)
     return partial_matches
 
@@ -58,28 +61,41 @@ def get_partial_matches(input_str, data):
 def edit_dialog(df):
     st.write("Something")
     st.dataframe(df, hide_index=True)
-    # df.insert(0, 'Remove', False).
+    # df.insert(0, 'Remove', False)
 
     name = st.text_input("Name")
 
     if name:
         exact_matches = get_exact_matches(name, json_example_data)
-
         partial_matches = get_partial_matches(name, json_example_data)
-        
+
         filtered_data = exact_matches + partial_matches
         filtered_data = filtered_data[:5]
 
         if filtered_data:
-            # st.write("Top 5 relevant names:")
-            for person in filtered_data:
-                st.write(list(person.values())[0]['name'])
-        
+            name_options = [list(person.values())[0]['name'] for person in filtered_data]
+            name = st.selectbox("Select a name", name_options)
+
+            selected_person = next(person for person in filtered_data if list(person.values())[0]['name'] == name)
+
+            st.write("Selected Person's Information:")
+            st.markdown(f"UVID: {list(selected_person.values())[0]['uvid']}")
+            st.markdown(f"Email: {list(selected_person.values())[0]['email']}")
+            st.markdown(f"Specialty: {list(selected_person.values())[0]['speciality']}")
+            st.markdown(f"Area of Interest: {list(selected_person.values())[0]['aoi']}")
+
+            # Allow to edit values here?
+            # st.text_input("UVU ID", value=list(selected_person.values())[0]['uvid'])
+            # st.text_input("Email", value=list(selected_person.values())[0]['email'])
+            # st.text_input("Speciality", value=list(selected_person.values())[0]['speciality'])
+            # st.text_input("Area of Interest", value=list(selected_person.values())[0]['aoi'])
+
         else:
             st.write("No relevant names found.")
 
     if st.button("Save"):
         st.write(f"Saved {name}")
+
 
 
 
