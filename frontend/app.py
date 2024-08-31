@@ -258,7 +258,7 @@ teams_pages = [
 admin_pages = [st.Page("payroll.py", title="Payroll", icon=":material/local_atm:")]
 
 dev_pages = [
-    st.Page("myAvailability.py", title="My Availability"),
+    st.Page("my_availability.py", title="My Availability"),
     st.Page("sessionstate.py", title="Session State"),
     st.Page("users.py", title="Verification", icon=":material/verified:"),
 ]
