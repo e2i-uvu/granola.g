@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import json
+from json_data_CAN_DELETE_LATER import json_example_data
+
 
 def filter_to_small_df(person, key_names=['name', 'speciality', 'aoi']):
     small_df_list = []
@@ -8,7 +10,7 @@ def filter_to_small_df(person, key_names=['name', 'speciality', 'aoi']):
         for column in key_names:
             if key == column:
                 small_df_list.append(person[column])
-                continue
+                break
     return small_df_list
 
 
@@ -21,7 +23,7 @@ def display_team(team_json):
         for key in item:
             team_json_partial.append(filter_to_small_df(item[key]))
             team_json_list.append(item[key])
-            example_team_json_list.append(filter_to_small_df(item[key], ['uvid', 'name', 'speciality']))
+            example_team_json_list.append(filter_to_small_df(item[key], ['uvid', 'name', 'speciality', 'aoi']))
 
     
     df = pd.DataFrame(team_json_list)
@@ -29,20 +31,52 @@ def display_team(team_json):
     df_example = pd.DataFrame(example_team_json_list)
 
     df_small.columns = ['Name', 'Specialty', 'Area of Interest']
-    df_example.columns = ['uvid', 'name', 'speciality']
+    df_example.columns = ['uvid', 'name', 'speciality', 'Area of Interest']
 
 
     st.dataframe(df_small, hide_index=True)
     if st.button('Edit'):
         edit_dialog(df_example)
 
+def get_exact_matches(input_str, data):
+    exact_matches = []
+    for item in data:
+        person = list(item.values())[0]
+        if person['name'].lower().startswith(input_str.lower()):
+            exact_matches.append(item)
+    return exact_matches
+
+def get_partial_matches(input_str, data):
+    partial_matches = []
+    for item in data:
+        person = list(item.values())[0]
+        if input_str.lower() in person['name'].lower() and not person['name'].lower().startswith(input_str.lower()):
+            partial_matches.append(item)
+    return partial_matches
+
 @st.dialog("Edit Data", width="large")
 def edit_dialog(df):
     st.write("Something")
     st.dataframe(df, hide_index=True)
-    df.insert(0, 'Remove', False)
+    # df.insert(0, 'Remove', False).
 
     name = st.text_input("Name")
+
+    if name:
+        exact_matches = get_exact_matches(name, json_example_data)
+
+        partial_matches = get_partial_matches(name, json_example_data)
+        
+        filtered_data = exact_matches + partial_matches
+        filtered_data = filtered_data[:5]
+
+        if filtered_data:
+            # st.write("Top 5 relevant names:")
+            for person in filtered_data:
+                st.write(list(person.values())[0]['name'])
+        
+        else:
+            st.write("No relevant names found.")
 
     if st.button("Save"):
         st.write(f"Saved {name}")
@@ -107,4 +141,3 @@ def edit_dialog(df):
 
 # just use dataFrame instead of dataeditor, get rid of remove column
 # add an edit button that brings up the dialogue box
-
