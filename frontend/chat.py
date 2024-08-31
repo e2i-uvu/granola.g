@@ -20,7 +20,7 @@ backend = os.getenv("BACKEND")
 username = os.getenv("USERNAME")
 password = os.getenv("PASSWORD")
 
-# --- tool stuff --- #
+# --- tool stuff --- #s
 
 ai_config = toml.load("./ai.toml")
 
@@ -335,7 +335,7 @@ def render_messages():
                         "majoralt": "Mathematics",
                         "aoi": "Artificial Intelligence",
                         "social": 5,
-                        "status": 1,
+                        "statuss": 1,
                     }
                 },
                 {

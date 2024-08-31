@@ -1,63 +1,80 @@
 import streamlit as st
 import pandas as pd
+import json
 
-def display_data_editor(data):
-
-    df = pd.DataFrame(data)
-
-    if 'Remove' not in df.columns:
-        df.insert(0, 'Remove', False)
+def filter_to_small_df(person):
+    small_df_list = []
+    key_names = ['name', 'speciality', 'aoi']
+    for key in person.keys():
+        for column in key_names:
+            if key == column:
+                small_df_list.append(person[column])
+                continue
+    return small_df_list
 
 
 def display_team(team_json):
-    if 'team_data' not in st.session_state:
-        st.session_state['team_data'] = team_json
+    team_json_list = []
+    team_json_partial = []
 
-    initial_data = pd.DataFrame(st.session_state['team_data'])
-    if 'Remove' not in initial_data.columns:
-        initial_data.insert(0, 'Remove', False)
+    for item in team_json:
+        # st.markdown(item)
+        for key in item:
+            # st.markdown(key)
+            team_json_partial.append(filter_to_small_df(item[key]))
+            team_json_list.append(item[key])
 
-    st.session_state['team_data'] = initial_data.to_dict('records')
+    
+    df = pd.DataFrame(team_json_list)
+    df_small = pd.DataFrame(team_json_partial)
 
-    container = st.empty() # this holds the data_editor container
+    st.dataframe(df)
+    st.dataframe(df_small)
+    print("\n")
+    print(team_json, "\n\n")
 
-    # col1, col2 = st.columns(2, vertical_alignment="bottom")
 
-    # with col1:
-    #     names = ['john', 'james', 'colton']
+# import streamlit as st
+# import pandas as pd
 
-    #     search_term = st.text_input(" ", "")
+# def display_data_editor(data):
 
-    #     filtered_names = [name for name in names if search_term.lower() in name.lower()]
+#     df = pd.DataFrame(data)
 
-    #     if search_term:
-    #         add_names = st.multiselect(" ", filtered_names)
-    #     else:
-    #         add_names = []
+#     if 'Remove' not in df.columns:
+#         df.insert(0, 'Remove', False)
 
-    #     st.write("Selected names:", add_names)
-    #     # add_names = st.multiselect("",
-    #     #     ['john', 'james', 'colton'])
 
-    # with col2:
-    try:
-        if st.session_state['team_data']:
-            edited_df = container.data_editor(st.session_state['team_data'])
-        else:
-            container.write("Team is empty")
+# def display_team(team_json):
+#     if 'team_data' not in st.session_state:
+#         st.session_state['team_data'] = team_json
 
-        if st.button('Save'):
-            st.session_state['team_data'] = edited_df
+#     initial_data = pd.DataFrame(st.session_state['team_data'])
+#     if 'Remove' not in initial_data.columns:
+#         initial_data.insert(0, 'Remove', False)
 
-            st.session_state['team_data'] = [row for row in st.session_state['team_data'] if not row['Remove']]
+#     st.session_state['team_data'] = initial_data.to_dict('records')
 
-            if st.session_state['team_data']:
-                container.data_editor(st.session_state['team_data'])
-            else:
-                container.write("Team is empty")
+#     container = st.empty() # this holds the data_editor container
 
-    except st.errors.DuplicateWidgetID:
-        st.toast("No Changes detected")
+#     try:
+#         if st.session_state['team_data']:
+#             edited_df = container.data_editor(st.session_state['team_data'])
+#         else:
+#             container.write("Team is empty")
+
+#         if st.button('Edit'):
+#             st.session_state['team_data'] = edited_df
+
+#             st.session_state['team_data'] = [row for row in st.session_state['team_data'] if not row['Remove']]
+
+#             if st.session_state['team_data']:
+#                 container.data_editor(st.session_state['team_data'])
+#             else:
+#                 container.write("Team is empty")
+
+#     except st.errors.DuplicateWidgetID:
+#         st.toast("No Changes detected")
 
    
 
