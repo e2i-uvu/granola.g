@@ -30,59 +30,66 @@ def display_team(team_json):
     df_small = pd.DataFrame(team_json_partial)
     df_example = pd.DataFrame(example_team_json_list)
 
-    df_small.columns = ['Name', 'Specialty', 'Area of Interest']
-    df_example.columns = ['uvid', 'name', 'speciality', 'Area of Interest']
+    df_small.columns = ['name', 'specialty', 'area of interest']
+    df_example.columns = ['name', 'uvid', 'speciality', 'area of interest']
 
+    if 'main_df' not in st.session_state:
+        st.session_state.main_df = df_small
 
-    st.dataframe(df_small, hide_index=True)
+    main_df_container = st.empty()
+    main_df_container.dataframe(st.session_state.main_df, hide_index = True)
+    
     if st.button('Edit'):
-        edit_dialog(df_example)
-
-def get_exact_matches(input_str, data):
-    exact_matches = []
-    for item in data:
-        person = list(item.values())[0]
-        if person['name'].lower().startswith(input_str.lower()):
-            exact_matches.append(item)
-    return exact_matches
-
-def get_partial_matches(input_str, data):
-    partial_matches = []
-    for item in data:
-        person = list(item.values())[0]
-        name_lower = person['name'].lower()
-        input_lower = input_str.lower()
-
-        if input_lower in name_lower and not person['name'].lower().startswith(input_str.lower()):
-            partial_matches.append(item)
-    return partial_matches
+        edit_dialog(df_example, main_df_container)
 
 @st.dialog("Edit Data", width="large")
-def edit_dialog(df):
-    st.write("Something")
-    st.dataframe(df, hide_index=True)
-    # df.insert(0, 'Remove', False)
+def edit_dialog(df, main_df_container):
+    if 'Remove' not in df.columns:
+        df.insert(0, 'Remove', False)
 
-    name = st.text_input("Name")
+    edited_df = st.data_editor(df, hide_index=True)
 
-    if name:
-        exact_matches = get_exact_matches(name, json_example_data)
-        partial_matches = get_partial_matches(name, json_example_data)
+    col1, col2 = st.columns([2.5, 1], vertical_alignment='bottom')
 
-        filtered_data = exact_matches + partial_matches
-        filtered_data = filtered_data[:5]
+    with col2:
+        if st.button('Save'):
+            updated_df = edited_df[edited_df['Remove'] == False].drop(columns=['Remove'])
+            st.session_state.main_df = updated_df
+            main_df_container.dataframe(st.session_state.main_df, hide_index=True)
 
-        if filtered_data:
-            name_options = [list(person.values())[0]['name'] for person in filtered_data]
-            name = st.selectbox("Select a name", name_options)
+    show_selectbox(df, col1)
 
-            selected_person = next(person for person in filtered_data if list(person.values())[0]['name'] == name)
+def show_selectbox(df, col1):
+    top_5_options = df['name'].head(5).tolist()
+    with col1:
+        selected_option = st.selectbox('Select team members to Add:', top_5_options)
 
-            st.write("Selected Person's Information:")
-            st.markdown(f"UVID: {list(selected_person.values())[0]['uvid']}")
-            st.markdown(f"Email: {list(selected_person.values())[0]['email']}")
-            st.markdown(f"Specialty: {list(selected_person.values())[0]['speciality']}")
-            st.markdown(f"Area of Interest: {list(selected_person.values())[0]['aoi']}")
+    if selected_option:
+        selected_df = df[df['name'] == selected_option].drop(columns=['Remove'])
+        st.dataframe(selected_df, hide_index=True)
+    
+
+
+    # name = st.text_input("Name")
+
+    # if name:
+    #     exact_matches = get_exact_matches(name, json_example_data)
+    #     partial_matches = get_partial_matches(name, json_example_data)
+
+    #     filtered_data = exact_matches + partial_matches
+    #     filtered_data = filtered_data[:5]
+
+    #     if filtered_data:
+    #         name_options = [list(person.values())[0]['name'] for person in filtered_data]
+    #         name = st.selectbox("Select a name", name_options)
+
+    #         selected_person = next(person for person in filtered_data if list(person.values())[0]['name'] == name)
+
+    #         st.write("Selected Person's Information:")
+    #         st.markdown(f"UVID: {list(selected_person.values())[0]['uvid']}")
+    #         st.markdown(f"Email: {list(selected_person.values())[0]['email']}")
+    #         st.markdown(f"Specialty: {list(selected_person.values())[0]['speciality']}")
+    #         st.markdown(f"Area of Interest: {list(selected_person.values())[0]['aoi']}")
 
             # Allow to edit values here?
             # st.text_input("UVU ID", value=list(selected_person.values())[0]['uvid'])
@@ -90,14 +97,33 @@ def edit_dialog(df):
             # st.text_input("Speciality", value=list(selected_person.values())[0]['speciality'])
             # st.text_input("Area of Interest", value=list(selected_person.values())[0]['aoi'])
 
-        else:
-            st.write("No relevant names found.")
+    #     else:
+    #         st.write("No relevant names found.")
 
-    if st.button("Save"):
-        st.write(f"Saved {name}")
+    # if st.button("Save"):
+    #     st.write(f"Saved {name}")
 
 
 
+
+# def get_exact_matches(input_str, data):
+#     exact_matches = []
+#     for item in data:
+#         person = list(item.values())[0]
+#         if person['name'].lower().startswith(input_str.lower()):
+#             exact_matches.append(item)
+#     return exact_matches
+
+# def get_partial_matches(input_str, data):
+#     partial_matches = []
+#     for item in data:
+#         person = list(item.values())[0]
+#         name_lower = person['name'].lower()
+#         input_lower = input_str.lower()
+
+#         if input_lower in name_lower and not person['name'].lower().startswith(input_str.lower()):
+#             partial_matches.append(item)
+#     return partial_matches
 
 # import streamlit as st
 # import pandas as pd
