@@ -251,8 +251,6 @@ def ai(query: str = ""):
 
     if tool_calls:
 
-        # TODO: Call the funcs
-
         st.session_state.gpt["messages"].append(
             {"role": "assistant", "content": completion, "tool_calls": tool_calls}
         )

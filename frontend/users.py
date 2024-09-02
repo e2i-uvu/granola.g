@@ -15,7 +15,7 @@ st.header("Users")
 # st.write(user_data)
 with st.form("verification", border=False):
     modified_user_data = st.data_editor(
-        user_data,
+        user_data["users"],
         column_config={
             "id": st.column_config.NumberColumn("UVID", disabled=True, format="%i"),
             "verified": st.column_config.CheckboxColumn(

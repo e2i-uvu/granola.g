@@ -1,3 +1,9 @@
+include:
+  - path: ./compose/streamlit.yaml
+    project_directory: .
+  - path: ./compose/go_server.yaml
+    project_directory: .
+
 services:
   traefik:
     image: traefik:latest
@@ -16,11 +22,9 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--providers.file.watch=true"
       - "--providers.file.directory=/etc/traefik/conf/"
-      # Redirect http -> https
-      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure" # Redirect http -> https
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
-      # Entrypoints
-      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.address=:80" # Entrypoints
       - "--entrypoints.websecure.address=:443"
       # - "--certificatesresolvers.production.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
       - "--certificatesresolvers.production.acme.tlschallenge=true"
@@ -39,53 +43,8 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./letsencrypt:/letsencrypt"
       - ./conf/:/etc/traefik/conf/
-      # - ./certs/:/etc/traefik/certs/
     networks:
       - traefik-network
-
-  go_server:
-    build:
-      context: ./backend/
-      dockerfile: ./Dockerfile
-    volumes:
-      - db:/usr/src/app/database
-    networks:
-      - web
-      - traefik-network
-    # labels:
-    # - traefik.enable=true
-    # - traefik.http.routers.chat.entrypoints=web,websecure
-    # - traefik.http.routers.chat.rule=Host(`your.domain.here`) # insert domain here
-    # - traefik.http.routers.chat.tls=true
-    # - traefik.http.routers.chat.tls.certresolver=production
-    # - traefik.http.services.chat.loadbalancer.server.port=8080 # what port?
-
-  streamlit:
-    build:
-      context: ./frontend/
-      dockerfile: Dockerfile
-    command: streamlit run app.py --server.port=8501 --server.address=0.0.0.0
-    # env_file:
-    #   - .env.traefik
-    environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-    ports:
-      - "8501:8501"
-    depends_on:
-      - go_server
-    # volumes:
-    #   - "./frontend/.streamlit/:"
-    networks:
-      - web
-      - traefik-network
-    labels:
-      - traefik.enable=true
-      # - traefik.http.routers.streamlit.entrypoints=web,websecure
-      - traefik.http.routers.streamlit.entrypoints=websecure
-      - traefik.http.routers.streamlit.rule=Host(`${DOMAIN}`)
-      - traefik.http.routers.streamlit.tls=true
-      - traefik.http.routers.streamlit.tls.certresolver=production
-      - traefik.http.services.streamlit.loadbalancer.server.port=8501
 
       # notifications 👀
   # ntfy:
