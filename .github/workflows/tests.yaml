@@ -1,0 +1,27 @@
+name: Run Tests
+run-name: Tests Ran by @${{ github.actor }}
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Compose
+        run: sudo apt-get update && sudo apt-get install -y docker-compose
+
+      - name: Build Docker Containers
+        run: docker-compose -f staging.yaml build
+
+      - name: Run Docker Compose
+        run: docker-compose -f staging.yaml up -d
+
+      - name: Tear down Docker Compose
+        run: docker-compose -f staging.yaml down
