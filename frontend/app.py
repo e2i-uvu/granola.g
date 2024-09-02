@@ -208,12 +208,12 @@ def logout():  # need to be careful to reset session_state
 
 account_pages = [
     st.Page(logout, title="Log out", icon=":material/logout:"),
-    st.Page(
-        "availability.py",
-        title="My Availability",
-        icon=":material/calendar_month:",
-        default=(st.session_state.user["role"] == "student"),
-    ),
+#    st.Page(
+        # "availability.py",
+        # title="My Availability",
+#        icon=":material/calendar_month:",
+#        default=(st.session_state.user["role"] == "student"),
+#    ),
 ]
 
 info_pages = [
@@ -258,7 +258,7 @@ teams_pages = [
 admin_pages = [st.Page("payroll.py", title="Payroll", icon=":material/local_atm:")]
 
 dev_pages = [
-    st.Page("my_availability.py", title="My Availability"),
+    # st.Page("my_availability.py", title="My Availability"),
     st.Page("sessionstate.py", title="Session State"),
     st.Page("users.py", title="Verification", icon=":material/verified:"),
 ]
