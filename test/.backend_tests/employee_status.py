@@ -4,7 +4,8 @@ from dotenv import load_dotenv
 import os
 #import pandas as pd
 
-import logging
+import pytest
+#import logging
 import testutils
 
 #load_dotenv()
