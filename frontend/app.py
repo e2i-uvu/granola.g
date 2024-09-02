@@ -243,9 +243,9 @@ teams_pages = [
     #     default=(st.session_state.user["role"] == "developer"),
     # ),
     st.Page(
-        "employees.py",
-        title="Employees",
-        icon=":material/groups:",
+         "overview.py",#"employees.py",
+        title="Overview",#"Employees",
+        icon=":material/groups:"
         # default=(st.session_state.user["role"] == "admin"),
     ),
     st.Page(
