@@ -4,9 +4,10 @@ WORKDIR /app
 
 COPY . .
 
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt && playwright install
 
 #EXPOSE 8501
-EXPOSE #
+#EXPOSE #
 
-#CMD ["pytest"]
+CMD ["python", "main.py"]
+

@@ -3,18 +3,16 @@ from playwright.sync_api import sync_playwright, Page#, _generated.BrowserType, 
 from playwright.sync_api._generated import BrowserType
 import time
 from testutils import *
-from openai import OpenAIError
+#from openai import OpenAIError
 import pytest
 
 #@timeit
 def _test_login(browser: BrowserType, credentials: dict[str, str]) -> bool:
-    try:
-        browser = browser.launch()
-        page = access_website(browser, credentials)
-        #page.screenshot(path=f'screenshots/test_login.png')
-        browser.close()
-    finally:
-        return True
+    browser = browser.launch()
+    page = access_website(browser, credentials)
+    #page.screenshot(path=f'screenshots/test_login.png')
+    browser.close()
+    return True
 
 
 def test_login() -> None:

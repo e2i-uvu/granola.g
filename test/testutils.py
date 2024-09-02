@@ -1,4 +1,4 @@
-#from playwright.sync_api import sync_playwright, Page
+from playwright.sync_api import sync_playwright, Page
 from playwright.sync_api._generated import BrowserType
 from time import time, sleep
 from collections.abc import Callable
