@@ -37,7 +37,7 @@ def edit_dialog(df, main_df_container, column_configuration):
 
     edited_df = st.data_editor(st.session_state.main_df, hide_index=True, column_config=column_configuration)
 
-    col1, col2 = st.columns([2.5, 1], vertical_alignment='bottom')
+    col1, col2 = st.columns([3, 1], vertical_alignment='bottom')
 
     with col2:
         if st.button('Save'):
@@ -49,6 +49,9 @@ def edit_dialog(df, main_df_container, column_configuration):
                 del st.session_state.selected_row
 
             main_df_container.dataframe(st.session_state.main_df, hide_index=True, column_config=column_configuration)
+            st.session_state.selected_rows = []
+            selected_options = False
+            st.rerun()
 
     add_members(df, col1, main_df_container, column_configuration)
 
@@ -62,16 +65,15 @@ def add_members(df, col1, main_df_container, column_configuration):
     all_options = df['name'].tolist()
 
     with col1:
-        selected_option = st.selectbox(
+        selected_options = st.multiselect(
             'Select team members to Add:',
             (all_options),
-            index=None,
-            placeholder='None'
+            default=None,
+            placeholder='Begin typing to add...'
         )
 
-    if selected_option:
-        st.session_state.selected_option = selected_option
-        selected_df = df[df['name'] == selected_option]
+    if selected_options:
+        selected_df = df[df['name'].isin(selected_options)]
 
         if 'selected_rows' not in st.session_state:
             st.session_state.selected_rows = []
