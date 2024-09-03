@@ -333,7 +333,7 @@ def render_messages():
                         "majoralt": "Mathematics",
                         "aoi": "Artificial Intelligence",
                         "social": 5,
-                        "statuss": 1,
+                        "status": 1,
                     }
                 },
                 {

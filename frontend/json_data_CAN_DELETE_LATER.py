@@ -1,3 +1,4 @@
+
 json_example_data = [
     {
         0: {
@@ -12,7 +13,7 @@ json_example_data = [
             "majoralt": "Mathematics",
             "aoi": "Artificial Intelligence",
             "social": 5,
-            "statuss": 1,
+            "status": 1,
         }
     },
     {

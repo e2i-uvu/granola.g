@@ -4,16 +4,6 @@ import json
 from json_data_CAN_DELETE_LATER import json_example_data
 
 
-def filter_to_small_df(person, key_names=['name', 'speciality', 'aoi']):
-    small_df_list = []
-    for key in person.keys():
-        for column in key_names:
-            if key == column:
-                small_df_list.append(person[column])
-                break
-    return small_df_list
-
-
 def display_team(team_json):
     team_json_list = []
     team_json_partial = []
@@ -21,33 +11,32 @@ def display_team(team_json):
 
     for item in team_json:
         for key in item:
-            team_json_partial.append(filter_to_small_df(item[key]))
+            team_json_partial.append(item[key])
             team_json_list.append(item[key])
-            example_team_json_list.append(filter_to_small_df(item[key], ['uvid', 'name', 'speciality', 'aoi']))
+            example_team_json_list.append(item[key])
 
     
     df = pd.DataFrame(team_json_list)
     df_small = pd.DataFrame(team_json_partial)
     df_example = pd.DataFrame(example_team_json_list)
 
-    df_small.columns = ['name', 'specialty', 'area of interest']
-    df_example.columns = ['name', 'uvid', 'speciality', 'area of interest']
-
     if 'main_df' not in st.session_state:
         st.session_state.main_df = df_small
+    
+    column_configuration ={"id":None, "email":None, "degreepercent":None, "teambefore":None, "major":None, "majoralt":None, "social":None, "status":None}
 
     main_df_container = st.empty()
-    main_df_container.dataframe(st.session_state.main_df, hide_index = True)
+    main_df_container.dataframe(st.session_state.main_df, hide_index = True, column_config=column_configuration)
     
     if st.button('Edit'):
-        edit_dialog(df_example, main_df_container)
+        edit_dialog(df_example, main_df_container, column_configuration)
 
 @st.dialog("Edit Data", width="large")
-def edit_dialog(df, main_df_container):
+def edit_dialog(df, main_df_container, column_configuration):
     if 'Remove' not in df.columns:
         df.insert(0, 'Remove', False)
 
-    edited_df = st.data_editor(df, hide_index=True)
+    edited_df = st.data_editor(df, hide_index=True, column_config=column_configuration)
 
     col1, col2 = st.columns([2.5, 1], vertical_alignment='bottom')
 
@@ -61,32 +50,35 @@ def edit_dialog(df, main_df_container):
                 selected_row = df[df['name'] == selected_option].drop(columns=['Remove'])
                 st.session_state.main_df = pd.concat([st.session_state.main_df, selected_row]).drop_duplicates().reset_index(drop=True)
             
-            main_df_container.dataframe(st.session_state.main_df, hide_index=True)
+            main_df_container.dataframe(st.session_state.main_df, hide_index=True, column_config=column_configuration)
 
-    show_selectbox(df, col1)
+    show_selectbox(df, col1, column_configuration)
 
-def show_selectbox(df, col1):
+def show_selectbox(df, col1, column_configuration):
     all_options = []
     for item in json_example_data:
         for key in item:
             all_options.append(item[key])
 
     df = pd.DataFrame(all_options)
-    # if 'Remove' not in df.columns:
-    #     df.insert(0, 'Remove', False)
     all_options = df['name'].tolist()
 
     with col1:
-        selected_option = st.selectbox('Select team members to Add:', all_options)
+        selected_option = st.selectbox(
+            'Select team members to Add:',
+            (all_options),
+            index=None,
+            placeholder='None',
+        )
 
     if selected_option:
         st.session_state.selected_option = selected_option
 
         selected_df = df[df['name'] == selected_option]
-        st.dataframe(selected_df, hide_index=True)
+        st.dataframe(selected_df, hide_index=True, column_config=column_configuration)
 
 # TODO still need to Make the 'Save' button actually add names into the st.empty container
-# TODO Add an 'Add' Button next to the 'Save' button that will add right next to name to the edit data dataframe
+# TODO Add an 'Add' Button next to the 'Save' button that will add right next to name to the edit data dsataframe
 # TODO Make the editable dataframe into an st.empty
 # formatting for each dataframe...
 
