@@ -29,6 +29,8 @@ def display_team(team_json):
 
     if st.button('Edit'):
         edit_dialog(st.session_state.main_df, main_df_container, column_configuration)
+    
+    # print(st.session_state.main_df)
 
 @st.dialog("Edit Data", width="large")
 def edit_dialog(df, main_df_container, column_configuration):
@@ -61,8 +63,10 @@ def add_members(df, col1, main_df_container, column_configuration):
         for key in item:
             all_options.append(item[key])
 
-    df = pd.DataFrame(all_options)
-    all_options = df['name'].tolist()
+    df = pd.DataFrame(all_options) 
+    temp_df = df
+    temp_df['display'] = temp_df['name'] + ' -- (' + temp_df['speciality'] + ')'
+    all_options = temp_df['display'].tolist()
 
     with col1:
         selected_options = st.multiselect(
@@ -73,39 +77,18 @@ def add_members(df, col1, main_df_container, column_configuration):
         )
 
     if selected_options:
-        selected_df = df[df['name'].isin(selected_options)]
+        selected_df = df[df['display'].isin(selected_options)]
 
         if 'selected_rows' not in st.session_state:
             st.session_state.selected_rows = []
 
+        selected_df.drop(columns=['display'], inplace=True)
+
         st.session_state.selected_rows.append(selected_df)
+
 
         combined_selected_df = pd.concat(st.session_state.selected_rows).drop_duplicates().reset_index(drop=True)
         st.session_state.selected_row = combined_selected_df
 
         st.dataframe(selected_df, hide_index=True, column_config=column_configuration)
 
-
-
-# TODO still need to Make the 'Save' button actually add names into the st.empty container
-# TODO Add an 'Add' Button next to the 'Save' button that will add right next to name to the edit data dsataframe
-# TODO Make the editable dataframe into an st.empty
-# formatting for each dataframe...
-
-   
-
-# Next steps:
-# Create a text input box
-# Create a dummy person's list
-# Search by name
-# Toggle to search by UVID
-# automatically pull up anything that matches the string input
-# Create an add button and the multi-select will allow for multiple people to be selected at a time
-
-#dialogue - maybe just a checkbox and st.markdown next to it
-# (hopefully no submit button is necessary)
-#popover (maybe just use this?)
-# ()
-
-# just use dataFrame instead of dataeditor, get rid of remove column
-# add an edit button that brings up the dialogue box
