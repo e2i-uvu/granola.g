@@ -3,7 +3,6 @@ import pandas as pd
 import json
 from json_data_CAN_DELETE_LATER import json_example_data
 
-
 def display_team(team_json):
     team_json_list = []
     team_json_partial = []
@@ -15,28 +14,28 @@ def display_team(team_json):
             team_json_list.append(item[key])
             example_team_json_list.append(item[key])
 
-    
     df = pd.DataFrame(team_json_list)
-    df_small = pd.DataFrame(team_json_partial)
-    df_example = pd.DataFrame(example_team_json_list)
 
     if 'main_df' not in st.session_state:
-        st.session_state.main_df = df_small
-    
-    column_configuration ={"id":None, "email":None, "degreepercent":None, "teambefore":None, "major":None, "majoralt":None, "social":None, "status":None}
+        st.session_state.main_df = df
+
+    column_configuration = {
+        "id": None, "email": None, "degreepercent": None, "teambefore": None,
+        "major": None, "majoralt": None, "social": None, "status": None
+    }
 
     main_df_container = st.empty()
-    main_df_container.dataframe(st.session_state.main_df, hide_index = True, column_config=column_configuration)
-    
+    main_df_container.dataframe(st.session_state.main_df, hide_index=True, column_config=column_configuration)
+
     if st.button('Edit'):
-        edit_dialog(df_example, main_df_container, column_configuration)
+        edit_dialog(st.session_state.main_df, main_df_container, column_configuration)
 
 @st.dialog("Edit Data", width="large")
 def edit_dialog(df, main_df_container, column_configuration):
-    if 'Remove' not in df.columns:
-        df.insert(0, 'Remove', False)
+    if 'Remove' not in st.session_state.main_df.columns:
+        st.session_state.main_df.insert(0, 'Remove', False)
 
-    edited_df = st.data_editor(df, hide_index=True, column_config=column_configuration)
+    edited_df = st.data_editor(st.session_state.main_df, hide_index=True, column_config=column_configuration)
 
     col1, col2 = st.columns([2.5, 1], vertical_alignment='bottom')
 
@@ -45,16 +44,15 @@ def edit_dialog(df, main_df_container, column_configuration):
             updated_df = edited_df[edited_df['Remove'] == False].drop(columns=['Remove'])
             st.session_state.main_df = updated_df
 
-            selected_option = st.session_state.get('selected_option')
-            if selected_option:
-                selected_row = df[df['name'] == selected_option].drop(columns=['Remove'])
-                st.session_state.main_df = pd.concat([st.session_state.main_df, selected_row]).drop_duplicates().reset_index(drop=True)
-            
+            if 'selected_row' in st.session_state:
+                st.session_state.main_df = pd.concat([st.session_state.main_df, st.session_state.selected_row]).drop_duplicates().reset_index(drop=True)
+                del st.session_state.selected_row
+
             main_df_container.dataframe(st.session_state.main_df, hide_index=True, column_config=column_configuration)
 
-    show_selectbox(df, col1, column_configuration)
+    add_members(df, col1, main_df_container, column_configuration)
 
-def show_selectbox(df, col1, column_configuration):
+def add_members(df, col1, main_df_container, column_configuration):
     all_options = []
     for item in json_example_data:
         for key in item:
@@ -68,14 +66,24 @@ def show_selectbox(df, col1, column_configuration):
             'Select team members to Add:',
             (all_options),
             index=None,
-            placeholder='None',
+            placeholder='None'
         )
 
     if selected_option:
         st.session_state.selected_option = selected_option
-
         selected_df = df[df['name'] == selected_option]
+
+        if 'selected_rows' not in st.session_state:
+            st.session_state.selected_rows = []
+
+        st.session_state.selected_rows.append(selected_df)
+
+        combined_selected_df = pd.concat(st.session_state.selected_rows).drop_duplicates().reset_index(drop=True)
+        st.session_state.selected_row = combined_selected_df
+
         st.dataframe(selected_df, hide_index=True, column_config=column_configuration)
+
+
 
 # TODO still need to Make the 'Save' button actually add names into the st.empty container
 # TODO Add an 'Add' Button next to the 'Save' button that will add right next to name to the edit data dsataframe
