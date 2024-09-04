@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -61,12 +63,28 @@ func EmployeeHandler(w http.ResponseWriter, r *http.Request) {
 func EmployeeIngestHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" && r.Header.Get("Content-Type") == "application/json" {
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			InfoLogger.Println("Error reading body:", err)
+			return
+		}
+		InfoLogger.Printf("Raw JSON body: %s", body)
+
+		// Reset the body for decoding
+		r.Body = io.NopCloser(bytes.NewReader(body))
 		var surveys []map[string]interface{}
 		decoder := json.NewDecoder(r.Body)
-		err := decoder.Decode(&surveys)
+		err = decoder.Decode(&surveys)
 		if err != nil {
 			InfoLogger.Println(err)
 		}
+		for i, survey := range surveys {
+			InfoLogger.Printf("\nSurvey %d:\n", i+1)
+			for key, value := range survey {
+				InfoLogger.Printf("  %s: %v\n", key, value)
+			}
+		}
+		InfoLogger.Printf("%s%", surveys)
 		for _, person := range surveys {
 			var emp Employee
 			emp.Id = person["ResponseID"].(string)

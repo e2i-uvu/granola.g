@@ -14,11 +14,15 @@
 import streamlit as st
 from io import StringIO
 import csv
-#import requests
-#from requests.auth import HTTPBasicAuth
+import requests
+from requests.auth import HTTPBasicAuth
+from dotenv import load_dotenv
+import os
 
-def upload_csv() -> list[dict[str,str]]:
-    uploadedFile = st.file_uploader(label = "Upload file", type = ["csv"], accept_multiple_files = False)
+
+def upload_csv() -> list[dict[str, str]]:
+    uploadedFile = st.file_uploader(label="Upload file", type=[
+                                    "csv"], accept_multiple_files=False)
 
     if uploadedFile is not None:
         stringInput = StringIO(uploadedFile.getvalue().decode("utf-8"))
@@ -28,15 +32,24 @@ def upload_csv() -> list[dict[str,str]]:
 
         data = []
         for row in table:
-            #st.write(row)
+            # st.write(row)
             data.append(row)
         return data
 
-def import_csv_data(*, testing = False):
+
+def import_csv_data(*, testing=False):
+    load_dotenv()
+    backend = os.getenv("BACKEND")
+    username = os.getenv("USERNAME")
+    password = os.getenv("PASSWORD")
     data = upload_csv()
     if data and testing:
         st.write(data)
-    url = ""
-    #request = requests.post(url, json=data)
+    url = backend+"employeesIngest"
+    if data:
+        print(data)
+        requests.post(url, auth=HTTPBasicAuth(username, password),
+                      headers={"Content-Type": "application/json"}, json=data)
 
-import_csv_data(testing = True)
+
+import_csv_data(testing=True)
