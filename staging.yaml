@@ -5,6 +5,8 @@ include:
     project_directory: .
   - path: ./compose/go_server.yaml
     project_directory: .
+  - path: ./compose/tests.yaml
+    project_directory: .
 
 networks:
   traefik-network:

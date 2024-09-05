@@ -1,0 +1,21 @@
+services:
+  tests:
+    build:
+      context: ./test/
+      dockerfile: Dockerfile
+    # command: streamlit run app.py --server.port=8501 --server.address=0.0.0.0
+    # restart: unless-stopped
+    # env_file:
+    #   - .env.traefik
+    # environment:
+    #   - OPENAI_API_KEY=${OPENAI_API_KEY}
+    # ports:
+    #   - "8501:8501"
+    depends_on:
+      - go_server
+      - streamlit
+    # volumes:
+    #   - "./frontend/.streamlit/:/app/.streamlit/"
+    networks:
+      - web
+      - traefik-network
