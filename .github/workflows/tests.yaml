@@ -21,10 +21,10 @@ jobs:
         run: docker compose version
 
       - name: Build Docker Containers
-        run: docker-compose -f staging.yaml build
+        run: docker compose -f staging.yaml build
 
       - name: Run Docker Compose
-        run: docker-compose -f staging.yaml up -d
+        run: docker compose -f staging.yaml up -d
 
       - name: Tear down Docker Compose
-        run: docker-compose -f staging.yaml down
+        run: docker compose -f staging.yaml down
