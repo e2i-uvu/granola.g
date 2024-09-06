@@ -216,16 +216,6 @@ account_pages = [
 #    ),
 ]
 
-info_pages = [
-    st.Page(
-        "about.py",
-        title="About",
-        icon=":material/info:",
-        # default=(st.session_state.user["role"] == "student"),
-    ),
-    st.Page("guide.py", title="How to", icon=":material/help:"),
-]
-
 teams_pages = [
     st.Page(
         "chat.py",
@@ -264,10 +254,6 @@ dev_pages = [
 ]
 
 pages = {}
-
-if st.session_state.user["role"] in ["student", "admin", "developer"]:
-    pages["Info"] = info_pages
-    # pg = st.navigation({"Account": account_pages} | pages)
 
 if st.session_state.user["role"] in ["admin", "developer"]:
     pages["Teams"] = teams_pages
