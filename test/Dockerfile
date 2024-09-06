@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN pip install -r requirements.txt && playwright install
+RUN pip install -r requirements.txt && playwright install && playwright install-deps
 
 #EXPOSE 8501
 #EXPOSE #
