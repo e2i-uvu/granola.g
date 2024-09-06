@@ -50,17 +50,16 @@ def import_csv_data(*, testing=False):
     if data and testing:
         st.write(data)
 
-    url = backend + "employeesIngest"
+    url = backend + "/employeesIngest"
 
-    # WARNING: Backend still on work. This might not work
     if data:
-        #print(data)
+        # print(data)
         response = requests.post(
-            url, auth=HTTPBasicAuth(username, password), 
-            headers={"Content-Type": "application/json"}, 
+            url, auth=HTTPBasicAuth(username, password),
+            headers={"Content-Type": "application/json"},
             json=data
         )
-        wrtie(response.status_code)
+        st.write(response.status_code)
 
 
-import_csv_data(testing=False)#True)
+import_csv_data()  # True)
