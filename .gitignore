@@ -14,13 +14,8 @@ frontend/.env
 .env
 .env.traefik
 
-# Test log for the requests
-frontend/test/*.log
-frontend/test/*.json
-#frontend/test/*.csv
-frontend/test/*.png
-frontend/test/.async/
-frontend/screenshots/
+# Test files
+test/garbage
 
 
 # Byte-compiled / optimized / DLL files | more python stuff

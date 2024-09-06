@@ -29,14 +29,16 @@ def get_status_code(url: url, data: data) -> int:
     )
     return response.status_code
 
-def test_request(logger: str, data: data, expected_status_code: code, case: str, /, url: url, request_function: Callable[[url,data], code] = get_status_code) -> None:
+def test_request(logger: str, data: data, expected_status_code: code, case: str, /, url: url, request_function: Callable[[url,data], code] = get_status_code) -> bool:
     if url == None:
         raise TypeError("URL cannot be of NoneType.")
 
     status: code = request_function(url, data)
     if status == expected_status_code:
         logger.info("Sucessfully fails " + case)#ok_message)
+        return True
     else:
         logger.warning(str(status) + " Does not fail " + case)#error_message)
+        return False
 
 

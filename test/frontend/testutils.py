@@ -27,8 +27,11 @@ def timeit(function: Callable) -> Callable:
 
 def access_website(browser: BrowserType, credentials: dict[str,str]) -> Page:
     page = browser.new_page()
-    page.goto('localhost:8080')
-    sleep(0.5)
+    # HACK: This address might not work in the GitHub Actions Workflow.
+    # Change if necessary
+    address = 'localhost:8080' 
+    page.goto(address)
+    #sleep(0.5)
 
     #page.get_by_test_id("stSelectbox").locator("div").filter(has_text="None").nth(2).click()
     inputID = page.get_by_placeholder("Username / UVID", exact = True)
