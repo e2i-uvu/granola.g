@@ -255,7 +255,10 @@ teams_pages = [
     ),
 ]
 
-admin_pages = [st.Page("payroll.py", title="Payroll", icon=":material/local_atm:")]
+admin_pages = [
+    st.Page("payroll.py", title="Payroll", icon=":material/local_atm:"),
+    st.Page("file_upload.py", title="File Upload", icon=":material/folder:")
+]
 
 dev_pages = [
     # st.Page("my_availability.py", title="My Availability"),
