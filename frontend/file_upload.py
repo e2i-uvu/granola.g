@@ -38,18 +38,29 @@ def upload_csv() -> list[dict[str, str]]:
 
 
 def import_csv_data(*, testing=False):
+
+    # NOTE: I have a nice function that can summarize loading up all this data
     load_dotenv()
+
     backend = os.getenv("BACKEND")
     username = os.getenv("USERNAME")
     password = os.getenv("PASSWORD")
     data = upload_csv()
+
     if data and testing:
         st.write(data)
-    url = backend+"employeesIngest"
+
+    url = backend + "employeesIngest"
+
+    # WARNING: Backend still on work. This might not work
     if data:
-        print(data)
-        requests.post(url, auth=HTTPBasicAuth(username, password),
-                      headers={"Content-Type": "application/json"}, json=data)
+        #print(data)
+        response = requests.post(
+            url, auth=HTTPBasicAuth(username, password), 
+            headers={"Content-Type": "application/json"}, 
+            json=data
+        )
+        wrtie(response.status_code)
 
 
-import_csv_data(testing=True)
+import_csv_data(testing=False)#True)
