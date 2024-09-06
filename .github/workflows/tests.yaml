@@ -21,7 +21,7 @@ jobs:
         run: docker compose -f staging.yaml build
 
       - name: Run Docker Compose
-        run: docker compose -f staging.yaml up
+        run: docker compose -f staging.yaml up -d
 
       - name: Stop Docker Compose
         run: docker compose -f staging.yaml down

@@ -9,17 +9,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - name:
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          # ssh-keyscan -H "${{ secrets.HOST }}" >> ~/.ssh/known_hosts
 
-      - name: Set up Docker Compose
-        run: sudo apt-get update && sudo apt-get install -y docker-compose
-
-      - name: Build Docker Containers
-        run: docker compose -f staging.yaml build
-
-      - name: Run Docker Compose
-        run: docker compose -f staging.yaml up
-
-      - name: Stop Docker Compose
-        run: docker compose -f staging.yaml down
+      - name:
+        run: |
+          ssh -i ~/.ssh/id_rsa -v -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
+            cd /e2i/projects/granola.g
+            git pull origin main
+          EOF
