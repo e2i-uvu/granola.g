@@ -14,6 +14,8 @@ def display_team(team_json):
             team_json_list.append(item[key])
             example_team_json_list.append(item[key])
 
+    # tj = [j for i, j in team_json.itmes()]
+
     df = pd.DataFrame(team_json_list)
 
     if 'main_df' not in st.session_state:
