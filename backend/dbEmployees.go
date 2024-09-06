@@ -154,11 +154,13 @@ func (user Employee) SaveNew() error {
 
 	stmt, err := db.Prepare("INSERT OR REPLACE INTO employees (id, name, email, uvid, degree, prevteam, speciality, major, majoralt, aoi, social, status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)")
 	if err != nil {
+		InfoLogger.Printf("Saving had an error, %s\n", err)
 	}
 	defer stmt.Close()
 
 	_, err = stmt.Exec(user.Id, user.Name, user.Email, user.UVID, user.DegreePercent, user.TeamBefore, user.Speciality, user.Major, user.MajorAlt, user.AOI, user.Social, user.Status)
 	if err != nil {
+		InfoLogger.Printf("Saving had an error, %s\n", err)
 	}
 
 	return nil
