@@ -9,5 +9,6 @@ RUN pip install -r requirements.txt && playwright install && playwright install-
 #EXPOSE 8501
 #EXPOSE #
 
-CMD ["python", "main.py"]
+#CMD ["python", "main.py"]
+CMD ["pytest"]
 

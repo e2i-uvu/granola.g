@@ -28,15 +28,15 @@ def timeit(function: Callable) -> Callable:
 def access_website(browser: BrowserType, credentials: dict[str,str]) -> Page:
     page = browser.new_page()
     page.goto('localhost:8080')
-    sleep(1)
+    sleep(0.5)
 
     #page.get_by_test_id("stSelectbox").locator("div").filter(has_text="None").nth(2).click()
-    inputID = page.get_by_label("UVID", exact = True)
-    inputPassword = page.get_by_label("Password", exact = True)
-
+    inputID = page.get_by_placeholder("Username / UVID", exact = True)
     inputID.click()
     inputID.fill(credentials["id"])
     inputID.press("Enter")
+
+    inputPassword = page.get_by_label("Password", exact = True)
     inputPassword.click()
     inputPassword.fill(credentials["password"])
     inputPassword.press("Enter") 
