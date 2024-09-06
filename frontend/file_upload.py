@@ -50,7 +50,7 @@ def import_csv_data(*, testing=False):
     if data and testing:
         st.write(data)
 
-    url = backend + "employeesIngest"
+    url = backend + "/employeesIngest"
 
     if data:
         # print(data)
