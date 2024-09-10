@@ -5,26 +5,13 @@ Entrypoint for the streamlit frontend
 import streamlit as st
 import toml
 import hmac
-import sys
 import re
 
-VERSION = 0.102
+import os
+from dotenv import load_dotenv
+
+VERSION = 0.110
 USERS = "./.streamlit/users.toml"
-
-try:
-    if sys.argv[1] == "dev":
-        st.session_state["dev"] = True
-        st.session_state.user = {
-            "id": 11111111,
-            "name": "Stinky Developer",
-            "role": "developer",
-        }
-        st.session_state["password_correct"] = True
-    else:
-        st.session_state["dev"] = False
-
-except IndexError:
-    st.session_state["dev"] = False
 
 
 def style(filename: str = "./styles/main.css"):
@@ -34,10 +21,7 @@ def style(filename: str = "./styles/main.css"):
     return f"<style>{css}</style>"
 
 
-# if "center" not in st.session_state:
-#     layout = "wide"
-# else:
-#     layout = "centered" if st.session_state.center else "wide"
+# --- Setup session state --- #
 
 st.session_state.mobile_pat = re.compile(r"[mM]obile|iPhone|iPad|iPod|Android|webOS")
 
@@ -60,6 +44,23 @@ if "layout" not in st.session_state:
         st.session_state.layout = "wide"
     else:
         st.session_state.layout = "centered"
+
+if "backend" not in st.session_state:
+    # NOTE: Can use like the rest, example:
+    # `st.session_state.backend["url"]` -> backend url
+
+    # TODO: This moves the environment variables into the session_state
+    # But we should maybe also move the functions, and possibly even look
+    # into streamlit connections:
+    # https://docs.streamlit.io/develop/api-reference/connections/st.connection
+    load_dotenv()
+    st.session_state.backend = {
+        "url": os.getenv("BACKEND"),
+        "username": os.getenv("USERNAME"),
+        "password": os.getenv("PASSWORD"),
+    }
+
+# --- Setup session state --- #
 
 st.set_page_config(
     page_title="E2i",
@@ -208,12 +209,12 @@ def logout():  # need to be careful to reset session_state
 
 account_pages = [
     st.Page(logout, title="Log out", icon=":material/logout:"),
-#    st.Page(
-        # "availability.py",
-        # title="My Availability",
-#        icon=":material/calendar_month:",
-#        default=(st.session_state.user["role"] == "student"),
-#    ),
+    #    st.Page(
+    # "availability.py",
+    # title="My Availability",
+    #        icon=":material/calendar_month:",
+    #        default=(st.session_state.user["role"] == "student"),
+    #    ),
 ]
 
 teams_pages = [
@@ -233,9 +234,9 @@ teams_pages = [
     #     default=(st.session_state.user["role"] == "developer"),
     # ),
     st.Page(
-         "overview.py",#"employees.py",
-        title="Overview",#"Employees",
-        icon=":material/groups:"
+        "overview.py",  # "employees.py",
+        title="Overview",  # "Employees",
+        icon=":material/groups:",
         # default=(st.session_state.user["role"] == "admin"),
     ),
     st.Page(
@@ -247,13 +248,14 @@ teams_pages = [
 
 admin_pages = [
     st.Page("payroll.py", title="Payroll", icon=":material/local_atm:"),
-    st.Page("file_upload.py", title="File Upload", icon=":material/folder:")
+    st.Page("file_upload.py", title="Qualtrics Upload", icon=":material/folder:"),
+    st.Page("users.py", title="Verification", icon=":material/verified:"),
 ]
 
 dev_pages = [
     # st.Page("my_availability.py", title="My Availability"),
-    st.Page("sessionstate.py", title="Session State"),
-    st.Page("users.py", title="Verification", icon=":material/verified:"),
+    st.Page("sessionstate.py", title="Session State", icon=":material/settings:"),
+    # st.Page("users.py", title="Verification", icon=":material/verified:"),
 ]
 
 pages = {}

@@ -6,7 +6,6 @@ import toml
 
 import requests
 from requests.auth import HTTPBasicAuth
-from dotenv import load_dotenv
 
 from openai import OpenAI
 
@@ -14,11 +13,6 @@ from datetime import datetime
 
 from ai import display_team
 
-
-load_dotenv()
-backend = os.getenv("BACKEND")
-username = os.getenv("USERNAME")
-password = os.getenv("PASSWORD")
 
 # --- tool stuff --- #s
 
@@ -53,7 +47,11 @@ def build_new_team(
     # )
 
     r = requests.get(
-        backend + "teams", json=request_json, auth=HTTPBasicAuth(username, password)
+        st.session_state.backend["url"] + "teams",
+        json=request_json,
+        auth=HTTPBasicAuth(
+            st.session_state.backend["username"], st.session_state.backend["password"]
+        ),
     )
 
     if r.status_code == 200:

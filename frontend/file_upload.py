@@ -16,13 +16,12 @@ from io import StringIO
 import csv
 import requests
 from requests.auth import HTTPBasicAuth
-from dotenv import load_dotenv
-import os
 
 
 def upload_csv() -> list[dict[str, str]]:
-    uploadedFile = st.file_uploader(label="Upload file", type=[
-                                    "csv"], accept_multiple_files=False)
+    uploadedFile = st.file_uploader(
+        label="Upload file", type=["csv"], accept_multiple_files=False
+    )
 
     if uploadedFile is not None:
         stringInput = StringIO(uploadedFile.getvalue().decode("utf-8"))
@@ -40,24 +39,22 @@ def upload_csv() -> list[dict[str, str]]:
 def import_csv_data(*, testing=False):
 
     # NOTE: I have a nice function that can summarize loading up all this data
-    load_dotenv()
-
-    backend = os.getenv("BACKEND")
-    username = os.getenv("USERNAME")
-    password = os.getenv("PASSWORD")
+    # Nice! I like your code 😄 I refactored the backend variables for you
     data = upload_csv()
 
     if data and testing:
         st.write(data)
 
-    url = backend + "/employeesIngest"
-
     if data:
         # print(data)
         response = requests.post(
-            url, auth=HTTPBasicAuth(username, password),
+            st.session_state.backend["url"] + "/employeesIngest",
+            auth=HTTPBasicAuth(
+                st.session_state.backend["username"],
+                st.session_state.backend["password"],
+            ),
             headers={"Content-Type": "application/json"},
-            json=data
+            json=data,
         )
         st.write(response.status_code)
 

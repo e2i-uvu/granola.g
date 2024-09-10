@@ -1,14 +1,8 @@
 import streamlit as st
 import requests
 from requests.auth import HTTPBasicAuth
-from dotenv import load_dotenv
-import os
 import pandas as pd
 
-load_dotenv()
-backend = os.getenv("BACKEND")
-username = os.getenv("USERNAME")
-password = os.getenv("PASSWORD")
 
 # A quick documentation for status
 # -2 = Fired
@@ -54,7 +48,12 @@ def option_selection(option):
 
 def show_pending_projects():
     st.write("Here is the status")
-    r = requests.get(backend + "project", auth=HTTPBasicAuth(username, password))
+    r = requests.get(
+        st.session_state.backend["url"] + "project",
+        auth=HTTPBasicAuth(
+            st.session_state.backend["username"], st.session_state.backend["password"]
+        ),
+    )
     if r.status_code != 200:
         st.text("The world is dying")
         st.text(r.status_code)
@@ -65,7 +64,12 @@ def show_pending_projects():
 
 def show_status():
     st.write("Here is the status")
-    r = requests.get(backend + "status", auth=HTTPBasicAuth(username, password))
+    r = requests.get(
+        st.session_state.backend["url"] + "status",
+        auth=HTTPBasicAuth(
+            st.session_state.backend["username"], st.session_state.backend["password"]
+        ),
+    )
     if r.status_code != 200:
         st.text("The world is dying")
         st.text(r.status_code)
@@ -76,7 +80,12 @@ def show_status():
 
 def show_all_surveys():
     st.write("Here is the status")
-    r = requests.get(backend + "preinterview", auth=HTTPBasicAuth(username, password))
+    r = requests.get(
+        st.session_state.backend["url"] + "preinterview",
+        auth=HTTPBasicAuth(
+            st.session_state.backend["username"], st.session_state.backend["password"]
+        ),
+    )
     if r.status_code != 200:
         st.text("The world is dying")
         st.text(r.status_code)
@@ -86,7 +95,12 @@ def show_all_surveys():
 
 def show_fire():
     st.write("Here is the status")
-    r = requests.get(backend + "fire", auth=HTTPBasicAuth(username, password))
+    r = requests.get(
+        st.session_state.backend["url"] + "fire",
+        auth=HTTPBasicAuth(
+            st.session_state.backend["username"], st.session_state.backend["password"]
+        ),
+    )
     if r.status_code != 200:
         st.text("The world is dying")
         st.text(r.status_code)
@@ -123,9 +137,12 @@ def show_fire():
             # st.dataframe(edited_df)
 
             response = requests.post(
-                backend + "hire",
+                st.session_state.backend["url"] + "hire",
                 json=filtered_data,
-                auth=HTTPBasicAuth(username, password),
+                auth=HTTPBasicAuth(
+                    st.session_state.backend["username"],
+                    st.session_state.backend["password"],
+                ),
             )
             if response.status_code == 200:
                 st.success("Changes save successfully!")
@@ -137,7 +154,12 @@ def show_fire():
 
 
 def show_hire():
-    r = requests.get(backend + "hire", auth=HTTPBasicAuth(username, password))
+    r = requests.get(
+        st.session_state.backend["url"] + "hire",
+        auth=HTTPBasicAuth(
+            st.session_state.backend["username"], st.session_state.backend["password"]
+        ),
+    )
     # FIX: this ->   ^^^^^^^^^^^^^^^^  is broken
 
     if r.status_code == 400:
@@ -185,9 +207,12 @@ def show_hire():
             filtered_data = edited_df[["pid", "status"]].to_dict(orient="records")
 
             response = requests.post(
-                backend + "hire",
+                st.session_state.backend["url"] + "hire",
                 json=filtered_data,
-                auth=HTTPBasicAuth(username, password),
+                auth=HTTPBasicAuth(
+                    st.session_state.backend["username"],
+                    st.session_state.backend["password"],
+                ),
             )
             if response.status_code == 200:
                 st.success("Changes save successfully!")
