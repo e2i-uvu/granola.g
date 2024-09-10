@@ -29,10 +29,20 @@ def display_team(team_json):
     main_df_container = st.empty()
     main_df_container.dataframe(st.session_state.main_df, hide_index=True, column_config=column_configuration)
 
-    if st.button('Edit'):
-        edit_dialog(st.session_state.main_df, main_df_container, column_configuration)
+    column1, column2, column3 = st.columns([1, 1, 5], vertical_alignment='bottom')
+
+    with column1:
+        if st.button('Edit', use_container_width=True):
+            edit_dialog(st.session_state.main_df, main_df_container, column_configuration)
     
-    # print(st.session_state.main_df)
+    with column2:
+        if st.button('Submit', use_container_width=True):
+            st.toast('Submitted!')
+            print(st.session_state.main_df)
+            print(type(st.session_state.main_df))
+    
+    df_json = st.session_state.main_df.to_json(orient='records')
+    st.json(df_json)
 
 @st.dialog("Edit Data", width="large")
 def edit_dialog(df, main_df_container, column_configuration):
