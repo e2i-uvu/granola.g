@@ -3,6 +3,168 @@ import pandas as pd
 import json
 from json_data_CAN_DELETE_LATER import json_example_data
 
+import toml
+from datetime import datetime
+
+import requests
+from requests.auth import HTTPBasicAuth
+
+# will add ai function calling tools and other related stuff here
+
+
+ai_config = toml.load("./ai.toml")
+
+
+def test():
+    st.toast("test successful")
+
+
+respond = {
+    "name": "test",
+    "local": True,
+    "func": test,
+    "tool": {
+        "type": "function",
+        "function": {
+            "name": "test",
+            "description": "Call this function if the user is testing",
+        },
+    },
+}
+
+
+def build_new_team(
+    # project_name: str, project_type: str, employees: list, total_employees: int
+    request_json: str,
+):
+    # st.toast(
+    #     f"New {project_type} Project!\nName: {
+    #         project_name}, {total_employees}, {employees}"
+    # )
+
+    r = requests.get(
+        st.session_state.backend["url"] + "teams",
+        json=request_json,
+        auth=HTTPBasicAuth(
+            st.session_state.backend["username"], st.session_state.backend["password"]
+        ),
+    )
+
+    if r.status_code == 200:
+        # Successful request
+        response_data = r.json()
+        print(response_data)
+    else:
+        # Handle the error
+        print(f"Error: {r.status_code}")
+
+    # TODO:
+    # after edits send to same endpoint but as a post request
+
+    return "Sucess!"
+
+
+employee_types = [
+    "Full stack",
+    "Frontend",
+    "Backend",
+    "Database",
+    "Embedded",
+    "Game Development",
+]
+
+project_types = ai_config["project_types"]
+employee_types = ai_config["employee_types"]
+
+
+create_team = {
+    "name": "create_team",
+    "local": False,
+    "func": build_new_team,
+    "tool": {
+        "type": "function",
+        "function": {
+            "name": "create_team",
+            "strict": True,
+            "description": """Create team or project based on description provided by user.
+            Created teams should have the proper skills and the necessary amount of each employee
+            to complete the project. Assume the Project manager is already chosen.""",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "project_name": {
+                        "type": "string",
+                        "description": "The name of the team or project",
+                    },
+                    "project_type": {
+                        "type": "string",
+                        "description": "The type of project",
+                        "enum": project_types,
+                    },
+                    "employees": {
+                        "type": "array",
+                        "description": """List of employees needed to successfully complete the project.
+                        Decide what combination and amount of each employee is needed by infering from
+                        the user's description. Do not explicitly ask to user to provide the specific
+                        roles/types.""",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "employee": {
+                                    "type": "string",
+                                    "enum": employee_types,
+                                    "description": """Type of employee needed to complete the project.""",
+                                },
+                                "amount": {
+                                    "type": "number",
+                                    "description": "The total number of this type of employee needed",
+                                },
+                            },
+                            "required": [
+                                "employee",
+                                "amount",
+                            ],
+                            "additionalProperties": False,
+                        },
+                    },
+                    "total_employees": {
+                        "type": "number",
+                        "description": "The total number of employees needed for a team, between 3 and 6",
+                    },
+                },
+                "required": [
+                    "project_name",
+                    "project_type",
+                    "total_employees",
+                    "employees",
+                ],
+                "additionalProperties": False,
+            },
+        },
+    },
+}
+
+TOOLS = [respond, create_team]
+
+
+# formatted_time = datetime.now().strftime("%H:%M on %A, %Y-%m-%d")
+
+SYSTEM_MESSAGE = f"""# Instructions
+
+* The current date and time is {datetime.now().strftime('%H:%M on %A, %Y-%m-%d')}
+* You are an assistant for the E2i Program at Utah Valley University (UVU).
+* The Director of E2i is Jeremiah Harrison and he is awesome.
+* You responses are formatted in github flavored markdown, with an occasional emoji.
+* Respond with concise and effective messages and a bright, upbeat and confident tone.
+
+## Tools
+
+Ask clarifying questions before calling tools if needed.
+"""
+
+### --- Specific Functions --- ###
+
+
 def display_team(team_json):
     team_json_list = []
     team_json_partial = []
@@ -18,56 +180,80 @@ def display_team(team_json):
 
     df = pd.DataFrame(team_json_list)
 
-    if 'main_df' not in st.session_state:
+    if "main_df" not in st.session_state:
         st.session_state.main_df = df
 
     column_configuration = {
-        "id": None, "email": None, "degreepercent": None, "teambefore": None,
-        "major": None, "majoralt": None, "social": None, "status": None
+        "id": None,
+        "email": None,
+        "degreepercent": None,
+        "teambefore": None,
+        "major": None,
+        "majoralt": None,
+        "social": None,
+        "status": None,
     }
 
     main_df_container = st.empty()
-    main_df_container.dataframe(st.session_state.main_df, hide_index=True, column_config=column_configuration)
+    main_df_container.dataframe(
+        st.session_state.main_df, hide_index=True, column_config=column_configuration
+    )
 
-    column1, column2, column3 = st.columns([1, 1, 5], vertical_alignment='bottom')
+    column1, column2, column3 = st.columns([1, 1, 5], vertical_alignment="bottom")
 
     with column1:
-        if st.button('Edit', use_container_width=True):
-            edit_dialog(st.session_state.main_df, main_df_container, column_configuration)
-    
+        if st.button("Edit", use_container_width=True):
+            edit_dialog(
+                st.session_state.main_df, main_df_container, column_configuration
+            )
+
     with column2:
-        if st.button('Submit', use_container_width=True):
-            st.toast('Submitted!')
+        if st.button("Submit", use_container_width=True):
+            st.toast("Submitted!")
             print(st.session_state.main_df)
             print(type(st.session_state.main_df))
-    
-    df_json = st.session_state.main_df.to_json(orient='records')
+
+    df_json = st.session_state.main_df.to_json(orient="records")
     st.json(df_json)
+
 
 @st.dialog("Edit Data", width="large")
 def edit_dialog(df, main_df_container, column_configuration):
-    if 'Remove' not in st.session_state.main_df.columns:
-        st.session_state.main_df.insert(0, 'Remove', False)
+    if "Remove" not in st.session_state.main_df.columns:
+        st.session_state.main_df.insert(0, "Remove", False)
 
-    edited_df = st.data_editor(st.session_state.main_df, hide_index=True, column_config=column_configuration)
+    edited_df = st.data_editor(
+        st.session_state.main_df, hide_index=True, column_config=column_configuration
+    )
 
-    col1, col2 = st.columns([3, 1], vertical_alignment='bottom')
+    col1, col2 = st.columns([3, 1], vertical_alignment="bottom")
 
     with col2:
-        if st.button('Save'):
-            updated_df = edited_df[edited_df['Remove'] == False].drop(columns=['Remove'])
+        if st.button("Save"):
+            updated_df = edited_df[edited_df["Remove"] == False].drop(
+                columns=["Remove"]
+            )
             st.session_state.main_df = updated_df
 
-            if 'selected_row' in st.session_state:
-                st.session_state.main_df = pd.concat([st.session_state.main_df, st.session_state.selected_row]).drop_duplicates().reset_index(drop=True)
+            if "selected_row" in st.session_state:
+                st.session_state.main_df = (
+                    pd.concat([st.session_state.main_df, st.session_state.selected_row])
+                    .drop_duplicates()
+                    .reset_index(drop=True)
+                )
                 del st.session_state.selected_row
 
-            main_df_container.dataframe(st.session_state.main_df, hide_index=True, column_config=column_configuration)
+            main_df_container.dataframe(
+                st.session_state.main_df,
+                hide_index=True,
+                column_config=column_configuration,
+            )
             st.session_state.selected_rows = []
             selected_options = False
             st.rerun()
 
     add_members(df, col1, main_df_container, column_configuration)
+
 
 def add_members(df, col1, main_df_container, column_configuration):
     all_options = []
@@ -75,32 +261,34 @@ def add_members(df, col1, main_df_container, column_configuration):
         for key in item:
             all_options.append(item[key])
 
-    df = pd.DataFrame(all_options) 
+    df = pd.DataFrame(all_options)
     temp_df = df
-    temp_df['display'] = temp_df['name'] + ' -- (' + temp_df['speciality'] + ')'
-    all_options = temp_df['display'].tolist()
+    temp_df["display"] = temp_df["name"] + " -- (" + temp_df["speciality"] + ")"
+    all_options = temp_df["display"].tolist()
 
     with col1:
         selected_options = st.multiselect(
-            'Select team members to Add:',
+            "Select team members to Add:",
             (all_options),
             default=None,
-            placeholder='Begin typing to add...'
+            placeholder="Begin typing to add...",
         )
 
     if selected_options:
-        selected_df = df[df['display'].isin(selected_options)]
+        selected_df = df[df["display"].isin(selected_options)]
 
-        if 'selected_rows' not in st.session_state:
+        if "selected_rows" not in st.session_state:
             st.session_state.selected_rows = []
 
-        selected_df.drop(columns=['display'], inplace=True)
+        selected_df.drop(columns=["display"], inplace=True)
 
         st.session_state.selected_rows.append(selected_df)
 
-
-        combined_selected_df = pd.concat(st.session_state.selected_rows).drop_duplicates().reset_index(drop=True)
+        combined_selected_df = (
+            pd.concat(st.session_state.selected_rows)
+            .drop_duplicates()
+            .reset_index(drop=True)
+        )
         st.session_state.selected_row = combined_selected_df
 
         st.dataframe(selected_df, hide_index=True, column_config=column_configuration)
-

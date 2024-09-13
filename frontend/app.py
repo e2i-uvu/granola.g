@@ -10,6 +10,11 @@ import re
 import os
 from dotenv import load_dotenv
 
+from openai import OpenAI
+
+from ai import SYSTEM_MESSAGE, TOOLS
+
+
 VERSION = 0.110
 USERS = "./.streamlit/users.toml"
 
@@ -36,6 +41,23 @@ if "user" not in st.session_state:
         # "name": None,
         "role": None,
         "mobile": False,
+    }
+
+
+if "gpt" not in st.session_state:
+    st.session_state.gpt = {
+        "client": OpenAI(api_key=os.environ.get("OPENAI_API_KEY")),
+        "model": "gpt-4o-mini",
+        "system_message": [{"role": "system", "content": SYSTEM_MESSAGE}],
+        "messages": [],
+        "tools": {
+            tool.get("name"): {
+                "tool": tool.get("tool"),
+                "func": tool.get("func"),
+                "local": tool.get("local"),
+            }
+            for tool in TOOLS
+        },
     }
 
 if "layout" not in st.session_state:
