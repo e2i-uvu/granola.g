@@ -37,6 +37,7 @@ def build_new_team(
     # project_name: str, project_type: str, employees: list, total_employees: int
     request_json: str,
 ):
+
     # st.toast(
     #     f"New {project_type} Project!\nName: {
     #         project_name}, {total_employees}, {employees}"
@@ -58,8 +59,10 @@ def build_new_team(
         # Handle the error
         print(f"Error: {r.status_code}")
 
-    # TODO:
-    # after edits send to same endpoint but as a post request
+    # TODO: Guts
+    # after edits send to same endpoint but as a post request ('Don't use fake data for this')
+    # Display team and modal dialog here
+    # when submit is hit, we send a post request back to the same endpoint
 
     return "Sucess!"
 
