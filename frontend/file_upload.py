@@ -18,7 +18,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 
-def upload_csv() -> list[dict[str, str]]:
+def upload_csv() -> list[dict[str, str]] | None:
     uploadedFile = st.file_uploader(
         label="Upload file", type=["csv"], accept_multiple_files=False
     )
@@ -56,7 +56,9 @@ def import_csv_data(*, testing=False):
             headers={"Content-Type": "application/json"},
             json=data,
         )
-        st.write(response.status_code)
+        if response.status_code == 200:
+            st.toast("CSV uploaded succesfully")
 
 
-import_csv_data()  # True)
+st.title("Qualtrics CSV Upload")
+import_csv_data(testing=True)  
