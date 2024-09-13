@@ -3,11 +3,12 @@ Entrypoint for the streamlit frontend
 """
 
 import streamlit as st
+
 import toml
 import hmac
 import re
-
 import os
+
 from dotenv import load_dotenv
 
 from openai import OpenAI

@@ -139,7 +139,7 @@ def render_messages():
         # TODO: also need to not render tool calls
 
     with st.chat_message("assistant"):
-        display_team(
+        display_team(  # FIX: remove
             [
                 {
                     0: {
