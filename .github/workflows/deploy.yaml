@@ -1,7 +1,10 @@
 name: Deployment
 run-name: Deployment by @${{ github.actor }}
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   deploy:
@@ -21,4 +24,5 @@ jobs:
           ssh -i ~/.ssh/id_rsa -v -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
             cd /e2i/projects/granola.g
             git pull origin main
+            bash deploy.sh
           EOF
