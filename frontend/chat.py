@@ -1,13 +1,118 @@
 import streamlit as st
-
+import requests
 import json
 
 
 from ai import display_team
 
 
-# --- tool stuff --- #s
+#################### ADDED THIS PART FOR TESTING ###############################3
+json_example_data = [
+    {
+        0: {
+            "id": "E001",
+            "name": "Alice Johnson",
+            "email": "alice.johnson@uvu.edu",
+            "uvid": "U12345678",
+            "degreepercent": 85,
+            "teambefore": True,
+            "speciality": "Software Engineering",
+            "major": "Computer Science",
+            "majoralt": "Mathematics",
+            "aoi": "Artificial Intelligence",
+            "social": 5,
+            "status": 1,
+        }
+    },
+    {
+        1: {
+            "id": "E002",
+            "name": "Bob Smith",
+            "email": "bob.smith@uvu.edu",
+            "uvid": "U87654321",
+            "degreepercent": 90,
+            "teambefore": False,
+            "speciality": "Data Analysis",
+            "major": "Information Systems",
+            "majoralt": "Statistics",
+            "aoi": "Big Data",
+            "social": 7,
+            "status": 2,
+        }
+    },
+]
 
+def post_employees_to_backend(employee_data):
+    url = "http://localhost:8081/employees"
+    headers = {"Content-Type": "application/json"}
+
+    auth = ("Username", "Password")
+
+    try:
+        response = requests.post(url, data=json.dumps(employee_data), headers=headers, auth=auth)
+        if response.status_code == 201 or response.status_code == 200:
+            st.success(f"Employees successfully posted to the backend! {response.status_code}")
+        else:
+            st.error(f"Falied to post emplyees. Status code: {response.status_code}")
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
+
+if st.button("Post Employees to Backend"):
+    post_employees_to_backend(json_example_data)
+# --- tool stuff --- #
+
+def get_team_from_backend(project_name):
+    try:
+        backend_url = f"http://localhost:8081/teams?project_name={project_name}"
+
+        response = requests.get(backend_url)
+
+        if response.status_code == 200:
+            team_json = response.json()
+            return team_json
+        else:
+            st.error(f"Failed to fetch team data. Status code: {response.status_code}")
+            return None
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
+        return None
+
+def process_team_data(json_data):
+    return [list(employee.values())[0] for employee in json_data]
+
+def fetch_employees_from_backend():
+    url = "http://localhost:8081/employees"
+    headers = {"Content-Type": "application/json"}
+
+    auth = ("Username", "Password")
+
+    try:
+        response = requests.get(url, headers=headers, auth=auth)
+        if response.status_code == 200:
+
+            return response.json()
+        else:
+            st.error(f"Failed to fetch employees. Status code: {response.status_code}")
+            return None
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
+        return None
+
+def display_employees_in_toast(employees):
+    if employees:
+        for employee in employees:
+            employee_info = f"ID: {employee['id']}, Name: {employee['name']}, Email: {employee['email']}, Speciality: {employee['speciality']}"
+            st.toast(employee_info)
+    
+    else:
+        st.error("No employees found.")
+
+if st.button("Fetch Employees from Backend"):
+    employees = fetch_employees_from_backend()
+    if employees:
+        display_employees_in_toast(employees)
+
+######################## THROUGH THIS POINT ################################
 
 def moderate(query: str):
 
@@ -17,7 +122,6 @@ def moderate(query: str):
             return True
 
     return False
-
 
 def ai(query: str = ""):
 
@@ -95,12 +199,24 @@ def ai(query: str = ""):
                 ](**function_args)
 
             else:
+                # function_response = st.session_state.gpt["tools"][function_name][
+                #     "func"
+                # ](function_args_json)
 
-                function_args_json = tc["function"]["arguments"]
+                function_args_json = tc["function"]["arguments"]                
+                project_name = json.loads(function_args_json).get("project_name")
 
-                function_response = st.session_state.gpt["tools"][function_name][
-                    "func"
-                ](function_args_json)
+                if project_name:
+                    team_data = get_team_from_backend(project_name)
+
+                    if team_data:
+
+                        display_team(team_data)
+                        function_response = "Team displayed successfully."
+                    else:
+                        function_response = "Failed to fetch team data."
+                else:
+                    function_response = "No project name provided."
 
             # TODO: give better value back to ai
             # call backend here to get team
@@ -268,3 +384,7 @@ if user_input := st.chat_input("Send a message"):
         st.write_stream(ai(user_input))
 
         # st.rerun()
+
+# I want you to make me a team with 5 people. This will be a tech project
+# and we will be making a mobile application for people to be able to order
+# food from anywhere on the UVU college campus
