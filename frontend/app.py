@@ -102,7 +102,8 @@ st.markdown(style(), unsafe_allow_html=True)
 
 st.logo(
     image="./static/innovation-academy-logo-side-green.png",
-    link="https://www.uvu.edu/innovation/e2i/",
+    # link="https://www.uvu.edu/innovation/e2i/",
+    link=None,
     icon_image="./static/uvu-logo-cropped-green.png",
 )
 
