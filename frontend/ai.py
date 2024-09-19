@@ -216,8 +216,9 @@ def display_team(team_json):
             # This is where we send back the confirmed team
 
             df_json = st.session_state.main_df.to_dict(orient="records")
+            print(json.dumps(df_json, indent=4))
             r = requests.post(
-                st.session_state.backend["url"] + "employees",
+                st.session_state.backend["url"] + "teams",
                 json=df_json,
                 auth=HTTPBasicAuth(
                     st.session_state.backend["username"], st.session_state.backend["password"]
