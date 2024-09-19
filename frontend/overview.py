@@ -38,9 +38,9 @@ def format_DataFrame(data: list[dict[str, str | int | bool]]):
 
     df["status"] = [decode_status_code(value) for value in df["status"]]#.iloc()]
 
-    # if "id" in df and "pid" not in df:
-    #     df["pid"] = df["id"]
-    #     del df['id']
+    if "id" in df and "pid" not in df:
+        df["pid"] = df["id"]
+        del df['id']
     columns_order = ["status"] + [col for col in df.columns if col != "status"]
     df = df[columns_order]
     return df
