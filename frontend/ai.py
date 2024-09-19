@@ -211,27 +211,23 @@ def display_team(team_json):
     with column2:
         if st.button("Submit", use_container_width=True):
             st.toast("Submitted!")
-            #TODO write post request here
-            ###########################################################
+            # TODO: Henry - write post request here
             # POST TO DATABASE HERE:
             # This is where we send back the confirmed team
 
-            # df_json = st.session_state.main_df.to_dict(orient="records")
-            # print(new_employee)
-            # r = requests.post(
-            #     st.session_state.backend["url"] + "employees",
-            #     data=new_employee,
-            #     auth=HTTPBasicAuth(
-            #         st.session_state.backend["username"], st.session_state.backend["password"]
-            #     ),
-            # )
-            # if r.status_code != 200:
-            #     st.text("The world is dying")
-            #     st.text(r.status_code)
-            # else:
-            #     print(r.status_code)
-            ########################################################33
-            
+            df_json = st.session_state.main_df.to_dict(orient="records")
+            r = requests.post(
+                st.session_state.backend["url"] + "employees",
+                json=df_json,
+                auth=HTTPBasicAuth(
+                    st.session_state.backend["username"], st.session_state.backend["password"]
+                ),
+            )
+            if r.status_code != 200:
+                st.text("The world is dying")
+                st.text(r.status_code)
+            else:
+                print(r.status_code)
     
 @st.dialog("Edit Data", width="large")
 def edit_dialog(df, main_df_container, column_configuration):
@@ -273,12 +269,9 @@ def edit_dialog(df, main_df_container, column_configuration):
 
 def add_members(df, col1, main_df_container, column_configuration):
     all_options = []
-    ###################################################################
-
+    # TODO: Henry -
     # GET REQUEST FROM DATABASE, SHOULD RETURN JSON INFORMATION OF FROM EVERY PERSON
     # json_example_data = requests.get(... ) 
-
-    ####################################################################
     for item in json_example_data:
         for key in item:
             all_options.append(item[key])

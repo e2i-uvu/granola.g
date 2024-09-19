@@ -142,12 +142,13 @@ def render_messages():
             st.chat_message(name=message["role"]).markdown(message["content"])
 
         # TODO: also need to not render tool calls
-    ####################################################################
+
+
+    # TODO: Henry -
     # GET REQUEST HERE, THIS SHOULD RETURN THE TEAM SUGGESTED BY THE TEAM BUILDING ALGO
     # suggested_team = requests.get(...)
+    # display_team(suggested_team) this will replace what is 3 lines down
 
-    # display_team(suggested_team)
-    ###################################################################
     with st.chat_message("assistant"):
         display_team(  # FIX: remove
             [
