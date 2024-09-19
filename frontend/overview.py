@@ -5,24 +5,26 @@ import pandas as pd
 
 st.title("Overview")
 
+#test_data = [{"id" : "11111111", "name": "Bob", "email": "bob@uvu.edu", "uvid": "111111111", "degreepercent": 99, "teambefore": True, "speciality": "Machine Learning", "major": "Computational Data Science", "aoi": "Artificial Intelligence", "social": 5, "status": 1}]
 
 def encode_status_code(status: str):
     match status:
         case "Hired":
             return 1
-        case "Not Hired":
+        case "Not hired":
             return 0
         case "Fired":
-            return -1
+            return -2
         # TODO: Add the rest of the status codes!
-        case _:
-            return status
+        case "":
+            return 1#status
 
 
 def format_DataFrame(data: list[dict[str, str | int | bool]]):
     def decode_status_code(status: int):
         match status:
             case 1:
+                st.write(True)
                 return "Hired"
             case 0:
                 return "Not hired"
@@ -30,12 +32,15 @@ def format_DataFrame(data: list[dict[str, str | int | bool]]):
                 return "Fired"
         # TODO: Add the rest of the status codes!
             case _:
-                return status
+                return "Not hired"
 
     df = pd.DataFrame(data)
 
-    df["status"] = [decode_status_code(value)
-                    for value in df["status"]]  # .iloc()]
+    df["status"] = [decode_status_code(value) for value in df["status"]]#.iloc()]
+
+    # if "id" in df and "pid" not in df:
+    #     df["pid"] = df["id"]
+    #     del df['id']
     columns_order = ["status"] + [col for col in df.columns if col != "status"]
     df = df[columns_order]
     return df
@@ -44,7 +49,7 @@ def format_DataFrame(data: list[dict[str, str | int | bool]]):
 EMPLOYEE_STATUS_CODE: list[str] = [
     "Fired",
     "Hired",
-    "Not Hired"
+    "Not hired"
 ]
 
 EMPLOYEE_COLUMN_CONFIG = {
@@ -120,42 +125,61 @@ def show_pending_projects():
 def show_status():
     st.write("Here is the status")
     r = requests.get(
-        st.session_state.backend["url"] + "status",
+        st.session_state.backend["url"] + "employees",
         auth=HTTPBasicAuth(
             st.session_state.backend["username"], st.session_state.backend["password"]
         ),
     )
-    df = format_DataFrame(r.json())
-    edited_df = st.data_editor(
-        df, column_config=EMPLOYEE_COLUMN_CONFIG, hide_index=True, use_container_width=True)
-    if st.button("Save Changes"):
-        edited_df["status"] = edited_df["status"].apply(encode_status_code)
-        filtered_data = edited_df[["pid", "status"]].to_dict(orient="records")
+    # df = format_DataFrame(test_data) 
+    # edited_df = st.data_editor(df, column_config=EMPLOYEE_COLUMN_CONFIG, hide_index=True, use_container_width=True)
+    # if st.button("Save Changes"):
+    #     edited_df["status"] = edited_df["status"].apply(encode_status_code)
+    #     filtered_data = edited_df[["pid", "status"]].to_dict(orient="records")
+    #
+    #     response = requests.post(
+    #         st.session_state.backend["url"] + "status",
+    #         json=filtered_data,
+    #         auth=HTTPBasicAuth(
+    #             st.session_state.backend["username"],
+    #             st.session_state.backend["password"],
+    #         ),
+    #     )
+    #     if response.status_code == 200:
+    #         st.success("Changes save successfully!")
+    #     else:
+    #         st.error(
+    #             f"Failed to save changes. Status code: {
+    #                  response.status_code}"
+    #         )
+    if r.status_code != 200:
+        st.text("The world is dying")
+        st.text(r.status_code)
+    else:
+        # st.json(r.json())
+        df = format_DataFrame(r.json())
+        # st.dataframe(df, hide_index=True)
+        edited_df = st.data_editor(df, column_config=EMPLOYEE_COLUMN_CONFIG, hide_index=True, use_container_width=True)
+        if st.button("Save Changes"):
+            edited_df["status"] = edited_df["status"].apply(encode_status_code)
+            filtered_data = edited_df[["pid", "status"]].to_dict(orient="records")
 
-        response = requests.post(
-            st.session_state.backend["url"] + "status",
-            json=filtered_data,
-            auth=HTTPBasicAuth(
-                st.session_state.backend["username"],
-                st.session_state.backend["password"],
-            ),
-        )
-        if response.status_code == 200:
-            st.success("Changes save successfully!")
-        else:
-            st.error(
-                f"Failed to save changes. Status code: {
-                    response.status_code}"
+            # FIX: To Henry: As it is now, the Employee struct sends a string Id and string UVID, but the EmployeeStatus gets an int PID. 
+
+            response = requests.post(
+                st.session_state.backend["url"] + "employees",
+                json=filtered_data,
+                auth=HTTPBasicAuth(
+                    st.session_state.backend["username"],
+                    st.session_state.backend["password"],
+                ),
             )
-    # if r.status_code != 200:
-    #     st.text("The world is dying")
-    #     st.text(r.status_code)
-    # else:
-    #     # st.json(r.json())
-    #     df = format_DataFrame(r.json())
-    #     # st.dataframe(df, hide_index=True)
-        # st.data_editor(df, column_config=EMPLOYEE_COLUMN_CONFIG, hide_index=True, use_container_width=True)
-
+            if response.status_code == 200:
+                st.success("Changes save successfully!")
+            else:
+                st.error(
+                    f"Failed to save changes. Status code: {
+                         response.status_code}"
+                )
 
 # TODO: Obsolete. Delete this later!!!
 # def show_all_surveys():
@@ -319,6 +343,7 @@ def show_hire():
 
 
 main()
+# NOTE:
 # Read everything in, if the hire is 1, if it is false then it is 0.
 # I want the hire box to appear in column 1, and I want it to be a checkbox
 #
