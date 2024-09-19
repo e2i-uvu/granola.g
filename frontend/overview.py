@@ -5,7 +5,6 @@ import pandas as pd
 
 st.title("Overview")
 
-test_data = [{"id" : "11111111", "name": "Bob", "email": "bob@uvu.edu", "uvid": "111111111", "degreepercent": 99, "teambefore": True, "speciality": "Machine Learning", "major": "Computational Data Science", "aoi": "Artificial Intelligence", "social": 5, "status": 1}]
 
 def encode_status_code(status: str):
     match status:
@@ -19,7 +18,8 @@ def encode_status_code(status: str):
         case _:
             return status
 
-def format_DataFrame(data: list[dict[str, str|int|bool]]):
+
+def format_DataFrame(data: list[dict[str, str | int | bool]]):
     def decode_status_code(status: int):
         match status:
             case 1:
@@ -34,10 +34,12 @@ def format_DataFrame(data: list[dict[str, str|int|bool]]):
 
     df = pd.DataFrame(data)
 
-    df["status"] = [decode_status_code(value) for value in df["status"]]#.iloc()]
+    df["status"] = [decode_status_code(value)
+                    for value in df["status"]]  # .iloc()]
     columns_order = ["status"] + [col for col in df.columns if col != "status"]
     df = df[columns_order]
     return df
+
 
 EMPLOYEE_STATUS_CODE: list[str] = [
     "Fired",
@@ -59,6 +61,7 @@ EMPLOYEE_COLUMN_CONFIG = {
     "social": st.column_config.Column(label="Social", disabled=True),
 }
 
+
 def main():
     # NOTE:
     # status + hire + fire + all surveys
@@ -73,7 +76,7 @@ def main():
     #         "all surveys",
     #         "pending projects",
     #     )
-    option = st.selectbox("Select one", options)#old_options)
+    option = st.selectbox("Select one", options)  # old_options)
     # st.write(f'You selected: {option}')
     if option != "Select an option":
         option_selection(option)
@@ -113,6 +116,7 @@ def show_pending_projects():
         # st.json(r.json())
         st.dataframe(pd.DataFrame(r.json()), hide_index=True)
 
+
 def show_status():
     st.write("Here is the status")
     r = requests.get(
@@ -121,9 +125,9 @@ def show_status():
             st.session_state.backend["username"], st.session_state.backend["password"]
         ),
     )
-    global test_data
-    df = format_DataFrame(test_data) 
-    edited_df = st.data_editor(df, column_config=EMPLOYEE_COLUMN_CONFIG, hide_index=True, use_container_width=True)
+    df = format_DataFrame(r.json())
+    edited_df = st.data_editor(
+        df, column_config=EMPLOYEE_COLUMN_CONFIG, hide_index=True, use_container_width=True)
     if st.button("Save Changes"):
         edited_df["status"] = edited_df["status"].apply(encode_status_code)
         filtered_data = edited_df[["pid", "status"]].to_dict(orient="records")
@@ -141,7 +145,7 @@ def show_status():
         else:
             st.error(
                 f"Failed to save changes. Status code: {
-                     response.status_code}"
+                    response.status_code}"
             )
     # if r.status_code != 200:
     #     st.text("The world is dying")
@@ -151,7 +155,7 @@ def show_status():
     #     df = format_DataFrame(r.json())
     #     # st.dataframe(df, hide_index=True)
         # st.data_editor(df, column_config=EMPLOYEE_COLUMN_CONFIG, hide_index=True, use_container_width=True)
-        
+
 
 # TODO: Obsolete. Delete this later!!!
 # def show_all_surveys():
@@ -187,7 +191,8 @@ def show_fire():
 
         # NOTE: Generate firing checkbox
         df["status"] = [False for row in df.index]
-        columns_order = ["status"] + [col for col in df.columns if col != "status"]
+        columns_order = ["status"] + \
+            [col for col in df.columns if col != "status"]
         df = df[columns_order]
 
         column_config = {
@@ -204,14 +209,16 @@ def show_fire():
         }
 
         # NOTE: Show Spreadsheet
-        edited_df = st.data_editor(df, column_config=column_config, hide_index=True)
+        edited_df = st.data_editor(
+            df, column_config=column_config, hide_index=True)
 
         # NOTE: Submitting changes
         if st.button("Save Changes"):
             edited_df["status"] = edited_df["status"].apply(
                 lambda x: -2 if x == True else 1
             )
-            filtered_data = edited_df[["pid", "status"]].to_dict(orient="records")
+            filtered_data = edited_df[["pid", "status"]].to_dict(
+                orient="records")
 
             # st.dataframe(edited_df)
 
@@ -228,7 +235,7 @@ def show_fire():
             else:
                 st.error(
                     f"Failed to save changes. Status code: {
-                         response.status_code}"
+                        response.status_code}"
                 )
 
 
@@ -260,7 +267,8 @@ def show_hire():
 
         df["status"] = st.session_state["checkboxes"]
 
-        columns_order = ["status"] + [col for col in df.columns if col != "status"]
+        columns_order = ["status"] + \
+            [col for col in df.columns if col != "status"]
         df = df[columns_order]
         # ^reorders the columns to put 'hired' column at the front of the list
 
@@ -278,13 +286,16 @@ def show_hire():
         }
 
         # NOTE: Show Spreadsheet
-        edited_df = st.data_editor(df, column_config=column_config, hide_index=True)
+        edited_df = st.data_editor(
+            df, column_config=column_config, hide_index=True)
 
         st.session_state["checkboxes"] = edited_df["status"].tolist()
 
         if st.button("Save Changes"):
-            edited_df["status"] = edited_df["status"].apply(lambda x: 1 if x else 0)
-            filtered_data = edited_df[["pid", "status"]].to_dict(orient="records")
+            edited_df["status"] = edited_df["status"].apply(
+                lambda x: 1 if x else 0)
+            filtered_data = edited_df[["pid", "status"]].to_dict(
+                orient="records")
 
             response = requests.post(
                 st.session_state.backend["url"] + "hire",
@@ -299,7 +310,7 @@ def show_hire():
             else:
                 st.error(
                     f"Failed to save changes. Status code: {
-                         response.status_code}"
+                        response.status_code}"
                 )
                 st.write(f"Error: {response.text}")
 
