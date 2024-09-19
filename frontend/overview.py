@@ -3,47 +3,99 @@ import requests
 from requests.auth import HTTPBasicAuth
 import pandas as pd
 
-
-# A quick documentation for status
-# -2 = Fired
-# -1 = Not hired
-# 0 = ?
-# 1 = Hired
-#
-
-
 st.title("Overview")
 
+test_data = [{"id" : "11111111", "name": "Bob", "email": "bob@uvu.edu", "uvid": "111111111", "degreepercent": 99, "teambefore": True, "speciality": "Machine Learning", "major": "Computational Data Science", "aoi": "Artificial Intelligence", "social": 5, "status": 1}]
+
+def encode_status_code(status: str):
+    match status:
+        case "Hired":
+            return 1
+        case "Not Hired":
+            return 0
+        case "Fired":
+            return -1
+        # TODO: Add the rest of the status codes!
+        case _:
+            return status
+
+def format_DataFrame(data: list[dict[str, str|int|bool]]):
+    def decode_status_code(status: int):
+        match status:
+            case 1:
+                return "Hired"
+            case 0:
+                return "Not hired"
+            case -1:
+                return "Fired"
+        # TODO: Add the rest of the status codes!
+            case _:
+                return status
+
+    df = pd.DataFrame(data)
+
+    df["status"] = [decode_status_code(value) for value in df["status"]]#.iloc()]
+    columns_order = ["status"] + [col for col in df.columns if col != "status"]
+    df = df[columns_order]
+    return df
+
+EMPLOYEE_STATUS_CODE: list[str] = [
+    "Fired",
+    "Hired",
+    "Not Hired"
+]
+
+EMPLOYEE_COLUMN_CONFIG = {
+    "status": st.column_config.SelectboxColumn(label="Status", options=EMPLOYEE_STATUS_CODE),
+    "id": st.column_config.Column(label="Employee ID", disabled=True),
+    "uvid": st.column_config.Column(label="UVID", disabled=True),
+    "name": st.column_config.Column(label="Name", disabled=True),
+    "email": st.column_config.Column(label="eMail", disabled=True),
+    "degreepercent": st.column_config.Column(label="Degree Percent", disabled=True),
+    "teambefore": st.column_config.Column(label="Team Before?", disabled=True),
+    "speciality": st.column_config.Column(label="Speciality", disabled=True),
+    "major": st.column_config.Column(label="Major", disabled=True),
+    "aoi": st.column_config.Column(label="Interest", disabled=True),
+    "social": st.column_config.Column(label="Social", disabled=True),
+}
 
 def main():
-    option = st.selectbox(
-        "Select one",
-        (
-            "Select an option",
-            "hire",
-            "status",
-            "fire",
-            "all surveys",
-            "pending projects",
-        ),
-    )
+    # NOTE:
+    # status + hire + fire + all surveys
+    # pending projects + running projects (teams and descriptions)
+    options = ("Select an option", "Employees", "Team Projects")
+    # TODO: Delete this!
+    # old_options = (
+    #         "Select an option",
+    #         "hire",
+    #         "status",
+    #         "fire",
+    #         "all surveys",
+    #         "pending projects",
+    #     )
+    option = st.selectbox("Select one", options)#old_options)
     # st.write(f'You selected: {option}')
     if option != "Select an option":
         option_selection(option)
 
 
 def option_selection(option):
-    if option == "hire":
-        show_hire()
-    elif option == "status":
-        show_status()
-    elif option == "fire":
-        show_fire()
-        st.write("Congratulations! You have been fired!")
-    elif option == "all surveys":
-        show_all_surveys()
-    if option == "pending projects":
-        show_pending_projects()
+    # if option == "hire":
+    #     show_hire()
+    # elif option == "status":
+    #     show_status()
+    # elif option == "fire":
+    #     show_fire()
+    #     st.write("Congratulations! You have been fired!")
+    # elif option == "all surveys":
+    #     show_all_surveys()
+    # if option == "pending projects":
+    #     show_pending_projects()
+    match option:
+        case "Employees":
+            show_status()
+        case "Team Projects":
+            show_pending_projects()
 
 
 def show_pending_projects():
@@ -61,7 +113,6 @@ def show_pending_projects():
         # st.json(r.json())
         st.dataframe(pd.DataFrame(r.json()), hide_index=True)
 
-
 def show_status():
     st.write("Here is the status")
     r = requests.get(
@@ -70,29 +121,55 @@ def show_status():
             st.session_state.backend["username"], st.session_state.backend["password"]
         ),
     )
-    if r.status_code != 200:
-        st.text("The world is dying")
-        st.text(r.status_code)
-    else:
-        # st.json(r.json())
-        st.dataframe(pd.DataFrame(r.json()), hide_index=True)
+    global test_data
+    df = format_DataFrame(test_data) 
+    edited_df = st.data_editor(df, column_config=EMPLOYEE_COLUMN_CONFIG, hide_index=True, use_container_width=True)
+    if st.button("Save Changes"):
+        edited_df["status"] = edited_df["status"].apply(encode_status_code)
+        filtered_data = edited_df[["pid", "status"]].to_dict(orient="records")
+
+        response = requests.post(
+            st.session_state.backend["url"] + "status",
+            json=filtered_data,
+            auth=HTTPBasicAuth(
+                st.session_state.backend["username"],
+                st.session_state.backend["password"],
+            ),
+        )
+        if response.status_code == 200:
+            st.success("Changes save successfully!")
+        else:
+            st.error(
+                f"Failed to save changes. Status code: {
+                     response.status_code}"
+            )
+    # if r.status_code != 200:
+    #     st.text("The world is dying")
+    #     st.text(r.status_code)
+    # else:
+    #     # st.json(r.json())
+    #     df = format_DataFrame(r.json())
+    #     # st.dataframe(df, hide_index=True)
+        # st.data_editor(df, column_config=EMPLOYEE_COLUMN_CONFIG, hide_index=True, use_container_width=True)
+        
+
+# TODO: Obsolete. Delete this later!!!
+# def show_all_surveys():
+#     st.write("Here is the status")
+#     r = requests.get(
+#         st.session_state.backend["url"] + "preinterview",
+#         auth=HTTPBasicAuth(
+#             st.session_state.backend["username"], st.session_state.backend["password"]
+#         ),
+#     )
+#     if r.status_code != 200:
+#         st.text("The world is dying")
+#         st.text(r.status_code)
+#     else:
+#         st.json(r.json())
 
 
-def show_all_surveys():
-    st.write("Here is the status")
-    r = requests.get(
-        st.session_state.backend["url"] + "preinterview",
-        auth=HTTPBasicAuth(
-            st.session_state.backend["username"], st.session_state.backend["password"]
-        ),
-    )
-    if r.status_code != 200:
-        st.text("The world is dying")
-        st.text(r.status_code)
-    else:
-        st.json(r.json())
-
-
+# TODO: Copy submit button and delete
 def show_fire():
     st.write("Here is the status")
     r = requests.get(
@@ -108,7 +185,7 @@ def show_fire():
         # st.json(r.json())
         df = pd.DataFrame(r.json())
 
-        # Generate firing checkbox
+        # NOTE: Generate firing checkbox
         df["status"] = [False for row in df.index]
         columns_order = ["status"] + [col for col in df.columns if col != "status"]
         df = df[columns_order]
@@ -126,8 +203,10 @@ def show_fire():
             "score": st.column_config.Column(label="Score", disabled=True),
         }
 
+        # NOTE: Show Spreadsheet
         edited_df = st.data_editor(df, column_config=column_config, hide_index=True)
 
+        # NOTE: Submitting changes
         if st.button("Save Changes"):
             edited_df["status"] = edited_df["status"].apply(
                 lambda x: -2 if x == True else 1
@@ -198,6 +277,7 @@ def show_hire():
             "score": st.column_config.Column(label="Score", disabled=True),
         }
 
+        # NOTE: Show Spreadsheet
         edited_df = st.data_editor(df, column_config=column_config, hide_index=True)
 
         st.session_state["checkboxes"] = edited_df["status"].tolist()
