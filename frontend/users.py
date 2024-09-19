@@ -33,6 +33,7 @@ with st.form("verification", border=False):
     )
     if submitted:
         with open(USERS, "w") as f:
-            toml.dump(modified_user_data, f)
+            user_data["users"] = modified_user_data
+            toml.dump(user_data, f)
 
         st.toast("success")
