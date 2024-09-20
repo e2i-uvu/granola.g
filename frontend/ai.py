@@ -52,7 +52,7 @@ def build_new_team(
 
     if r.status_code == 200:
         # Successful request
-        response_data = r.json()
+        response_data = r.json() # this is response data
         print(response_data)
     else:
         # Handle the error
@@ -164,7 +164,7 @@ Ask clarifying questions before calling tools if needed.
 
 ### --- Specific Functions --- ###
 
-
+@st.dialog("Edit Data", width="large")
 def display_team(team_json):
     team_json_list = []
     team_json_partial = []
@@ -203,6 +203,7 @@ def display_team(team_json):
 
     with column1:
         if st.button("Edit", use_container_width=True):
+            #display_team()
             edit_dialog(
                 st.session_state.main_df, main_df_container, column_configuration
             )
@@ -213,14 +214,13 @@ def display_team(team_json):
             # TODO: Henry - write post request here
             # POST TO DATABASE HERE:
             # This is where we send back the confirmed team
-
             df_json = st.session_state.main_df.to_dict(orient="records")
             # st.json(df_json)
             # print(json.dumps(df_json, indent=4))
 
             r = requests.post(
                 st.session_state.backend["url"] + "teams",
-                json=df_json,
+                json=json.dumps(df_json),
                 auth=HTTPBasicAuth(
                     st.session_state.backend["username"],
                     st.session_state.backend["password"],
@@ -241,9 +241,7 @@ def display_team(team_json):
                      r.status_code}"
                 )
 
-
-
-@st.dialog("Edit Data", width="large")
+# @st.dialog("Edit Data", width="large")
 def edit_dialog(df, main_df_container, column_configuration):
     if "Remove" not in st.session_state.main_df.columns:
         st.session_state.main_df.insert(0, "Remove", False)
