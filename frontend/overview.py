@@ -5,12 +5,12 @@ import pandas as pd
 
 st.title("Overview")
 
-#test_data = [{"id" : "11111111", "name": "Bob", "email": "bob@uvu.edu", "uvid": "111111111", "degreepercent": 99, "teambefore": True, "speciality": "Machine Learning", "major": "Computational Data Science", "aoi": "Artificial Intelligence", "social": 5, "status": 1}]
+# NOTE: EMPLOYEES
 
 EMPLOYEE_STATUS_CODE: list[str] = [
-    "Fired",
-    "Hired",
-    "Not hired"
+    "Assigned",
+    "Pending Assignment",
+    "Previously on e2i"
 ]
 
 EMPLOYEE_COLUMN_ORDER: list[str] = [
@@ -27,9 +27,9 @@ EMPLOYEE_COLUMN_ORDER: list[str] = [
     "social",
     "id"
 ]
-
+ 
 EMPLOYEE_COLUMN_CONFIG = {
-    "status": st.column_config.SelectboxColumn(label="Status", options=EMPLOYEE_STATUS_CODE, required=True),
+    "status": st.column_config.SelectboxColumn(label="Status", disabled=True, options=EMPLOYEE_STATUS_CODE, required=True),
     "id": st.column_config.Column(label="Employee ID", disabled=True),
     "uvid": st.column_config.Column(label="UVID", disabled=True),
     "name": st.column_config.Column(label="Name", disabled=True),
@@ -45,51 +45,39 @@ EMPLOYEE_COLUMN_CONFIG = {
 
 def encode_status_code(status: str):
     match status:
-        case "Hired":
+        case "Assigned":
             return 1
-        case "Not hired":
+        case "Pending Assignment":
             return 0
-        case "Fired":
-            return -2
-        # TODO: Add the rest of the status codes!
-        case "":
-            return 1#status
+        case "Previously on e2i":
+            return -1
 
 def employee_stats_summary(df: pd.Series | pd.DataFrame) -> dict[str, int|float|str]:
     return {
-        "Applicants/Employees": len(df),
-        "Unhired Applicants": len([s for s in df.status if s != 1]),
-        "Unassigned Employees": 0,
-        #"Degree Percent Mean": f"{df.degreepercent.mean()}%"
-        
-        # "Statistic" : ["Employee Count", "Unassigned Employees", "Degree Percent Mean"], 
-        # "Value" : [len(df), len([s for s in df.status if s != 1]), df['degreepercent'].mean()] 
+        "Total Team Members": len(df),
+        "Assigned": len([s for s in df.status if s == 1]),
+        "Unassigned": len([s for s in df.status if s != 1]),
     }
 
 def format_DataFrame(data: list[dict[str, str | int | bool]]):
     def decode_status_code(status: int):
         match status:
             case 1:
-                return "Hired"
+                return "Assigned"
             case 0:
-                return "Not hired"
+                return "Pending Assignment"
             case -2:
-                return "Fired"
-        # TODO: Add the rest of the status codes!
-            case _:
-                return "Not hired"
+                return "Previously on e2i"
 
     df = pd.DataFrame(data)
     stats = employee_stats_summary(df)
-
-    #st.dataframe(df)
 
     df["status"] = [decode_status_code(value) for value in df["status"]]#.iloc()]
     df["degreepercent"] = [f"{value}%" for value in df["degreepercent"]]
 
     return df, stats
 
-def show_stats(stats: dict[str, int|float|str]) -> None:
+def generate_stats(stats: dict[str, int|float|str]) -> None:
     labels = list(stats.keys())
     values = list(stats.values())
     stat_num: int = len(stats)
@@ -100,7 +88,6 @@ def show_stats(stats: dict[str, int|float|str]) -> None:
             st.metric(labels[i], values[i])
 
 def show_status():
-    st.write("Here is the status")
     r = requests.get(
         st.session_state.backend["url"] + "employees",
         auth=HTTPBasicAuth(
@@ -113,7 +100,7 @@ def show_status():
     else:
 
         df, stats = format_DataFrame(r.json())
-        show_stats(stats) 
+        generate_stats(stats) 
         edited_df = st.data_editor(
             df, 
             height = 1400,
@@ -131,8 +118,6 @@ def show_status():
             edited_df["pid"] = edited_df["id"]
             filtered_data = edited_df[["pid", "status"]].to_dict(orient="records")
 
-            #filtered_data
-
             response = requests.post(
                 st.session_state.backend["url"] + "employees",
                 json=filtered_data,
@@ -149,6 +134,7 @@ def show_status():
                          response.status_code}"
                 )
 
+# NOTE: PROJECTS
 def show_pending_projects():
     st.write("Here is the status")
     r = requests.get(
@@ -164,21 +150,24 @@ def show_pending_projects():
         # st.json(r.json())
         st.dataframe(pd.DataFrame(r.json()), hide_index=True)
 
-def option_selection(option):
-    match option:
-        case "Employees":
-            show_status()
-        case "Team Projects":
-            show_pending_projects()
+# NOTE: DATA ANALYTICS
+def show_analytics():
+    pass
 
+# NOTE: main
 def main():
     # NOTE:
     # pending projects + running projects (teams and descriptions)
-    OPTIONS = ("Select an option", "Employees", "Team Projects")
-    option = st.selectbox("Select one", OPTIONS)  # old_options)
+    option = st.selectbox("Select one", ("Select an option", "Employees", "Team Projects", "Analytics"))  # old_options)
 
     if option != "Select an option":
-        option_selection(option)
+        match option:
+            case "Employees":
+                show_status()
+            case "Team Projects":
+                show_pending_projects()
+            case "Analytics":
+                show_analytics()
 
 main()
 # NOTE:
