@@ -44,9 +44,10 @@ if st.button("Create Team"):
 
         st.header("Response from backend")
 
+        st.json(r.json())
+
         to_send = test_post
 
-        st.json(r.json())
         st.success("success")
 
         new_r = requests.post(
