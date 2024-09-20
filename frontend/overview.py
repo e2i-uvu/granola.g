@@ -3,6 +3,10 @@ import requests
 from requests.auth import HTTPBasicAuth
 import pandas as pd
 
+# Data Analytics
+import matplotlib.pyplot as plt
+import numpy as np
+
 st.title("Overview")
 
 # NOTE: EMPLOYEES
@@ -77,15 +81,22 @@ def format_DataFrame(data: list[dict[str, str | int | bool]]):
 
     return df, stats
 
-def generate_stats(stats: dict[str, int|float|str]) -> None:
-    labels = list(stats.keys())
-    values = list(stats.values())
-    stat_num: int = len(stats)
-    metric_columns = st.columns(stat_num)
+def generate_stats(stats: dict[str, int|float|str]| pd.Series) -> None:
+    if type(stats) == dict:
+        labels = list(stats.keys())
+        values = list(stats.values())
+        stat_num: int = len(stats)
+        metric_columns = st.columns(stat_num)
 
-    for i in range(stat_num):
-        with metric_columns[i]:
-            st.metric(labels[i], values[i])
+        for i in range(stat_num):
+            with metric_columns[i]:
+                if type(values[i]) == pd.Series:
+                    values[i] = values[i][0]
+                st.metric(labels[i], values[i])
+
+
+
+
 
 def show_status():
     r = requests.get(
@@ -95,6 +106,7 @@ def show_status():
         ),
     )
     if r.status_code != 200:
+        # TODO: Something??
         st.text("The world is dying")
         st.text(r.status_code)
     else:
@@ -129,10 +141,7 @@ def show_status():
             if response.status_code == 200:
                 st.success("Changes save successfully!")
             else:
-                st.error(
-                    f"Failed to save changes. Status code: {
-                         response.status_code}"
-                )
+                st.error( f"Failed to save changes. Status code: {response.status_code}")
 
 # NOTE: PROJECTS
 def show_pending_projects():
@@ -144,15 +153,51 @@ def show_pending_projects():
         ),
     )
     if r.status_code != 200:
+        # TODO: Something??
         st.text("The world is dying")
         st.text(r.status_code)
     else:
-        # st.json(r.json())
-        st.dataframe(pd.DataFrame(r.json()), hide_index=True)
+        st.json(r.json())
 
 # NOTE: DATA ANALYTICS
 def show_analytics():
-    pass
+    r = requests.get(
+        st.session_state.backend["url"] + "employees",
+        auth=HTTPBasicAuth(
+            st.session_state.backend["username"], st.session_state.backend["password"]
+        )
+    )
+    if r.status_code != 200:
+        st.text("The world is dying")
+        st.text(r.status_code)
+    else:
+        df = pd.DataFrame(r.json())
+
+        statistics: dict[str, dict[str, str|int|float]] = {
+            "Frequencies" : {
+                "Total Team Members": len(df),
+                "Assigned": len([s for s in df.status if s == 1]),
+                "Unassigned": len([s for s in df.status if s != 1]),
+            },
+            "Means" : {
+                "Social Skills": round(df.social.mean(),2),
+                "Degree Percentage": round(df.degreepercent.mean(),2),
+            },
+            "Modes" : {
+                #"Area of Interest": df.aoi.mode(),
+                "Major": df.major.mode(),
+                #"Major (Alt)": df.majoralt.mode()
+            }
+        }
+
+        for stat, values in statistics.items():
+            st.subheader(stat)
+            generate_stats(values)
+
+        # FIX: Not available yet
+        # hist = plt.hist(np.array(df.degreepercent))
+        # st.pyplot(hist)
+
 
 # NOTE: main
 def main():
