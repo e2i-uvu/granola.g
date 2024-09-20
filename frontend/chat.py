@@ -125,24 +125,21 @@ def render_messages():
         else:
             st.chat_message(name=message["role"]).markdown(message["content"])
 
-        # TODO: also need to not render tool calls
-
     # display_team(suggested_team) this will replace what is 3 lines down
 
 
-st.title("AI Chat :brain:")
-col1, col2 = st.columns(2, vertical_alignment="bottom")
+col1, col2 = st.columns([2, 1], vertical_alignment="bottom")
+col1.title("AI Chat :brain:")
 
-with col1:
+with col2:
     if st.button("New Chat", use_container_width=True):
         st.session_state.gpt["messages"] = []
-
-# with col2:
-# st.session_state.status = st.status(label="Waiting", state="complete")
 
 if st.session_state.user["role"] == "developer":
     with st.popover("Messages", use_container_width=True):
         st.json(st.session_state.gpt["messages"])
+
+st.caption("Keep in mind AI responses may be inaccurate.")
 
 st.write("---")
 
@@ -155,4 +152,3 @@ if user_input := st.chat_input("Send a message"):
 
         # st.chat_message("assistant").write_stream(stream_response(user_input))
         st.write_stream(ai(user_input))
-

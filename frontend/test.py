@@ -5,6 +5,7 @@ import json
 
 
 st.title("build quick n dirty team")
+st.caption("almost there")
 
 test_data = {
     "project_name": "Video Game and Website",
@@ -20,8 +21,7 @@ test_data = {
 st.json(test_data)
 
 
-create_team = st.button("Create Team")
-if create_team:
+if st.button("Create Team"):
     r = requests.get(
         st.session_state.backend["url"] + "teams",
         json=json.dumps(test_data),
@@ -35,6 +35,10 @@ if create_team:
         st.header("Response from backend")
 
         to_send = r.json()
+        # BUG: error ^^^ is here. the `r.json()` method returns a python dictionary
+        # Additionally, I tried `r.text` which just returns a string of the response
+        # and that is a Json Parse Error, unexpected end of data at line 1 column 1
+
         st.json(to_send)
         st.success("success")
 
