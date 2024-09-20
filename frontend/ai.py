@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import json
-from json_data_CAN_DELETE_LATER import json_example_data
 
 import toml
 from datetime import datetime
@@ -200,7 +199,8 @@ def display_team(team_json):
         st.session_state.main_df, hide_index=True, column_config=column_configuration
     )
 
-    column1, column2, column3 = st.columns([1, 1, 5], vertical_alignment="bottom")
+    column1, column2, column3 = st.columns(
+        [1, 1, 5], vertical_alignment="bottom")
 
     with column1:
         if st.button("Edit", use_container_width=True):
@@ -229,7 +229,8 @@ def display_team(team_json):
                 st.text(r.status_code)
             else:
                 print(r.status_code)
-    
+
+
 @st.dialog("Edit Data", width="large")
 def edit_dialog(df, main_df_container, column_configuration):
     if "Remove" not in st.session_state.main_df.columns:
@@ -250,7 +251,8 @@ def edit_dialog(df, main_df_container, column_configuration):
 
             if "selected_row" in st.session_state:
                 st.session_state.main_df = (
-                    pd.concat([st.session_state.main_df, st.session_state.selected_row])
+                    pd.concat([st.session_state.main_df,
+                              st.session_state.selected_row])
                     .drop_duplicates()
                     .reset_index(drop=True)
                 )
@@ -272,14 +274,15 @@ def add_members(df, col1, main_df_container, column_configuration):
     all_options = []
     # TODO: Henry -
     # GET REQUEST FROM DATABASE, SHOULD RETURN JSON INFORMATION OF FROM EVERY PERSON
-    # json_example_data = requests.get(... ) 
-    for item in json_example_data:
-        for key in item:
-            all_options.append(item[key])
+    # json_example_data = requests.get(... )
+    # for item in json_example_data:
+    #     for key in item:
+    #         all_options.append(item[key])
 
     df = pd.DataFrame(all_options)
     temp_df = df
-    temp_df["display"] = temp_df["name"] + " -- (" + temp_df["speciality"] + ")"
+    temp_df["display"] = temp_df["name"] + \
+        " -- (" + temp_df["speciality"] + ")"
     all_options = temp_df["display"].tolist()
 
     with col1:
@@ -307,4 +310,5 @@ def add_members(df, col1, main_df_container, column_configuration):
         )
         st.session_state.selected_row = combined_selected_df
 
-        st.dataframe(selected_df, hide_index=True, column_config=column_configuration)
+        st.dataframe(selected_df, hide_index=True,
+                     column_config=column_configuration)
