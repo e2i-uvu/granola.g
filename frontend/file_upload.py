@@ -17,7 +17,7 @@ import csv
 import requests
 from requests.auth import HTTPBasicAuth
 
-st.title("Qualtrics Upload :file_folder:")
+st.title("Qualtrics Upload :material/folder:")
 
 def upload_csv() -> list[dict[str, str]] | None:
     uploadedFile = st.file_uploader(
@@ -38,9 +38,6 @@ def upload_csv() -> list[dict[str, str]] | None:
 
 
 def import_csv_data(*, testing=False):
-
-    # NOTE: I have a nice function that can summarize loading up all this data
-    # Nice! I like your code 😄 I refactored the backend variables for you
     data = upload_csv()
 
     if data and testing:
@@ -64,6 +61,8 @@ def import_csv_data(*, testing=False):
                 "CSV uploaded successfully. Now you can check status or chat with the Assistant to build teams!", 
                 icon=":material/thumb_up:"
             )
-
+        else:
+            st.toast("CSV could not be uploaded.")
+            st.error("CSV file could not be uploaded. Try again or contact support.", icon=":material/sad:")
 
 import_csv_data(testing=False)

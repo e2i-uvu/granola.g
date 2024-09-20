@@ -4,10 +4,11 @@ from requests.auth import HTTPBasicAuth
 import pandas as pd
 
 # Data Analytics
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
+import altair as alt
 import numpy as np
 
-st.title("Overview :bar_chart:")
+st.title("Overview :material/bar_chart:")
 
 # NOTE: EMPLOYEES
 
@@ -95,9 +96,6 @@ def generate_stats(stats: dict[str, int|float|str]| pd.Series) -> None:
                 st.metric(labels[i], values[i])
 
 
-
-
-
 def show_status():
     r = requests.get(
         st.session_state.backend["url"] + "employees",
@@ -106,9 +104,8 @@ def show_status():
         ),
     )
     if r.status_code != 200:
-        # TODO: Something??
-        st.text("The world is dying")
-        st.text(r.status_code)
+        st.error(f"Error code: {r.status_code}. Contact support.", icon=":material/sad:")
+        st.toast(f"Error code: {r.status_code}", icon=":material/sad:")
     else:
 
         df, stats = format_DataFrame(r.json())
@@ -153,11 +150,21 @@ def show_pending_projects():
         ),
     )
     if r.status_code != 200:
-        # TODO: Something??
-        st.text("The world is dying")
-        st.text(r.status_code)
+        st.error(f"Error code: {r.status_code}. Contact support.", icon=":material/sad:")
+        st.toast(f"Error code: {r.status_code}", icon=":material/sad:")
     else:
         st.json(r.json())
+
+def gen_hist(df, var:str, label: str):
+    st.altair_chart(
+        alt.Chart(df).mark_bar().encode(
+            x=alt.X(var)
+                .title(label)
+                .bin(maxbins=10),
+            y=alt.Y("count()").title("Frequency"),
+            color=alt.Color("count()").title("Frequency")
+        ).properties(title=label)
+    )
 
 # NOTE: DATA ANALYTICS
 def show_analytics():
@@ -168,13 +175,13 @@ def show_analytics():
         )
     )
     if r.status_code != 200:
-        st.text("The world is dying")
-        st.text(r.status_code)
+        st.error(f"Error code: {r.status_code}. Contact support.", icon=":material/sad:")
+        st.toast(f"Error code: {r.status_code}", icon=":material/sad:")
     else:
         df = pd.DataFrame(r.json())
 
         statistics: dict[str, dict[str, str|int|float]] = {
-            "Frequencies" : {
+            "Counts" : {
                 "Total Team Members": len(df),
                 "Assigned": len([s for s in df.status if s == 1]),
                 "Unassigned": len([s for s in df.status if s != 1]),
@@ -194,9 +201,13 @@ def show_analytics():
             st.subheader(stat)
             generate_stats(values)
 
-        # FIX: Not available yet
-        # hist = plt.hist(np.array(df.degreepercent))
-        # st.pyplot(hist)
+        gen_hist(df, "degreepercent", "Degree Percent")
+        gen_hist(df, "social", "Social Skills")
+
+        # WARN: pyplot charts are kinda ugly honestly
+        # fig, ax = plt.subplots()
+        # ax.hist(np.array(df.degreepercent), bins=20)
+        # st.pyplot(fig, clear_figure=False)
 
 
 # NOTE: main
