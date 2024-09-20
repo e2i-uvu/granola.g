@@ -39,7 +39,7 @@ if create_team:
         st.success("success")
 
         new_r = requests.post(
-            st.session_state.backend["url"] + "employees",
+            st.session_state.backend["url"] + "teams",
             json=to_send,
             auth=HTTPBasicAuth(
                 st.session_state.backend["username"],
