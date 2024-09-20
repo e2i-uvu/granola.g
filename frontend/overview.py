@@ -116,6 +116,7 @@ def show_status():
         show_stats(stats) 
         edited_df = st.data_editor(
             df, 
+            height = 1400,
             column_order=EMPLOYEE_COLUMN_ORDER,
             column_config=EMPLOYEE_COLUMN_CONFIG,
             hide_index=True,
@@ -124,11 +125,13 @@ def show_status():
 
         if st.button("Save Changes"):
             edited_df["status"] = edited_df["status"].apply(encode_status_code)
-            # HACK: Backend expects a PID key, not an ID
+
+            # HACK: Backend expects a PID key, not an ID. 
+            # Therefore, this funky algorithm
             edited_df["pid"] = edited_df["id"]
             filtered_data = edited_df[["pid", "status"]].to_dict(orient="records")
 
-            filtered_data
+            #filtered_data
 
             response = requests.post(
                 st.session_state.backend["url"] + "employees",
