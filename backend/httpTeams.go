@@ -31,6 +31,7 @@ func TeamsHandler(w http.ResponseWriter, r *http.Request) {
 		//   ]
 		// }
 		// saves project to projects and then adds the employee ids and project ids to many to many table
+		w.WriteHeader(http.StatusOK)
 	}
 	if r.Method == "GET" && r.Header.Get("Content-Type") == "application/json" {
 		var project Project
