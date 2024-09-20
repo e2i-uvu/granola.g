@@ -57,7 +57,8 @@ def import_csv_data(*, testing=False):
             json=data,
         )
         if response.status_code == 200:
-            st.toast("CSV uploaded succesfully")
+            st.toast("CSV uploaded succesfully", icon=":material/thumb_up:")
+            st.success("CSV uploaded successfully. Now you can check status or chat with the Assistant to build teams!")
 
 
 st.title("Qualtrics CSV Upload")
