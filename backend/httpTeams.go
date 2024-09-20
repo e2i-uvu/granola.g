@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -39,20 +38,21 @@ func TeamsHandler(w http.ResponseWriter, r *http.Request) {
 		err := decoder.Decode(&project)
 		if err != nil {
 			InfoLogger.Println("Error decoding JSON:", err)
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		team, err := BuildTeams(project)
 		if err != nil {
 			InfoLogger.Println("Couldn't build teams")
-			http.Error(w, fmt.Sprintf("%s", err), http.StatusOK)
+			w.WriteHeader(http.StatusOK)
 			return
 		}
 
 		response, err := json.Marshal(team)
 		if err != nil {
 			InfoLogger.Println("Couldn't marshal data for hires")
-			http.Error(w, "Invalid input", http.StatusInternalServerError)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
