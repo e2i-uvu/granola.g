@@ -13,6 +13,13 @@ services:
       - "8501:8501"
     depends_on:
       - go_server
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend
+          target: /app
+          ignore:
+            - __pycache__/
     volumes:
       - "./frontend/.streamlit/:/app/.streamlit/"
     networks:

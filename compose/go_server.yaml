@@ -4,6 +4,8 @@ services:
       context: ./backend/
       dockerfile: ./Dockerfile
     restart: unless-stopped
+    ports:
+      - "8081:8081"
     volumes:
       - db:/usr/src/app/database
     networks:
