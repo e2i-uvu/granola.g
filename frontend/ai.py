@@ -209,13 +209,15 @@ def display_team(team_json):
 
     with column2:
         if st.button("Submit", use_container_width=True):
-            st.toast("Submitted!")
+            # st.toast("Submitted!")
             # TODO: Henry - write post request here
             # POST TO DATABASE HERE:
             # This is where we send back the confirmed team
 
             df_json = st.session_state.main_df.to_dict(orient="records")
-            print(json.dumps(df_json, indent=4))
+            # st.json(df_json)
+            # print(json.dumps(df_json, indent=4))
+
             r = requests.post(
                 st.session_state.backend["url"] + "teams",
                 json=df_json,
@@ -224,11 +226,21 @@ def display_team(team_json):
                     st.session_state.backend["password"],
                 ),
             )
-            if r.status_code != 200:
-                st.text("The world is dying")
-                st.text(r.status_code)
-            else:
+            if r.status_code == 200:
+                st.header("Response from backend")
+
+                recieved = new_r.json()
+                st.json(recieved)
+                st.success("success")
+
                 print(r.status_code)
+
+            else:
+                st.error(
+                f"Failed. Status code: {
+                     r.status_code}"
+                )
+
 
 
 @st.dialog("Edit Data", width="large")
@@ -274,9 +286,31 @@ def add_members(df, col1, main_df_container, column_configuration):
     # TODO: Henry -
     # GET REQUEST FROM DATABASE, SHOULD RETURN JSON INFORMATION OF FROM EVERY PERSON
     # json_example_data = requests.get(... )
-    # for item in json_example_data:
-    #     for key in item:
-    #         all_options.append(item[key])
+
+    r = requests.get(
+        st.session_state.backend["url"] + "employees",
+        auth=HTTPBasicAuth(
+            st.session_state.backend["username"],
+            st.session_state.backend["password"],
+        ),
+    )
+
+    if r.status_code == 200:
+
+        st.header("Response from backend")
+
+        to_send = r.json()
+        st.json(r.json())
+        st.success("success")
+
+    else:
+        st.error(
+        f"Failed. Status code: {
+                r.status_code}"
+        )
+    for item in json_example_data:
+        for key in item:
+            all_options.append(item[key])
 
     df = pd.DataFrame(all_options)
     temp_df = df

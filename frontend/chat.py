@@ -109,8 +109,32 @@ def ai(query: str = ""):
                 else:
                     function_response = "No project name provided."
 
-            # TODO: give better value back to ai
-            # call backend here to get team
+                # TODO: Henry -
+                # GET REQUEST HERE, THIS SHOULD RETURN THE TEAM SUGGESTED BY THE TEAM BUILDING ALGO
+                # suggested_team = requests.get(...)
+                suggested_team = requests.get(
+                    st.session_state.backend["url"] + "employees",
+                    json=json.dumps(test_data),
+                    auth=HTTPBasicAuth(
+                        st.session_state.backend["username"], st.session_state.backend["password"]
+                    ),
+                )
+
+                if r.status_code == 200:
+
+                    st.header("Response from backend")
+
+                    to_send = r.json()
+                    st.json(r.json())
+                    st.success("success")
+
+                else:
+                    st.error(
+                        f"Failed. Status code: {
+                            r.status_code}"
+                    )
+
+
 
             st.session_state.gpt["messages"].append(
                 {
@@ -144,9 +168,6 @@ def render_messages():
         # TODO: also need to not render tool calls
 
 
-    # TODO: Henry -
-    # GET REQUEST HERE, THIS SHOULD RETURN THE TEAM SUGGESTED BY THE TEAM BUILDING ALGO
-    # suggested_team = requests.get(...)
     # display_team(suggested_team) this will replace what is 3 lines down
 
     with st.chat_message("assistant"):
