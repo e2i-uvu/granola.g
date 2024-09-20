@@ -38,37 +38,34 @@ employees = [
     }
 ]
 
-projects  = ["Windows", "ChadLinux","IDRobber"]
+projects = ["Windows", "ChadLinux", "IDRobber"]
 
 columnConfig = {
-    "eid": st.column_config.Column(label="eid", disabled = True),
-    "ename": st.column_config.Column(label="ename", disabled = True),
-    "escore": st.column_config.Column(label="escore", disabled = True),
-    "pname": st.column_config.SelectboxColumn(label="pname", options = projects)
+    "eid": st.column_config.Column(label="eid", disabled=True),
+    "ename": st.column_config.Column(label="ename", disabled=True),
+    "escore": st.column_config.Column(label="escore", disabled=True),
+    "pname": st.column_config.SelectboxColumn(label="pname", options=projects)
 }
 
 session = HTTPBasicAuth(username, password)
-#r = requests.get(backend + _ +, auth=HTTPBASICAuth(username, password))
-#raw_data = r.json()
+# r = requests.get(backend + _ +, auth=HTTPBASICAuth(username, password))
+# raw_data = r.json()
 
 raw_data = pd.DataFrame(employees)
 
 st.title("Team Building")
-edited_data = st.data_editor(raw_data, column_config = columnConfig, hide_index = True)
+edited_data = st.data_editor(
+    raw_data, column_config=columnConfig, hide_index=True)
 
 if st.button('Save'):
     filtered_data = edited_data[["eid", "pname"]].to_dict()
-    response = requests.post(backend + _,
-                             json=filtered_data,
-                             auth=session)
-    if response.status_code == 200:
-        st.success("Changes saved.")
-    else:
-        st.error("Failure in saving changes.")
+    # response = requests.post(backend + _,
+    #                          json=filtered_data,
+    #                          auth=session)
+    # if response.status_code == 200:
+    #     st.success("Changes saved.")
+    # else:
+    #     st.error("Failure in saving changes.")
 
 if st.button('Reset'):
     pass
-
-
-
-
