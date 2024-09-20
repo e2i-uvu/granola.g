@@ -59,6 +59,7 @@ def import_csv_data(*, testing=False):
         )
         if response.status_code == 200:
             st.toast("CSV uploaded succesfully", icon=":material/thumb_up:")
+            st.balloons()
             st.success(
                 "CSV uploaded successfully. Now you can check status or chat with the Assistant to build teams!", 
                 icon=":material/thumb_up:"
