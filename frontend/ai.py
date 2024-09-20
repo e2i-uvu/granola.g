@@ -2,8 +2,6 @@ import streamlit as st
 import pandas as pd
 import json
 
-# from json_data_CAN_DELETE_LATER import json_example_data
-
 import toml
 from datetime import datetime
 
@@ -276,12 +274,9 @@ def add_members(df, col1, main_df_container, column_configuration):
     # TODO: Henry -
     # GET REQUEST FROM DATABASE, SHOULD RETURN JSON INFORMATION OF FROM EVERY PERSON
     # json_example_data = requests.get(... )
-
-    # json_example_data = requests.get(st.session_state.backend["url"], json)
-
-    for item in json_example_data:
-        for key in item:
-            all_options.append(item[key])
+    # for item in json_example_data:
+    #     for key in item:
+    #         all_options.append(item[key])
 
     df = pd.DataFrame(all_options)
     temp_df = df
