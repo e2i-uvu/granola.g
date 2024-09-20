@@ -7,6 +7,42 @@ st.title("Overview")
 
 #test_data = [{"id" : "11111111", "name": "Bob", "email": "bob@uvu.edu", "uvid": "111111111", "degreepercent": 99, "teambefore": True, "speciality": "Machine Learning", "major": "Computational Data Science", "aoi": "Artificial Intelligence", "social": 5, "status": 1}]
 
+EMPLOYEE_STATUS_CODE: list[str] = [
+    "Fired",
+    "Hired",
+    "Not hired"
+]
+
+EMPLOYEE_COLUMN_ORDER: list[str] = [
+    "status",
+    "uvid",
+    "name",
+    "email",
+    "speciality",
+    "teambefore",
+    "major",
+    "majoralt",
+    "degreepercent",
+    "aoi",
+    "social",
+    "id"
+]
+
+EMPLOYEE_COLUMN_CONFIG = {
+    "status": st.column_config.SelectboxColumn(label="Status", options=EMPLOYEE_STATUS_CODE, required=True),
+    "id": st.column_config.Column(label="Employee ID", disabled=True),
+    "uvid": st.column_config.Column(label="UVID", disabled=True),
+    "name": st.column_config.Column(label="Name", disabled=True),
+    "email": st.column_config.Column(label="Email", disabled=True),
+    "degreepercent": st.column_config.Column(label="Degree Percent", disabled=True),
+    "teambefore": st.column_config.Column(label="Team Before?", disabled=True),
+    "speciality": st.column_config.Column(label="Speciality", disabled=True),
+    "major": st.column_config.Column(label="Major", disabled=True),
+    "majoralt": st.column_config.Column(label="Major (Alt)", disabled=True),
+    "aoi": st.column_config.Column(label="Interest", disabled=True),
+    "social": st.column_config.Column(label="Social", disabled=True),
+}
+
 def encode_status_code(status: str):
     match status:
         case "Hired":
@@ -19,108 +55,49 @@ def encode_status_code(status: str):
         case "":
             return 1#status
 
+def employee_stats_summary(df: pd.Series | pd.DataFrame) -> dict[str, int|float|str]:
+    return {
+        "Applicants/Employees": len(df),
+        "Unhired Applicants": len([s for s in df.status if s != 1]),
+        "Unassigned Employees": 0,
+        #"Degree Percent Mean": f"{df.degreepercent.mean()}%"
+        
+        # "Statistic" : ["Employee Count", "Unassigned Employees", "Degree Percent Mean"], 
+        # "Value" : [len(df), len([s for s in df.status if s != 1]), df['degreepercent'].mean()] 
+    }
 
 def format_DataFrame(data: list[dict[str, str | int | bool]]):
     def decode_status_code(status: int):
         match status:
             case 1:
-                st.write(True)
                 return "Hired"
             case 0:
                 return "Not hired"
-            case -1:
+            case -2:
                 return "Fired"
         # TODO: Add the rest of the status codes!
             case _:
                 return "Not hired"
 
     df = pd.DataFrame(data)
+    stats = employee_stats_summary(df)
+
+    #st.dataframe(df)
 
     df["status"] = [decode_status_code(value) for value in df["status"]]#.iloc()]
+    df["degreepercent"] = [f"{value}%" for value in df["degreepercent"]]
 
-    if "id" in df and "pid" not in df:
-        df["pid"] = df["id"]
-        del df['id']
-    columns_order = ["status"] + [col for col in df.columns if col != "status"]
-    df = df[columns_order]
-    return df
+    return df, stats
 
+def show_stats(stats: dict[str, int|float|str]) -> None:
+    labels = list(stats.keys())
+    values = list(stats.values())
+    stat_num: int = len(stats)
+    metric_columns = st.columns(stat_num)
 
-EMPLOYEE_STATUS_CODE: list[str] = [
-    "Fired",
-    "Hired",
-    "Not hired"
-]
-
-EMPLOYEE_COLUMN_CONFIG = {
-    "status": st.column_config.SelectboxColumn(label="Status", options=EMPLOYEE_STATUS_CODE),
-    "id": st.column_config.Column(label="Employee ID", disabled=True),
-    "uvid": st.column_config.Column(label="UVID", disabled=True),
-    "name": st.column_config.Column(label="Name", disabled=True),
-    "email": st.column_config.Column(label="eMail", disabled=True),
-    "degreepercent": st.column_config.Column(label="Degree Percent", disabled=True),
-    "teambefore": st.column_config.Column(label="Team Before?", disabled=True),
-    "speciality": st.column_config.Column(label="Speciality", disabled=True),
-    "major": st.column_config.Column(label="Major", disabled=True),
-    "aoi": st.column_config.Column(label="Interest", disabled=True),
-    "social": st.column_config.Column(label="Social", disabled=True),
-}
-
-
-def main():
-    # NOTE:
-    # status + hire + fire + all surveys
-    # pending projects + running projects (teams and descriptions)
-    options = ("Select an option", "Employees", "Team Projects")
-    # TODO: Delete this!
-    # old_options = (
-    #         "Select an option",
-    #         "hire",
-    #         "status",
-    #         "fire",
-    #         "all surveys",
-    #         "pending projects",
-    #     )
-    option = st.selectbox("Select one", options)  # old_options)
-    # st.write(f'You selected: {option}')
-    if option != "Select an option":
-        option_selection(option)
-
-
-def option_selection(option):
-    # if option == "hire":
-    #     show_hire()
-    # elif option == "status":
-    #     show_status()
-    # elif option == "fire":
-    #     show_fire()
-    #     st.write("Congratulations! You have been fired!")
-    # elif option == "all surveys":
-    #     show_all_surveys()
-    # if option == "pending projects":
-    #     show_pending_projects()
-    match option:
-        case "Employees":
-            show_status()
-        case "Team Projects":
-            show_pending_projects()
-
-
-def show_pending_projects():
-    st.write("Here is the status")
-    r = requests.get(
-        st.session_state.backend["url"] + "project",
-        auth=HTTPBasicAuth(
-            st.session_state.backend["username"], st.session_state.backend["password"]
-        ),
-    )
-    if r.status_code != 200:
-        st.text("The world is dying")
-        st.text(r.status_code)
-    else:
-        # st.json(r.json())
-        st.dataframe(pd.DataFrame(r.json()), hide_index=True)
-
+    for i in range(stat_num):
+        with metric_columns[i]:
+            st.metric(labels[i], values[i])
 
 def show_status():
     st.write("Here is the status")
@@ -130,40 +107,31 @@ def show_status():
             st.session_state.backend["username"], st.session_state.backend["password"]
         ),
     )
-    # df = format_DataFrame(test_data) 
-    # edited_df = st.data_editor(df, column_config=EMPLOYEE_COLUMN_CONFIG, hide_index=True, use_container_width=True)
-    # if st.button("Save Changes"):
-    #     edited_df["status"] = edited_df["status"].apply(encode_status_code)
-    #     filtered_data = edited_df[["pid", "status"]].to_dict(orient="records")
-    #
-    #     response = requests.post(
-    #         st.session_state.backend["url"] + "status",
-    #         json=filtered_data,
-    #         auth=HTTPBasicAuth(
-    #             st.session_state.backend["username"],
-    #             st.session_state.backend["password"],
-    #         ),
-    #     )
-    #     if response.status_code == 200:
-    #         st.success("Changes save successfully!")
-    #     else:
-    #         st.error(
-    #             f"Failed to save changes. Status code: {
-    #                  response.status_code}"
-    #         )
     if r.status_code != 200:
         st.text("The world is dying")
         st.text(r.status_code)
     else:
-        # st.json(r.json())
-        df = format_DataFrame(r.json())
-        # st.dataframe(df, hide_index=True)
-        edited_df = st.data_editor(df, column_config=EMPLOYEE_COLUMN_CONFIG, hide_index=True, use_container_width=True)
+
+        df, stats = format_DataFrame(r.json())
+        show_stats(stats) 
+        edited_df = st.data_editor(
+            df, 
+            height = 1400,
+            column_order=EMPLOYEE_COLUMN_ORDER,
+            column_config=EMPLOYEE_COLUMN_CONFIG,
+            hide_index=True,
+            use_container_width=True
+        )
+
         if st.button("Save Changes"):
             edited_df["status"] = edited_df["status"].apply(encode_status_code)
+
+            # HACK: Backend expects a PID key, not an ID. 
+            # Therefore, this funky algorithm
+            edited_df["pid"] = edited_df["id"]
             filtered_data = edited_df[["pid", "status"]].to_dict(orient="records")
 
-            # FIX: To Henry: As it is now, the Employee struct sends a string Id and string UVID, but the EmployeeStatus gets an int PID. 
+            #filtered_data
 
             response = requests.post(
                 st.session_state.backend["url"] + "employees",
@@ -181,27 +149,10 @@ def show_status():
                          response.status_code}"
                 )
 
-# TODO: Obsolete. Delete this later!!!
-# def show_all_surveys():
-#     st.write("Here is the status")
-#     r = requests.get(
-#         st.session_state.backend["url"] + "preinterview",
-#         auth=HTTPBasicAuth(
-#             st.session_state.backend["username"], st.session_state.backend["password"]
-#         ),
-#     )
-#     if r.status_code != 200:
-#         st.text("The world is dying")
-#         st.text(r.status_code)
-#     else:
-#         st.json(r.json())
-
-
-# TODO: Copy submit button and delete
-def show_fire():
+def show_pending_projects():
     st.write("Here is the status")
     r = requests.get(
-        st.session_state.backend["url"] + "fire",
+        st.session_state.backend["url"] + "project",
         auth=HTTPBasicAuth(
             st.session_state.backend["username"], st.session_state.backend["password"]
         ),
@@ -211,136 +162,23 @@ def show_fire():
         st.text(r.status_code)
     else:
         # st.json(r.json())
-        df = pd.DataFrame(r.json())
+        st.dataframe(pd.DataFrame(r.json()), hide_index=True)
 
-        # NOTE: Generate firing checkbox
-        df["status"] = [False for row in df.index]
-        columns_order = ["status"] + \
-            [col for col in df.columns if col != "status"]
-        df = df[columns_order]
+def option_selection(option):
+    match option:
+        case "Employees":
+            show_status()
+        case "Team Projects":
+            show_pending_projects()
 
-        column_config = {
-            "status": st.column_config.CheckboxColumn(label="Fire?"),
-            "pid": st.column_config.Column(label="PID", disabled=True),
-            "uvuid": st.column_config.Column(label="UVUID", disabled=True),
-            "name": st.column_config.Column(label="Name", disabled=True),
-            "lang": st.column_config.Column(label="Language", disabled=True),
-            "aoi": st.column_config.Column(label="Area of Interest", disabled=True),
-            "cancode": st.column_config.Column(label="Can Code", disabled=True),
-            "enjoyment": st.column_config.Column(label="Enjoyment", disabled=True),
-            "social": st.column_config.Column(label="Social", disabled=True),
-            "score": st.column_config.Column(label="Score", disabled=True),
-        }
+def main():
+    # NOTE:
+    # pending projects + running projects (teams and descriptions)
+    OPTIONS = ("Select an option", "Employees", "Team Projects")
+    option = st.selectbox("Select one", OPTIONS)  # old_options)
 
-        # NOTE: Show Spreadsheet
-        edited_df = st.data_editor(
-            df, column_config=column_config, hide_index=True)
-
-        # NOTE: Submitting changes
-        if st.button("Save Changes"):
-            edited_df["status"] = edited_df["status"].apply(
-                lambda x: -2 if x == True else 1
-            )
-            filtered_data = edited_df[["pid", "status"]].to_dict(
-                orient="records")
-
-            # st.dataframe(edited_df)
-
-            response = requests.post(
-                st.session_state.backend["url"] + "hire",
-                json=filtered_data,
-                auth=HTTPBasicAuth(
-                    st.session_state.backend["username"],
-                    st.session_state.backend["password"],
-                ),
-            )
-            if response.status_code == 200:
-                st.success("Changes save successfully!")
-            else:
-                st.error(
-                    f"Failed to save changes. Status code: {
-                        response.status_code}"
-                )
-
-
-def show_hire():
-    r = requests.get(
-        st.session_state.backend["url"] + "hire",
-        auth=HTTPBasicAuth(
-            st.session_state.backend["username"], st.session_state.backend["password"]
-        ),
-    )
-    # FIX: this ->   ^^^^^^^^^^^^^^^^  is broken
-
-    if r.status_code == 400:
-        st.text("There is currently no one to hire")
-        st.text(r.status_code)
-    elif r.status_code != 200:
-        st.text("The world is dying")
-        st.text(r.status_code)
-    else:
-        st.write("You are hiring this person")
-        data = r.json()
-        df = pd.DataFrame(data)
-
-        df["status"] = df["status"].apply(lambda x: x >= 1)
-        # ^converts the 'hired' column into boolean values to show up as checkmarks
-
-        if "checkboxes" not in st.session_state:
-            st.session_state["checkboxes"] = df["status"].tolist()
-
-        df["status"] = st.session_state["checkboxes"]
-
-        columns_order = ["status"] + \
-            [col for col in df.columns if col != "status"]
-        df = df[columns_order]
-        # ^reorders the columns to put 'hired' column at the front of the list
-
-        column_config = {
-            "status": st.column_config.Column(label="Hire"),
-            "pid": st.column_config.Column(label="PID", disabled=True),
-            "uvuid": st.column_config.Column(label="UVUID", disabled=True),
-            "name": st.column_config.Column(label="Name", disabled=True),
-            "lang": st.column_config.Column(label="Language", disabled=True),
-            "aoi": st.column_config.Column(label="Area of Interest", disabled=True),
-            "cancode": st.column_config.Column(label="Can Code", disabled=True),
-            "enjoyment": st.column_config.Column(label="Enjoyment", disabled=True),
-            "social": st.column_config.Column(label="Social", disabled=True),
-            "score": st.column_config.Column(label="Score", disabled=True),
-        }
-
-        # NOTE: Show Spreadsheet
-        edited_df = st.data_editor(
-            df, column_config=column_config, hide_index=True)
-
-        st.session_state["checkboxes"] = edited_df["status"].tolist()
-
-        if st.button("Save Changes"):
-            edited_df["status"] = edited_df["status"].apply(
-                lambda x: 1 if x else 0)
-            filtered_data = edited_df[["pid", "status"]].to_dict(
-                orient="records")
-
-            response = requests.post(
-                st.session_state.backend["url"] + "hire",
-                json=filtered_data,
-                auth=HTTPBasicAuth(
-                    st.session_state.backend["username"],
-                    st.session_state.backend["password"],
-                ),
-            )
-            if response.status_code == 200:
-                st.success("Changes save successfully!")
-            else:
-                st.error(
-                    f"Failed to save changes. Status code: {
-                        response.status_code}"
-                )
-                st.write(f"Error: {response.text}")
-
-        if st.button("Show session state"):
-            st.write(st.session_state)
-
+    if option != "Select an option":
+        option_selection(option)
 
 main()
 # NOTE:

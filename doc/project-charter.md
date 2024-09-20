@@ -7,25 +7,27 @@
 To develop an AI-driven platform to streamline and enhance the recruitment process, reducing time-to-hire and improving team organization.
 
 ## 3. Project Objectives
-- Reduce time-to-hire by ?% 
+- Reduce time-to-hire by 25% 
 - Achieve a candidate 
-- Integrate AI-driven
+- Integrate AI-driven team building
+- Allow managment to export data in a way that works with current system
 
 ## 4. Scope
 **In Scope**:
 - Determine useful information we need about canidates to enable us to judge their abilites. 
 - Develop website for interviewers and management to use for interviews and team formation. 
 - Develop AI enhanced algorithm to determine team structure to best fit needs of different projects. 
-- Integration with existing HR systems.
+  
 
 **Out of Scope**:
 - Development of custom HR systems.
-- Long-term maintenance and support post-launch.
+- Long-term maintenance and support post-launch v1.
+  
 
 ## 5. Deliverables
 - AI enhanced alogrithm for team building
 - Web-based recruitment portal
-- User documentation and training materials
+
 
 ## 6. Project Timeline
 - **Start Date**: June 24, 2024
@@ -61,8 +63,7 @@ To develop an AI-driven platform to streamline and enhance the recruitment proce
 - Potential delays in AI model training due to data issues.
 - User adoption risks if the interface is not user-friendly.
 - Resource allocation delays
--  
-
+  
 ## 13. Approval and Signatures
 - **Project Sponsor**: 
 - **Project Manager**: 

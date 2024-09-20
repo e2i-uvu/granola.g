@@ -303,7 +303,7 @@ else:
 if not st.session_state.user["mobile"]:
 
     # Dynamically change to wide if going to payroll page
-    if pg.title == "Payroll":
+    if pg.title == "Payroll" or pg.title == "Overview":
         if st.session_state.layout == "centered":
             st.session_state.layout = "wide"
             st.rerun()
