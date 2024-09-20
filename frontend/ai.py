@@ -56,7 +56,7 @@ def build_new_team(
         # print(response_data)
 
         display_team(response_data)
-
+        # have display_team return the whole submitted json, (this is in addition to making the post request)
     else:
         # Handle the error
         print(f"Error: {r.status_code}")
@@ -167,24 +167,26 @@ Ask clarifying questions before calling tools if needed.
 
 ### --- Specific Functions --- ###
 
+# I want to build a tech team, we are building a website using go as a backend and python streamlit as the frontend.
 
-@st.dialog("Edit Data", width="large")
+
+@st.dialog("Edit Team", width="large")
 def display_team(team_json):
     team_json_list = []
     team_json_partial = []
     example_team_json_list = []
 
-    # st.write(team_json)
+    st.markdown(team_json)
 
-    for item in team_json:
-        for key in item:
-            team_json_partial.append(item[key])
-            team_json_list.append(item[key])
-            example_team_json_list.append(item[key])
+    # for item in team_json:
+    #     for key in item:
+    #         team_json_partial.append(item[key])
+    #         team_json_list.append(item[key])
+    #         example_team_json_list.append(item[key])
 
     # tj = [j for i, j in team_json.itmes()]
 
-    df = pd.DataFrame(team_json_list)
+    df = pd.DataFrame(team_json)
 
     if "main_df" not in st.session_state:
         st.session_state.main_df = df
@@ -201,19 +203,22 @@ def display_team(team_json):
     }
 
     main_df_container = st.empty()
-    main_df_container.dataframe(
-        st.session_state.main_df, hide_index=True, column_config=column_configuration
-    )
-
-    column1, column2, column3 = st.columns([1, 1, 5], vertical_alignment="bottom")
-
-    with column1:
-        if st.button("Edit", use_container_width=True):
-            # display_team()
-            edit_dialog(
+    # main_df_container.dataframe(
+    #     st.session_state.main_df, hide_index=True, column_config=column_configuration
+    # )
+    edit_dialog(
                 st.session_state.main_df, main_df_container, column_configuration
             )
 
+    column1, column2, column3 = st.columns([1, 1, 5], vertical_alignment="bottom")
+
+    # with column1:
+    #     if st.button("Edit", use_container_width=True):
+    #         # display_team()
+    #         edit_dialog(
+    #             st.session_state.main_df, main_df_container, column_configuration
+    #         )
+    
     with column2:
         if st.button("Submit", use_container_width=True):
             # st.toast("Submitted!")
@@ -235,8 +240,9 @@ def display_team(team_json):
             if r.status_code == 200:
                 st.header("Response from backend")
 
-                recieved = new_r.json()
-                st.json(recieved)
+                recieved = r.json()
+
+                # st.json(recieved)
                 st.success("success")
 
                 print(r.status_code)
@@ -246,6 +252,7 @@ def display_team(team_json):
                     f"Failed. Status code: {
                      r.status_code}"
                 )
+        # add_members(df, col1, main_df_container, column_configuration)
 
 
 # @st.dialog("Edit Data", width="large")
@@ -299,13 +306,14 @@ def add_members(df, col1, main_df_container, column_configuration):
             st.session_state.backend["password"],
         ),
     )
+    to_send = ''
 
     if r.status_code == 200:
 
         st.header("Response from backend")
 
         to_send = r.json()
-        st.json(r.json())
+        # st.json(r.json())
         st.success("success")
 
     else:
@@ -313,11 +321,11 @@ def add_members(df, col1, main_df_container, column_configuration):
             f"Failed. Status code: {
                 r.status_code}"
         )
-    for item in json_example_data:
+    for item in to_send:
         for key in item:
             all_options.append(item[key])
 
-    df = pd.DataFrame(all_options)
+    df = pd.DataFrame(to_send)
     temp_df = df
     temp_df["display"] = temp_df["name"] + " -- (" + temp_df["speciality"] + ")"
     all_options = temp_df["display"].tolist()
@@ -348,3 +356,5 @@ def add_members(df, col1, main_df_container, column_configuration):
         st.session_state.selected_row = combined_selected_df
 
         st.dataframe(selected_df, hide_index=True, column_config=column_configuration)
+
+# I want to build a tech team, we are building a website using go as a backend and python streamlit as the frontend.
