@@ -17,6 +17,7 @@ import csv
 import requests
 from requests.auth import HTTPBasicAuth
 
+st.title("Qualtrics Upload :file_folder:")
 
 def upload_csv() -> list[dict[str, str]] | None:
     uploadedFile = st.file_uploader(
@@ -64,5 +65,4 @@ def import_csv_data(*, testing=False):
             )
 
 
-st.title("Qualtrics CSV Upload")
 import_csv_data(testing=False)

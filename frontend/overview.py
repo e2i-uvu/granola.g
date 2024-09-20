@@ -7,7 +7,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-st.title("Overview")
+st.title("Overview :bar_chart:")
 
 # NOTE: EMPLOYEES
 

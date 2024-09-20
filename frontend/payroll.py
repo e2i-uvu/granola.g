@@ -84,7 +84,7 @@ def merge_data(tims: pd.DataFrame, key: pd.DataFrame) -> dict:
 
 
 # --- UI ---
-st.title("Payroll Reports")
+st.title("Payroll Reports :coin:")
 st.write("---")
 
 col1, col2 = st.columns(2)
