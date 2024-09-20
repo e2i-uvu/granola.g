@@ -1,7 +1,6 @@
 import streamlit as st
 import requests
 from requests.auth import HTTPBasicAuth
-import json
 
 
 st.title("build quick n dirty team")
@@ -11,9 +10,9 @@ test_data = {
     "project_name": "Video Game and Website",
     "project_type": "Tech",
     "employees": [
-        {"employee": "Game dev", "amount": 2},
+        {"employee": "Game", "amount": 2},
         {"employee": "Frontend", "amount": 2},
-        {"employee": "Web dev", "amount": 1},
+        {"employee": "Backend", "amount": 1},
     ],
     "total_employees": 5,
 }
@@ -34,11 +33,7 @@ if st.button("Create Team"):
 
         st.header("Response from backend")
 
-        print(r.json())
-        to_send = {}
-        # BUG: error ^^^ is here. the `r.json()` method returns a python dictionary
-        # Additionally, I tried `r.text` which just returns a string of the response
-        # and that is a Json Parse Error, unexpected end of data at line 1 column 1
+        to_send = r.json()
 
         st.json(to_send)
         st.success("success")

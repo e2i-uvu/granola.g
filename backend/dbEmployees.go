@@ -30,8 +30,9 @@ func GetEmployeeArbitrary(where string) ([]Employee, error) {
 	db := OpenDB()
 	defer db.Close()
 
-	query := fmt.Sprintf(`SELECT id, name, email, uvid, degree, prevteam, speciality, major, majoralt, aoi, social, status
-	FROM employees %s LIMIT 10`, where)
+	query := fmt.Sprintf(`SELECT id, name, email, uvid, degree, prevteam, speciality, major, majoralt, aoi, social, status FROM employees %s LIMIT 10`, where)
+
+	InfoLogger.Printf("%s\n", query)
 
 	result, err := db.Query(query)
 	if err != nil {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -43,7 +44,7 @@ func TeamsHandler(w http.ResponseWriter, r *http.Request) {
 		team, err := BuildTeams(project)
 		if err != nil {
 			InfoLogger.Println("Couldn't build teams")
-			http.Error(w, "Invalid input", http.StatusBadRequest)
+			http.Error(w, fmt.Sprintf("%s", err), http.StatusOK)
 			return
 		}
 
