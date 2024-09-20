@@ -149,7 +149,7 @@ def login():
         label="Username / UVID",
         # disabled=True,  # remove upon implementation
         max_chars=8,
-        placeholder="Username / UVID",
+        # placeholder="Username / UVID",
         label_visibility="visible",
     )
 
@@ -265,7 +265,7 @@ teams_pages = [
     ),
     st.Page(
         "teams.py",
-        title="Team Building",
+        title="Team Builder",
         icon=":material/reduce_capacity:",
     ),
 ]

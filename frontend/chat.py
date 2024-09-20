@@ -5,6 +5,7 @@ import json
 
 from ai import display_team
 
+
 def moderate(query: str):
 
     mod = st.session_state.gpt["client"].moderations.create(input=query)
@@ -13,6 +14,7 @@ def moderate(query: str):
             return True
 
     return False
+
 
 def ai(query: str = ""):
 
@@ -76,7 +78,7 @@ def ai(query: str = ""):
 
             # normally surround in try except, gonna try without it
 
-            print(tc["function"]["arguments"])  # for testing only
+            # print(tc["function"]["arguments"])  # for testing only
 
             if st.session_state.gpt["tools"][function_name]["local"]:
 
@@ -90,51 +92,9 @@ def ai(query: str = ""):
                 ](**function_args)
 
             else:
-                # function_response = st.session_state.gpt["tools"][function_name][
-                #     "func"
-                # ](function_args_json)
-
-                function_args_json = tc["function"]["arguments"]                
-                project_name = json.loads(function_args_json).get("project_name")
-
-                if project_name:
-                    team_data = get_team_from_backend(project_name)
-
-                    if team_data:
-
-                        display_team(team_data)
-                        function_response = "Team displayed successfully."
-                    else:
-                        function_response = "Failed to fetch team data."
-                else:
-                    function_response = "No project name provided."
-
-                # TODO: Henry -
-                # GET REQUEST HERE, THIS SHOULD RETURN THE TEAM SUGGESTED BY THE TEAM BUILDING ALGO
-                # suggested_team = requests.get(...)
-                suggested_team = requests.get(
-                    st.session_state.backend["url"] + "employees",
-                    json=json.dumps(test_data),
-                    auth=HTTPBasicAuth(
-                        st.session_state.backend["username"], st.session_state.backend["password"]
-                    ),
-                )
-
-                if r.status_code == 200:
-
-                    st.header("Response from backend")
-
-                    to_send = r.json()
-                    st.json(r.json())
-                    st.success("success")
-
-                else:
-                    st.error(
-                        f"Failed. Status code: {
-                            r.status_code}"
-                    )
-
-
+                function_response = st.session_state.gpt["tools"][function_name][
+                    "func"
+                ](tc["function"]["arguments"])
 
             st.session_state.gpt["messages"].append(
                 {
@@ -167,110 +127,7 @@ def render_messages():
 
         # TODO: also need to not render tool calls
 
-
     # display_team(suggested_team) this will replace what is 3 lines down
-
-    with st.chat_message("assistant"):
-        display_team(  # FIX: remove
-            [
-                {
-                    0: {
-                        "id": "E001",
-                        "name": "Alice Johnson",
-                        "email": "alice.johnson@uvu.edu",
-                        "uvid": "U12345678",
-                        "degreepercent": 85,
-                        "teambefore": True,
-                        "speciality": "Software Engineering",
-                        "major": "Computer Science",
-                        "majoralt": "Mathematics",
-                        "aoi": "Artificial Intelligence",
-                        "social": 5,
-                        "status": 1,
-                    }
-                },
-                {
-                    1: {
-                        "id": "E002",
-                        "name": "Bob Smith",
-                        "email": "bob.smith@uvu.edu",
-                        "uvid": "U87654321",
-                        "degreepercent": 90,
-                        "teambefore": False,
-                        "speciality": "Data Analysis",
-                        "major": "Information Systems",
-                        "majoralt": "Statistics",
-                        "aoi": "Big Data",
-                        "social": 7,
-                        "status": 2,
-                    }
-                },
-                {
-                    2: {
-                        "id": "E003",
-                        "name": "Catherine Lee",
-                        "email": "catherine.lee@uvu.edu",
-                        "uvid": "U11223344",
-                        "degreepercent": 75,
-                        "teambefore": True,
-                        "speciality": "Cybersecurity",
-                        "major": "Computer Science",
-                        "majoralt": "Criminal Justice",
-                        "aoi": "Network Security",
-                        "social": 6,
-                        "status": 1,
-                    }
-                },
-                {
-                    3: {
-                        "id": "E004",
-                        "name": "David Brown",
-                        "email": "david.brown@uvu.edu",
-                        "uvid": "U44332211",
-                        "degreepercent": 80,
-                        "teambefore": False,
-                        "speciality": "Project Management",
-                        "major": "Business Administration",
-                        "majoralt": "Management",
-                        "aoi": "Agile Methodologies",
-                        "social": 8,
-                        "status": 2,
-                    }
-                },
-                {
-                    4: {
-                        "id": "E005",
-                        "name": "Eva Green",
-                        "email": "eva.green@uvu.edu",
-                        "uvid": "U55667788",
-                        "degreepercent": 95,
-                        "teambefore": True,
-                        "speciality": "Machine Learning",
-                        "major": "Computer Engineering",
-                        "majoralt": "Data Science",
-                        "aoi": "Deep Learning",
-                        "social": 9,
-                        "status": 1,
-                    }
-                },
-                {
-                    5: {
-                        "id": "E006",
-                        "name": "Frank White",
-                        "email": "frank.white@uvu.edu",
-                        "uvid": "U99887766",
-                        "degreepercent": 70,
-                        "teambefore": False,
-                        "speciality": "Web Development",
-                        "major": "Information Technology",
-                        "majoralt": "Graphic Design",
-                        "aoi": "Frontend Development",
-                        "social": 4,
-                        "status": 2,
-                    }
-                },
-            ]
-        )  # testing
 
 
 st.title("AI Chat :brain:")
@@ -298,3 +155,4 @@ if user_input := st.chat_input("Send a message"):
 
         # st.chat_message("assistant").write_stream(stream_response(user_input))
         st.write_stream(ai(user_input))
+

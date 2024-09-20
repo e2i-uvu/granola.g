@@ -23,7 +23,7 @@ st.json(test_data)
 create_team = st.button("Create Team")
 if create_team:
     r = requests.get(
-        st.session_state.backend["url"] + "employees",
+        st.session_state.backend["url"] + "teams",
         json=json.dumps(test_data),
         auth=HTTPBasicAuth(
             st.session_state.backend["username"], st.session_state.backend["password"]
@@ -35,7 +35,7 @@ if create_team:
         st.header("Response from backend")
 
         to_send = r.json()
-        st.json(r.json())
+        st.json(to_send)
         st.success("success")
 
         new_r = requests.post(
