@@ -34,7 +34,8 @@ if st.button("Create Team"):
 
         st.header("Response from backend")
 
-        to_send = r.json()
+        print(r.json())
+        to_send = {}
         # BUG: error ^^^ is here. the `r.json()` method returns a python dictionary
         # Additionally, I tried `r.text` which just returns a string of the response
         # and that is a Json Parse Error, unexpected end of data at line 1 column 1
@@ -63,11 +64,11 @@ if st.button("Create Team"):
 
             st.error(
                 f"Failed. Status code: {
-                     r.status_code}"
+                    r.status_code}"
             )
 
     else:
         st.error(
             f"Failed. Status code: {
-                 r.status_code}"
+                r.status_code}"
         )

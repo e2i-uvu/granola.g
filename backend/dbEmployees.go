@@ -6,8 +6,8 @@ import (
 )
 
 type EmployeeStatus struct {
-	PID    int `json:"pid"`
-	Status int `json:"status"`
+	PID    string `json:"pid"`
+	Status int    `json:"status"`
 }
 
 type Employee struct {

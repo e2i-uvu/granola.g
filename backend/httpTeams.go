@@ -11,10 +11,10 @@ type AOI struct {
 }
 
 type Project struct {
-	ProjectName    string `json:"project_name"`
-	Type           string `json:"project_type"`
-	AOIs           []AOI  `json:"employees"`
-	TotalEmployees int    `json:"total_employees"`
+	ProjectName    string      `json:"project_name"`
+	Type           string      `json:"project_type"`
+	AOIs           map[int]AOI `json:"employees"`
+	TotalEmployees int         `json:"total_employees"`
 }
 
 func TeamsHandler(w http.ResponseWriter, r *http.Request) {
