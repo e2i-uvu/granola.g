@@ -17,6 +17,17 @@ test_data = {
     "total_employees": 5,
 }
 
+test_post = {
+    "project_name": "Video Game and Website",
+    "project_type": "Tech",
+    "employees": [
+        {"employee": "r_jnhdfa9d8asdoifh89"},
+        {"employee": "r_jnhdfa9d8nfbkjvnsk"},
+        {"employee": "r_jnhdhi890u98dsuyfg"},
+    ]
+}
+
+
 st.json(test_data)
 
 
@@ -33,7 +44,7 @@ if st.button("Create Team"):
 
         st.header("Response from backend")
 
-        to_send = r.json()
+        to_send = test_post
 
         st.json(to_send)
         st.success("success")
