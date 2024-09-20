@@ -2,12 +2,6 @@ package main
 
 import ()
 
-// _, err = db.Exec(`CREATE TABLE IF NOT EXISTS projects
-//
-//	(id INTEGER PRIMARY KEY,
-//	status INTEGER,
-//	name TEXT,
-//	type TEXT)`)
 type ProjectAOI struct {
 	Aoi    string `json:"employee"`
 	Amount int    `json:"amount"`

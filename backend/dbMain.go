@@ -1,6 +1,3 @@
-// TODO: edit surveys table to include qualtrics info and delete employees
-// TODO: create status table -2: fired; -1: not invited back; 0: Complted Surveyed; 1: Pending team; 2: Assigned to team
-// TODO: create project status 0: Waiting for paperwork; 1: Waiting for team; 2: Active with team assigned; 3: Finished
 package main
 
 import (

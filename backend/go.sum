@@ -1,4 +1,2 @@
-github.com/Kunde21/numgo v0.0.0-20170108025656-b9dc613b1c37 h1:VGh+IK8CroVWnJArMbQKBWmfp6UZvNqlCSjUymYAsYQ=
-github.com/Kunde21/numgo v0.0.0-20170108025656-b9dc613b1c37/go.mod h1:cFifd7Okn3gKCg/EBS+AuO7lTkglHTrREfIDQMLOXwo=
 github.com/mattn/go-sqlite3 v1.14.22 h1:2gZY6PC6kBnID23Tichd1K+Z0oS6nE/XwU+Vz/5o4kU=
 github.com/mattn/go-sqlite3 v1.14.22/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxUwlHK0RXw+Y=

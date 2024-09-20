@@ -1,10 +1,8 @@
 package main
 
 import (
-	// "bytes"
 	"encoding/json"
 	"fmt"
-	// "io"
 	"net/http"
 	"strconv"
 	"strings"
