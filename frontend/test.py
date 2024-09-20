@@ -24,7 +24,7 @@ st.json(test_data)
 if st.button("Create Team"):
     r = requests.get(
         st.session_state.backend["url"] + "teams",
-        json=json.dumps(test_data),
+        json=test_data,
         auth=HTTPBasicAuth(
             st.session_state.backend["username"], st.session_state.backend["password"]
         ),
