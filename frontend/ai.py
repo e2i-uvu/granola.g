@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
 import json
-from json_data_CAN_DELETE_LATER import json_example_data
+
+# from json_data_CAN_DELETE_LATER import json_example_data
 
 import toml
 from datetime import datetime
@@ -221,7 +222,8 @@ def display_team(team_json):
                 st.session_state.backend["url"] + "teams",
                 json=df_json,
                 auth=HTTPBasicAuth(
-                    st.session_state.backend["username"], st.session_state.backend["password"]
+                    st.session_state.backend["username"],
+                    st.session_state.backend["password"],
                 ),
             )
             if r.status_code != 200:
@@ -229,7 +231,8 @@ def display_team(team_json):
                 st.text(r.status_code)
             else:
                 print(r.status_code)
-    
+
+
 @st.dialog("Edit Data", width="large")
 def edit_dialog(df, main_df_container, column_configuration):
     if "Remove" not in st.session_state.main_df.columns:
@@ -272,7 +275,10 @@ def add_members(df, col1, main_df_container, column_configuration):
     all_options = []
     # TODO: Henry -
     # GET REQUEST FROM DATABASE, SHOULD RETURN JSON INFORMATION OF FROM EVERY PERSON
-    # json_example_data = requests.get(... ) 
+    # json_example_data = requests.get(... )
+
+    # json_example_data = requests.get(st.session_state.backend["url"], json)
+
     for item in json_example_data:
         for key in item:
             all_options.append(item[key])

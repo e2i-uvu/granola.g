@@ -279,6 +279,7 @@ admin_pages = [
 dev_pages = [
     # st.Page("my_availability.py", title="My Availability"),
     st.Page("sessionstate.py", title="Session State", icon=":material/settings:"),
+    st.Page("test.py", title="Test Build Team"),
     # st.Page("users.py", title="Verification", icon=":material/verified:"),
 ]
 
