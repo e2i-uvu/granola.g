@@ -24,7 +24,7 @@ test_post = {
         {"employee": "r_jnhdfa9d8asdoifh89"},
         {"employee": "r_jnhdfa9d8nfbkjvnsk"},
         {"employee": "r_jnhdhi890u98dsuyfg"},
-    ]
+    ],
 }
 
 
@@ -46,7 +46,7 @@ if st.button("Create Team"):
 
         to_send = test_post
 
-        st.json(to_send)
+        st.json(r.json())
         st.success("success")
 
         new_r = requests.post(

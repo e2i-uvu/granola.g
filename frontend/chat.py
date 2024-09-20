@@ -76,25 +76,24 @@ def ai(query: str = ""):
         for tc in tool_calls:
             function_name = tc["function"]["name"]
 
-            # normally surround in try except, gonna try without it
-
-            # print(tc["function"]["arguments"])  # for testing only
+            if tc["function"]["arguments"]:
+                function_args = json.loads(tc["function"]["arguments"])
+            else:
+                function_args = {}
 
             if st.session_state.gpt["tools"][function_name]["local"]:
 
-                if tc["function"]["arguments"]:
-                    function_args = json.loads(tc["function"]["arguments"])
-                else:
-                    function_args = {}
-
+                # This one unpacks kwargs
                 function_response = st.session_state.gpt["tools"][function_name][
                     "func"
                 ](**function_args)
 
             else:
+
+                # This one does not
                 function_response = st.session_state.gpt["tools"][function_name][
                     "func"
-                ](tc["function"]["arguments"])
+                ](function_args)
 
             st.session_state.gpt["messages"].append(
                 {

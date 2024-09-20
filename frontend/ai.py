@@ -52,8 +52,11 @@ def build_new_team(
 
     if r.status_code == 200:
         # Successful request
-        response_data = r.json() # this is response data
-        print(response_data)
+        response_data = r.json()  # this is response data
+        # print(response_data)
+
+        display_team(response_data)
+
     else:
         # Handle the error
         print(f"Error: {r.status_code}")
@@ -164,11 +167,14 @@ Ask clarifying questions before calling tools if needed.
 
 ### --- Specific Functions --- ###
 
+
 @st.dialog("Edit Data", width="large")
 def display_team(team_json):
     team_json_list = []
     team_json_partial = []
     example_team_json_list = []
+
+    # st.write(team_json)
 
     for item in team_json:
         for key in item:
@@ -203,7 +209,7 @@ def display_team(team_json):
 
     with column1:
         if st.button("Edit", use_container_width=True):
-            #display_team()
+            # display_team()
             edit_dialog(
                 st.session_state.main_df, main_df_container, column_configuration
             )
@@ -237,9 +243,10 @@ def display_team(team_json):
 
             else:
                 st.error(
-                f"Failed. Status code: {
+                    f"Failed. Status code: {
                      r.status_code}"
                 )
+
 
 # @st.dialog("Edit Data", width="large")
 def edit_dialog(df, main_df_container, column_configuration):
@@ -303,7 +310,7 @@ def add_members(df, col1, main_df_container, column_configuration):
 
     else:
         st.error(
-        f"Failed. Status code: {
+            f"Failed. Status code: {
                 r.status_code}"
         )
     for item in json_example_data:
