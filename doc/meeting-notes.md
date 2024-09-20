@@ -94,7 +94,7 @@
   - Organize meeting notes for stakeholders.
 
 ## July 1st
-
+---
 ### Questions & Decisions
 - **Clocking In:**
   - If you're thinking about the project, clock in.
@@ -103,7 +103,7 @@
   - Can include improving documentation.
 
 ## July 8th
-
+---
 ### Meeting Structure
 - **PR Review:** At the beginning of each meeting.
   - Spencer
@@ -119,6 +119,7 @@
 - Set up a billing account for OpenAI.
 
 ## July 15th
+---
 # Granola.g Project Meeting Notes
 
 ## Meeting Agenda
@@ -188,7 +189,7 @@
 - We can't continue without VM by the end of the month.
 
 ## July 22nd
-
+---
 # Meeting Notes
 
 ### PR's
@@ -249,6 +250,7 @@
 - Develop the **team-building algorithm** into a science.
 
 ### July 29th
+---
 # Team Meeting Notes
 
 ### Passwords:
@@ -295,6 +297,7 @@
   - Coordinate communication for deployment meeting.
 
 ### August 5th 
+---
 # Meeting Notes
 
 ### General Notes:
@@ -334,6 +337,7 @@
 - (No specific updates provided)
 
 ### August 8th
+---
 # Major Change of Scope
 
 ### No More Interviews:
@@ -411,6 +415,7 @@
   - Create a bot to test the AI chatbot.
 
 ### August 19th 
+---
 # Meeting Notes - August 19th
 
 ### Agenda:
@@ -444,6 +449,7 @@ Best regards,
 Noble Beazel
 
 ### August 29th 
+---
 # Team Building Project: Defining Future Scope and Key Features
 
 ### 1. Introduction
