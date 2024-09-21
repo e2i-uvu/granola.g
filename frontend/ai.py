@@ -156,7 +156,7 @@ SYSTEM_MESSAGE = f"""# Instructions
 
 * The current date and time is {datetime.now().strftime('%H:%M on %A, %Y-%m-%d')}
 * You are an assistant for the E2i Program at Utah Valley University (UVU).
-* The Director of E2i is Jeremiah Harrison and he is awesome.
+* The best Director of E2i was Jeremiah Harrison and he is awesome.
 * You responses are formatted in github flavored markdown, with an occasional emoji.
 * Respond with concise and effective messages and a bright, upbeat and confident tone.
 
@@ -206,9 +206,7 @@ def display_team(team_json):
     # main_df_container.dataframe(
     #     st.session_state.main_df, hide_index=True, column_config=column_configuration
     # )
-    edit_dialog(
-                st.session_state.main_df, main_df_container, column_configuration
-            )
+    edit_dialog(st.session_state.main_df, main_df_container, column_configuration)
 
     column1, column2, column3 = st.columns([1, 1, 5], vertical_alignment="bottom")
 
@@ -218,7 +216,7 @@ def display_team(team_json):
     #         edit_dialog(
     #             st.session_state.main_df, main_df_container, column_configuration
     #         )
-    
+
     with column2:
         if st.button("Submit", use_container_width=True):
             # st.toast("Submitted!")
@@ -266,18 +264,19 @@ def edit_dialog(df, main_df_container, column_configuration):
     # )
 
     main_df_container.data_editor(
-    st.session_state.main_df,
-    hide_index=True,
-    column_config=column_configuration,
-            )
-    st.success('Nice')
-
+        st.session_state.main_df,
+        hide_index=True,
+        column_config=column_configuration,
+    )
+    st.success("Nice")
 
     col1, col2 = st.columns([3, 1], vertical_alignment="bottom")
 
     with col2:
         if st.button("Save"):
-            updated_df = st.session_state.main_df[st.session_state.main_df["Remove"] == False]
+            updated_df = st.session_state.main_df[
+                st.session_state.main_df["Remove"] == False
+            ]
             # .drop(
             #     columns=["Remove"]
             # )
@@ -317,7 +316,7 @@ def add_members(df, col1, main_df_container, column_configuration):
             st.session_state.backend["password"],
         ),
     )
-    to_send = ''
+    to_send = ""
 
     if r.status_code == 200:
 
@@ -341,7 +340,6 @@ def add_members(df, col1, main_df_container, column_configuration):
     temp_df["display"] = temp_df["name"] + " -- (" + temp_df["speciality"] + ")"
     all_options = temp_df["display"].tolist()
 
-    
     with col1:
         selected_options = st.selectbox(
             "Select team members to Add:",
@@ -351,24 +349,25 @@ def add_members(df, col1, main_df_container, column_configuration):
             placeholder="Begin typing to add...",
         )
 
+
 # def auto_update(df, col1, main_df_container, column_configuration):
-   
-    # if selected_options:
-    #     selected_df = df[df["display"].isin(selected_options)]
 
-    #     if "selected_rows" not in st.session_state:
-    #         st.session_state.selected_rows = []
+# if selected_options:
+#     selected_df = df[df["display"].isin(selected_options)]
 
-    #     selected_df.drop(columns=["display"], inplace=True)
+#     if "selected_rows" not in st.session_state:
+#         st.session_state.selected_rows = []
 
-    #     st.session_state.selected_rows.append(selected_df)
+#     selected_df.drop(columns=["display"], inplace=True)
 
-    #     combined_selected_df = (
-    #         pd.concat(st.session_state.selected_rows)
-    #         .drop_duplicates()
-    #         .reset_index(drop=True)
-    #     )
-    #     st.session_state.selected_row = combined_selected_df
+#     st.session_state.selected_rows.append(selected_df)
 
-    #     st.dataframe(selected_df, hide_index=True, column_config=column_configuration)
+#     combined_selected_df = (
+#         pd.concat(st.session_state.selected_rows)
+#         .drop_duplicates()
+#         .reset_index(drop=True)
+#     )
+#     st.session_state.selected_row = combined_selected_df
+
+#     st.dataframe(selected_df, hide_index=True, column_config=column_configuration)
 # I want to make a tech team with 5 people. We are making a website.

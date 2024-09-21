@@ -1,8 +1,9 @@
 import streamlit as st
+import random
 import json
 
 
-from ai import display_team
+PLACEHOLDERS = ["Send a message", "I want to build a team..."]
 
 
 def moderate(query: str):
@@ -22,8 +23,6 @@ def ai(query: str = ""):
             return "I'm sorry, I can't help you with that."
 
     st.session_state.gpt["messages"].append({"role": "user", "content": query})
-
-    # st.session_state.status.update(label="Thinking...", state="running")
 
     response = st.session_state.gpt["client"].chat.completions.create(
         model=st.session_state.gpt["model"],
@@ -129,8 +128,6 @@ def render_messages():
         else:
             st.chat_message(name=message["role"]).markdown(message["content"])
 
-    # display_team(suggested_team) this will replace what is 3 lines down
-
 
 col1, col2 = st.columns([2, 1], vertical_alignment="bottom")
 col1.title("AI Chat :material/chat:")
@@ -148,11 +145,10 @@ st.caption("Keep in mind AI responses may be inaccurate.")
 st.write("---")
 
 render_messages()
-if user_input := st.chat_input("Send a message"):
+if user_input := st.chat_input(random.choice(PLACEHOLDERS)):
 
     st.chat_message("user").markdown(user_input)
 
     with st.chat_message("assistant"):
 
-        # st.chat_message("assistant").write_stream(stream_response(user_input))
         st.write_stream(ai(user_input))
