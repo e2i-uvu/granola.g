@@ -4,11 +4,12 @@ from requests.auth import HTTPBasicAuth
 import pandas as pd
 
 # Data Analytics
-# import matplotlib.pyplot as plt
 import altair as alt
 import numpy as np
+from collections.abc import Callable
+#from enum import Enum
 
-st.title("Overview :material/bar_chart:")
+st.title("Overview :material/groups:")
 
 # NOTE: EMPLOYEES
 
@@ -155,25 +156,59 @@ def show_pending_projects():
     else:
         st.json(r.json())
 
-def gen_hist(df, var:str, label: str):
-    st.altair_chart(
-        alt.Chart(df).mark_bar().encode(
-            x=alt.X(var)
-                .title(label)
-                .bin(maxbins=10),
-            y=alt.Y("count()").title("Frequency"),
-            color=alt.Color("count()").title("Frequency")
-        ).properties(title=label)
-    )
+
+def generate_plots(df, vars: dict[str, str], plot_type: str):
+    def _generate_histogram(df, var: str, label: str):
+        st.altair_chart(
+            alt.Chart(df).mark_bar().encode(
+                x=alt.X(var)
+                    .title(label)
+                    .bin(maxbins=10),
+                y=alt.Y("count()").title("Frequency"),
+                color=alt.Color("count()",legend=None).title("Frequency")
+            ).properties(title=label),
+            use_container_width=True
+        )
+
+    def _generate_barplot(df, var: str, label: str):
+        st.altair_chart(
+            alt.Chart(df).mark_bar().encode(
+                y=alt.Y(var)
+                    .title(label),
+                x=alt.X("count()").title("Frequency"),
+                color=alt.Color("count()", legend=None).title("Frequency")
+            ).properties(title=label),
+            use_container_width=True
+        )
+
+    generate_plot: Callable
+
+    match plot_type:
+        case "barplot":
+            generate_plot = _generate_barplot
+        case "histogram":
+            generate_plot = _generate_histogram
+
+    columns = list(vars.keys())
+    labels = list(vars.values())
+    vars_num: int = len(vars)
+    vars_columns = st.columns(vars_num)
+
+    for i in range(vars_num):
+        with vars_columns[i]:
+            generate_plot(df, columns[i], labels[i])
+
 
 # NOTE: DATA ANALYTICS
 def show_analytics():
     r = requests.get(
+    #r_emp = requests.get(
         st.session_state.backend["url"] + "employees",
         auth=HTTPBasicAuth(
             st.session_state.backend["username"], st.session_state.backend["password"]
         )
     )
+    #if not(r_emp.status_code == 200 and r_projects.status_code == 200):
     if r.status_code != 200:
         st.error(f"Error code: {r.status_code}. Contact support.", icon=":material/sad:")
         st.toast(f"Error code: {r.status_code}", icon=":material/sad:")
@@ -182,17 +217,17 @@ def show_analytics():
 
         statistics: dict[str, dict[str, str|int|float]] = {
             "Counts" : {
-                "Total Team Members": len(df),
-                "Assigned": len([s for s in df.status if s == 1]),
-                "Unassigned": len([s for s in df.status if s != 1]),
+                "Total e2i Members": len(df),
+                "Assigned e2i Students": len([s for s in df.status if s == 1]),
+                "Unassigned e2i Students": len([s for s in df.status if s != 1]),
             },
             "Means" : {
                 "Social Skills": round(df.social.mean(),2),
-                "Degree Percentage": round(df.degreepercent.mean(),2),
+                "Degree Completion Percentage": round(df.degreepercent.mean(),2),
             },
             "Modes" : {
                 #"Area of Interest": df.aoi.mode(),
-                "Major": df.major.mode(),
+                "Most Frequent Major": df.major.mode(),
                 #"Major (Alt)": df.majoralt.mode()
             }
         }
@@ -201,13 +236,18 @@ def show_analytics():
             st.subheader(stat)
             generate_stats(values)
 
-        gen_hist(df, "degreepercent", "Degree Percent")
-        gen_hist(df, "social", "Social Skills")
+        histogram_variables: dict[str,str] = {
+            "degreepercent": "Degree Percent",
+            "social": "Social Skills",
+        }
 
-        # WARN: pyplot charts are kinda ugly honestly
-        # fig, ax = plt.subplots()
-        # ax.hist(np.array(df.degreepercent), bins=20)
-        # st.pyplot(fig, clear_figure=False)
+        barplot_variables: dict[str,str] = {
+            "major": "Major",
+            "majoralt": "Major (Alt)"
+        }
+
+        generate_plots(df, histogram_variables, "histogram")
+        generate_plots(df, barplot_variables, "barplot")
 
 
 # NOTE: main
