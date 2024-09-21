@@ -1,188 +1,24 @@
 import streamlit as st
-import requests
-from requests.auth import HTTPBasicAuth
-import json
-import os
-from ai import display_team
+import pandas as pd
 
-# Initialize session_state 'backend' if not already set
-if 'backend' not in st.session_state:
-    st.write('Initializing backend in session state')
-    st.session_state['backend'] = {
-        "url": os.getenv("BACKEND", ""),
-        "username": os.getenv("USERNAME1", ""),
-        "password": os.getenv("PASSWORD", ""),
-    }
+if "main_df" not in st.session_state:
+    st.session_state.main_df = [{'id': 'R_1kL1ZzUZg70h7bf', 'name': 'Emily Burch', 'email': '10875611@uvu.edu', 'uvid': '', 'degreepercent': 95, 'teambefore': True, 'speciality': 'Tech/Computer Science', 'major': 'Software Engineering', 'majoralt': '', 'aoi': 'Fullstack, Frontend, Backend, ', 'social': 11, 'status': 0}, {'id': 'R_1ARWFFvLGiSsbGI', 'name': 'Michael Short', 'email': '10894737@uvu.edu', 'uvid': '', 'degreepercent': 46, 'teambefore': False, 'speciality': 'Tech/Computer Science', 'major': 'Computer Science', 'majoralt': '', 'aoi': 'Database, Backend, Embedded, Game, Frontend, Fullstack, ', 'social': 10, 'status': 0}, {'id': 'R_6ifg0379tg04Hzv', 'name': 'Noah Potter', 'email': '10954749@uvu.edu', 'uvid': '', 'degreepercent': 91, 'teambefore': False, 'speciality': 'Tech/Computer Science', 'major': 'Software Engineering', 'majoralt': '', 'aoi': 'Frontend, Backend, ', 'social': 12, 'status': 0}, {'id': 'R_5mU8mEtyJQ8Qr3e', 'name': 'Brippney Vargas', 'email': '11023340@uvu.edu', 'uvid': '', 'degreepercent': 67, 'teambefore': False, 'speciality': 'Tech/Computer Science', 'major': 'Computer Science', 'majoralt': '', 'aoi': 'Game, Fullstack, Backend, Frontend, ', 'social': 8, 'status': 0}, {'id': 'R_13TtUjWjZlBi71L', 'name': 'David Rowley', 'email': '10861208@uvu.edu', 'uvid': '', 'degreepercent': 90, 'teambefore': False, 'speciality': 'Tech/Computer Science', 'major': 'Computer Science', 'majoralt': '', 'aoi': 'Frontend, Game, Fullstack, Database, Backend, ', 'social': 7, 'status': 0}, {'id': 'R_7fZzZ53fQ4aMUCJ', 'name': 'Hyomin Cha', 'email': '10994542@uvu.edu', 'uvid': '', 'degreepercent': 98, 'teambefore': False, 'speciality': 'Tech/Computer Science', 'major': 'Computer Science', 'majoralt': '', 'aoi': 'Fullstack, Frontend, Database, ', 'social': 12, 'status': 0}]
 
-st.title("Build Quick and Dirty Team")
+df = pd.DataFrame(st.session_state.main_df)
 
-# Correct test data without numbered keys
-test_data = {
-    "project_name": "Video Game and Website",
-    "project_type": "Tech",
-    "employees": [
-        {"employee": "Game dev", "amount": 2},
-        {"employee": "Frontend", "amount": 2},
-        {"employee": "Web dev", "amount": 1}
-    ],
-    "total_employees": 5
-}
+for row in st.session_state.main_df:
+    if "Remove" not in row.keys():
+        print('no remove')
 
-st.json(test_data)
+st.markdown(st.session_state.main_df[0]['id'])
+# if "Remove" not in st.session_state.main_df.columns:
+#     st.session_state.main_df.insert(0, "Remove", False)
 
-# Button to create team
-create_team = st.button("Create Team")
-
-if create_team:
-    display_team(  # FIX: remove
-        [
-            {
-                0: {
-                    "id": "E001",
-                    "name": "Alice Johnson",
-                    "email": "alice.johnson@uvu.edu",
-                    "uvid": "U12345678",
-                    "degreepercent": 85,
-                    "teambefore": True,
-                    "speciality": "Software Engineering",
-                    "major": "Computer Science",
-                    "majoralt": "Mathematics",
-                    "aoi": "Artificial Intelligence",
-                    "social": 5,
-                    "status": 1,
-                }
-            },
-            {
-                1: {
-                    "id": "E002",
-                    "name": "Bob Smith",
-                    "email": "bob.smith@uvu.edu",
-                    "uvid": "U87654321",
-                    "degreepercent": 90,
-                    "teambefore": False,
-                    "speciality": "Data Analysis",
-                    "major": "Information Systems",
-                    "majoralt": "Statistics",
-                    "aoi": "Big Data",
-                    "social": 7,
-                    "status": 2,
-                }
-            },
-            {
-                2: {
-                    "id": "E003",
-                    "name": "Catherine Lee",
-                    "email": "catherine.lee@uvu.edu",
-                    "uvid": "U11223344",
-                    "degreepercent": 75,
-                    "teambefore": True,
-                    "speciality": "Cybersecurity",
-                    "major": "Computer Science",
-                    "majoralt": "Criminal Justice",
-                    "aoi": "Network Security",
-                    "social": 6,
-                    "status": 1,
-                }
-            },
-            {
-                3: {
-                    "id": "E004",
-                    "name": "David Brown",
-                    "email": "david.brown@uvu.edu",
-                    "uvid": "U44332211",
-                    "degreepercent": 80,
-                    "teambefore": False,
-                    "speciality": "Project Management",
-                    "major": "Business Administration",
-                    "majoralt": "Management",
-                    "aoi": "Agile Methodologies",
-                    "social": 8,
-                    "status": 2,
-                }
-            },
-            {
-                4: {
-                    "id": "E005",
-                    "name": "Eva Green",
-                    "email": "eva.green@uvu.edu",
-                    "uvid": "U55667788",
-                    "degreepercent": 95,
-                    "teambefore": True,
-                    "speciality": "Machine Learning",
-                    "major": "Computer Engineering",
-                    "majoralt": "Data Science",
-                    "aoi": "Deep Learning",
-                    "social": 9,
-                    "status": 1,
-                }
-            },
-            {
-                5: {
-                    "id": "E006",
-                    "name": "Frank White",
-                    "email": "frank.white@uvu.edu",
-                    "uvid": "U99887766",
-                    "degreepercent": 70,
-                    "teambefore": False,
-                    "speciality": "Web Development",
-                    "major": "Information Technology",
-                    "majoralt": "Graphic Design",
-                    "aoi": "Frontend Development",
-                    "social": 4,
-                    "status": 2,
-                }
-            },
-        ]
-    )  # testing
-
-if create_team:
-    # Check if URL, username, and password are set
-    if not st.session_state['backend']["url"] or not st.session_state['backend']["username"] or not st.session_state['backend']["password"]:
-        st.error("Backend URL, username, or password is not set.")
-    else:
-        # Make the request to get employees
-        try:
-            r = requests.get(
-                st.session_state['backend']["url"] + "/teams",
-                json=test_data,  # Directly pass the correct JSON structure
-                auth=HTTPBasicAuth(
-                    st.session_state['backend']["username"],
-                    st.session_state['backend']["password"]
-                ),
-            )
-
-            # Print the raw response content for debugging
-            st.write("Raw response content:", r.content.decode('utf-8'))
-
-            # Only attempt to parse JSON if the response contains data
-            if r.content and r.status_code == 200:
-                st.header("Response from backend")
-                try:
-                    to_send = r.json()  # Attempt to parse JSON
-                    st.json(to_send)
-                    st.success("Success")
-
-                    # Now post to create the team
-                    new_r = requests.post(
-                        st.session_state['backend']["url"] + "/teams",
-                        json=to_send,  # Send parsed JSON as payload
-                        auth=HTTPBasicAuth(
-                            st.session_state['backend']["username"],
-                            st.session_state['backend']["password"],
-                        ),
-                    )
-
-                    if new_r.status_code == 200:
-                        st.header("Team creation response from backend")
-                        received = new_r.json()
-                        st.json(received)
-                        st.success("Team created successfully")
-                    else:
-                        st.error(f"Failed to create team. Status code: {new_r.status_code}")
-                except json.JSONDecodeError:
-                    st.error("Failed to decode JSON from response.")
-            else:
-                st.error(f"Failed to fetch employees. Status code: {r.status_code} or empty response")
-
-        except Exception as e:
-            st.error(f"An error occurred: {e}")
+st.data_editor(
+        st.session_state.main_df,
+        key="data_editor",
+        # on_change=callback,
+        hide_index=True,
+        # column_config=column_configuration,
+        disabled = ('name', 'uvid', 'speciality', 'aoi')
+)

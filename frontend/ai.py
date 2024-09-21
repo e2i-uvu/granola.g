@@ -172,24 +172,9 @@ Ask clarifying questions before calling tools if needed.
 
 @st.dialog("Edit Team", width="large")
 def display_team(team_json):
-    team_json_list = []
-    team_json_partial = []
-    example_team_json_list = []
-
-    # st.markdown(team_json)
-
-    # for item in team_json:
-    #     for key in item:
-    #         team_json_partial.append(item[key])
-    #         team_json_list.append(item[key])
-    #         example_team_json_list.append(item[key])
-
-    # tj = [j for i, j in team_json.itmes()]
-
-    df = pd.DataFrame(team_json)
 
     if "main_df" not in st.session_state:
-        st.session_state.main_df = df
+        st.session_state.main_df = pd.DataFrame(team_json)
 
     column_configuration = {
         "id": None,
@@ -203,29 +188,15 @@ def display_team(team_json):
     }
 
     main_df_container = st.empty()
-    # main_df_container.dataframe(
-    #     st.session_state.main_df, hide_index=True, column_config=column_configuration
-    # )
+
     edit_dialog(st.session_state.main_df, main_df_container, column_configuration)
 
     column1, column2, column3 = st.columns([1, 1, 5], vertical_alignment="bottom")
 
-    # with column1:
-    #     if st.button("Edit", use_container_width=True):
-    #         # display_team()
-    #         edit_dialog(
-    #             st.session_state.main_df, main_df_container, column_configuration
-    #         )
-
     with column2:
         if st.button("Submit", use_container_width=True):
-            # st.toast("Submitted!")
-            # TODO: Henry - write post request here
-            # POST TO DATABASE HERE:
-            # This is where we send back the confirmed team
+
             df_json = st.session_state.main_df.to_dict(orient="records")
-            # st.json(df_json)
-            # print(json.dumps(df_json, indent=4))
 
             r = requests.post(
                 st.session_state.backend["url"] + "teams",
@@ -236,74 +207,60 @@ def display_team(team_json):
                 ),
             )
             if r.status_code == 200:
-                # st.header("Response from backend")
 
                 recieved = r.json()
-
-                # st.json(recieved)
-                # st.success("success")
-
-                print(r.status_code)
 
             else:
                 st.error(
                     f"Failed. Status code: {
                      r.status_code}"
                 )
-        # add_members(df, col1, main_df_container, column_configuration)
 
+
+def callback():
+
+    edited_rows = st.session_state["data_editor"]["edited_rows"]
+    rows_to_delete = []
+
+    for idx, value in edited_rows.items():
+        if value["Remove"] is True:
+            rows_to_delete.append(idx)
+
+    st.session_state["main_df"] = (
+        st.session_state["main_df"].drop(rows_to_delete, axis=0).reset_index(drop=True)
+    )
 
 # @st.dialog("Edit Data", width="large")
 def edit_dialog(df, main_df_container, column_configuration):
-    if "Remove" not in st.session_state.main_df.columns:
-        st.session_state.main_df.insert(0, "Remove", False)
 
-    # edited_df = st.data_editor(
-    #     st.session_state.main_df, hide_index=True, column_config=column_configuration,
-    #     disabled = ('name', 'uvid', 'speciality', 'aoi')
-    # )
+    if "Remove" not in df.columns:
+        df.insert(0, "Remove", False)
+
+    columns = df.columns
+    # column_config = {column: st.column_config.Column(disabled=True) for column in columns}
+
+    modified_df = df.copy()
+    modified_df["Remove"] = False
+    # Make Delete be the first column
+    modified_df = modified_df[["Remove"] + [col for col in modified_df.columns if col != "Remove"]]
 
     main_df_container.data_editor(
-        st.session_state.main_df,
+        modified_df,
+        key="data_editor",
+        on_change=callback,
         hide_index=True,
         column_config=column_configuration,
+        disabled = ('name', 'uvid', 'speciality', 'aoi')
     )
-    st.success("Nice")
 
-    col1, col2 = st.columns([3, 1], vertical_alignment="bottom")
+    st.session_state.main_df = df.copy()
 
-    with col2:
-        if st.button("Save"):
-            updated_df = st.session_state.main_df[
-                st.session_state.main_df["Remove"] == False
-            ]
-            # .drop(
-            #     columns=["Remove"]
-            # )
-            # st.session_state.main_df = updated_df
-            # st.session_state.main_df = updated_df.drop(columns=["Remove"])
+    callback()
 
-            if "selected_row" in st.session_state:
-                st.session_state.main_df = (
-                    pd.concat([st.session_state.main_df, st.session_state.selected_row])
-                    .drop_duplicates()
-                    .reset_index(drop=True)
-                )
-                del st.session_state.selected_row
-
-            # main_df_container.dataframe(
-            #     st.session_state.main_df,
-            #     hide_index=True,
-            #     column_config=column_configuration,
-            # )
-            st.session_state.selected_rows = []
-            selected_options = False
-            # st.rerun()
-
-    add_members(df, col1, main_df_container, column_configuration)
+    add_members(df, main_df_container, column_configuration)
 
 
-def add_members(df, col1, main_df_container, column_configuration):
+def add_members(df, main_df_container, column_configuration):
     all_options = []
     # TODO: Henry -
     # GET REQUEST FROM DATABASE, SHOULD RETURN JSON INFORMATION OF FROM EVERY PERSON
@@ -316,15 +273,9 @@ def add_members(df, col1, main_df_container, column_configuration):
             st.session_state.backend["password"],
         ),
     )
-    to_send = ""
-
     if r.status_code == 200:
 
-        # st.header("Response from backend")
-
         to_send = r.json()
-        # st.json(r.json())
-        # st.success("success")
 
     else:
         st.error(
@@ -340,34 +291,11 @@ def add_members(df, col1, main_df_container, column_configuration):
     temp_df["display"] = temp_df["name"] + " -- (" + temp_df["speciality"] + ")"
     all_options = temp_df["display"].tolist()
 
-    with col1:
-        selected_options = st.selectbox(
-            "Select team members to Add:",
-            (all_options),
-            # on_change = auto_update(df, col1, main_df_container, column_configuration),
-            # default=None,
-            placeholder="Begin typing to add...",
-        )
-
-
-# def auto_update(df, col1, main_df_container, column_configuration):
-
-# if selected_options:
-#     selected_df = df[df["display"].isin(selected_options)]
-
-#     if "selected_rows" not in st.session_state:
-#         st.session_state.selected_rows = []
-
-#     selected_df.drop(columns=["display"], inplace=True)
-
-#     st.session_state.selected_rows.append(selected_df)
-
-#     combined_selected_df = (
-#         pd.concat(st.session_state.selected_rows)
-#         .drop_duplicates()
-#         .reset_index(drop=True)
-#     )
-#     st.session_state.selected_row = combined_selected_df
-
-#     st.dataframe(selected_df, hide_index=True, column_config=column_configuration)
-# I want to make a tech team with 5 people. We are making a website.
+    selected_options = st.selectbox(
+        "Select team members to Add:",
+        (all_options),
+        # on_change = auto_update(df, col1, main_df_container, column_configuration),
+        # default=None,
+        placeholder="Begin typing to add...",
+    )
+# I want to build a tech team with 5 people. We are building a website
