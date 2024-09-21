@@ -12,4 +12,3 @@ files = st.file_uploader(
 
 if files is not None:
     pass
-st.write("---")

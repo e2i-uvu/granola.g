@@ -38,4 +38,3 @@ with st.form("verification", border=False):
             toml.dump(user_data, f)
 
         st.toast("success")
-st.write("---")

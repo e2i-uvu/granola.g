@@ -20,6 +20,7 @@ from requests.auth import HTTPBasicAuth
 st.title("Qualtrics Upload :material/folder:")
 st.write("---")
 
+
 def upload_csv() -> list[dict[str, str]] | None:
     uploadedFile = st.file_uploader(
         label="Upload file", type=["csv"], accept_multiple_files=False
@@ -59,12 +60,15 @@ def import_csv_data(*, testing=False):
             st.toast("CSV uploaded succesfully", icon=":material/thumb_up:")
             st.balloons()
             st.success(
-                "CSV uploaded successfully. Now you can check status or chat with the Assistant to build teams!", 
-                icon=":material/thumb_up:"
+                "CSV uploaded successfully. Now you can check status or chat with the Assistant to build teams!",
+                icon=":material/thumb_up:",
             )
         else:
             st.toast("CSV could not be uploaded.")
-            st.error("CSV file could not be uploaded. Try again or contact support.", icon=":material/sad:")
+            st.error(
+                "CSV file could not be uploaded. Try again or contact support.",
+                icon=":material/sad:",
+            )
+
 
 import_csv_data(testing=False)
-st.write("---")
