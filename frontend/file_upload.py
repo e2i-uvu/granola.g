@@ -18,6 +18,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 st.title("Qualtrics Upload :material/folder:")
+st.write("---")
 
 def upload_csv() -> list[dict[str, str]] | None:
     uploadedFile = st.file_uploader(
@@ -66,3 +67,4 @@ def import_csv_data(*, testing=False):
             st.error("CSV file could not be uploaded. Try again or contact support.", icon=":material/sad:")
 
 import_csv_data(testing=False)
+st.write("---")
