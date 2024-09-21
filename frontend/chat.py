@@ -1,5 +1,4 @@
 import streamlit as st
-import requests
 import json
 
 
@@ -103,6 +102,12 @@ def ai(query: str = ""):
                     "content": str(function_response),
                 }
             )
+
+        # respond again?
+        yield ai()
+
+        # if query:  # recursive
+        # yield ai()
 
     if completion:
         st.session_state.gpt["messages"].append(

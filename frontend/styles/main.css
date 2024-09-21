@@ -3,16 +3,22 @@
   display: none;
 }
 
+/* less space between header elements */
+hr {
+  margin-top: 0rem;
+  margin-bottom: 2rem;
+}
+
 .reportview-container {
   margin-top: -2em;
 }
 
-#MainMenu {
-  visibility: hidden;
-}
+/* #MainMenu { */
+/*   visibility: hidden; */
+/* } */
 
-.stDeployButton {
-  display: none;
+.stAppDeployButton {
+  visibility: hidden;
 }
 
 footer {

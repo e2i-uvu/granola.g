@@ -16,7 +16,8 @@ from openai import OpenAI
 from ai import SYSTEM_MESSAGE, TOOLS
 
 
-VERSION = 0.110
+VERSION = 1.000
+MODEL = "gpt-4o"
 USERS = "./.streamlit/users.toml"
 
 
@@ -24,7 +25,7 @@ def style(filename: str = "./styles/main.css"):
     """Hide default style. Additionally add custom styles"""
     with open(filename, "r") as f:
         css = f.read()
-    return f"<style>{css}</style>"
+    return f"""<style>\n{css}\n</style>"""
 
 
 # --- Setup session state --- #
@@ -48,7 +49,7 @@ if "user" not in st.session_state:
 if "gpt" not in st.session_state:
     st.session_state.gpt = {
         "client": OpenAI(api_key=os.environ.get("OPENAI_API_KEY")),
-        "model": "gpt-4o-mini",
+        "model": MODEL,
         "system_message": [{"role": "system", "content": SYSTEM_MESSAGE}],
         "messages": [],
         "tools": {
@@ -251,12 +252,6 @@ teams_pages = [
             or st.session_state.user["role"] == "developer"
         ),
     ),
-    # st.Page(
-    #     "interview.py",
-    #     title="Interview",
-    #     icon=":material/person_add:",
-    #     default=(st.session_state.user["role"] == "developer"),
-    # ),
     st.Page(
         "overview.py",  # "employees.py",
         title="Overview",  # "Employees",
