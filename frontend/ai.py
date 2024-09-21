@@ -293,14 +293,18 @@ def add_members(df, main_df_container, column_configuration):
         (all_options),
         # on_change = auto_update(df, col1, main_df_container, column_configuration),
         on_change=add_member_to_team,
-        # default=None,
+        key="selected_member",
         placeholder="Begin typing to add...",
     )
+
+    st.session_state.temp_df = temp_df
 # I want to build a tech team with 5 people. We are building a website
 
 def add_member_to_team():
-    # Extract selected member data
-    selected_data = st.session_state.main_df.iloc[-1]
+    selected_display = st.session_state.selected_member
 
-    # Add selected data to the main dataframe
-    st.session_state.main_df = pd.concat([st.session_state.main_df, pd.DataFrame([selected_data])]).reset_index(drop=True)
+    selected_data = st.session_state.temp_df.loc[
+    st.session_state.temp_df['display'] == selected_display
+    ].drop(columns=["display"])
+
+    st.session_state.main_df = pd.concat([st.session_state.main_df, selected_data]).reset_index(drop=True)
