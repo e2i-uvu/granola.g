@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.title("Team Import :memo:")
+st.title("Team Import :material/reduce_capacity:")
 
 files = st.file_uploader(
     "Project Charter",

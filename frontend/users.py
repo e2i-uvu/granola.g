@@ -10,7 +10,7 @@ USERS = "./.streamlit/users.toml"
 
 user_data = toml.load(USERS)
 
-st.header("Users :office_worker:")
+st.header("Users :material/person_check:")
 
 # st.write(user_data)
 with st.form("verification", border=False):
