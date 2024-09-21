@@ -191,32 +191,6 @@ def display_team(team_json):
 
     edit_dialog(st.session_state.main_df, main_df_container, column_configuration)
 
-    column1, column2, column3 = st.columns([1, 1, 5], vertical_alignment="bottom")
-
-    with column2:
-        if st.button("Submit", use_container_width=True):
-
-            df_json = st.session_state.main_df.to_dict(orient="records")
-
-            r = requests.post(
-                st.session_state.backend["url"] + "teams",
-                json=json.dumps(df_json),
-                auth=HTTPBasicAuth(
-                    st.session_state.backend["username"],
-                    st.session_state.backend["password"],
-                ),
-            )
-            if r.status_code == 200:
-
-                recieved = r.json()
-
-            else:
-                st.error(
-                    f"Failed. Status code: {
-                     r.status_code}"
-                )
-
-
 def callback():
 
     edited_rows = st.session_state["data_editor"]["edited_rows"]
@@ -259,6 +233,27 @@ def edit_dialog(df, main_df_container, column_configuration):
 
     add_members(df, main_df_container, column_configuration)
 
+    if st.button("Submit", use_container_width=True):
+
+        df_json = modified_df.to_dict(orient="records")
+
+        r = requests.post(
+            st.session_state.backend["url"] + "teams",
+            json=json.dumps(df_json),
+            auth=HTTPBasicAuth(
+                st.session_state.backend["username"],
+                st.session_state.backend["password"],
+            ),
+        )
+        if r.status_code == 200:
+
+            recieved = r.json()
+
+        else:
+            st.error(
+                f"Failed. Status code: {
+                r.status_code}"
+            )
 
 def add_members(df, main_df_container, column_configuration):
     all_options = []
@@ -298,6 +293,7 @@ def add_members(df, main_df_container, column_configuration):
     )
 
     st.session_state.temp_df = temp_df
+
 # I want to build a tech team with 5 people. We are building a website
 
 def add_member_to_team():
