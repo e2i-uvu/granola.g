@@ -46,7 +46,7 @@ if st.button("Create Team"):
 
         st.json(r.json())
 
-        to_send = test_post
+        to_send = r.json()
 
         st.success("success")
 
@@ -63,8 +63,8 @@ if st.button("Create Team"):
 
             st.header("Response from backend")
 
-            recieved = new_r.json()
-            st.json(recieved)
+            # recieved = new_r.json()
+            # st.json(recieved)
             st.success("success")
 
         else:

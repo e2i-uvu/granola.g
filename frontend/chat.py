@@ -103,7 +103,24 @@ def ai(query: str = ""):
             )
 
         # respond again?
-        yield ai()
+        response = st.session_state.gpt["client"].chat.completions.create(
+            model=st.session_state.gpt["model"],
+            messages=st.session_state.gpt["system_message"]
+            + st.session_state.gpt["messages"],
+            stream=True,
+        )
+
+        completion = ""
+        for chunk in response:  # handle response
+            delta = chunk.choices[0].delta
+
+            if delta and delta.content:
+                completion += delta.content
+                yield delta.content
+
+        # st.session_state.gpt["messages"].append(
+        #     {"role": "assistant", "content": completion}
+        # )
 
         # if query:  # recursive
         # yield ai()
