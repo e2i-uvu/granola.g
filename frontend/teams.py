@@ -1,6 +1,7 @@
 import streamlit as st
 
 st.title("Team Import :material/reduce_capacity:")
+st.write("---")
 
 files = st.file_uploader(
     "Project Charter",
@@ -11,3 +12,4 @@ files = st.file_uploader(
 
 if files is not None:
     pass
+st.write("---")

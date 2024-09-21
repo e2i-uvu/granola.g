@@ -134,6 +134,7 @@ def render_messages():
 
 col1, col2 = st.columns([2, 1], vertical_alignment="bottom")
 col1.title("AI Chat :material/chat:")
+st.write("---")
 
 with col2:
     if st.button("New Chat", use_container_width=True):

@@ -10,6 +10,7 @@ from collections.abc import Callable
 #from enum import Enum
 
 st.title("Overview :material/groups:")
+st.write("---")
 
 # NOTE: EMPLOYEES
 
@@ -266,6 +267,7 @@ def main():
                 show_analytics()
 
 main()
+st.write("---")
 # NOTE:
 # Read everything in, if the hire is 1, if it is false then it is 0.
 # I want the hire box to appear in column 1, and I want it to be a checkbox
