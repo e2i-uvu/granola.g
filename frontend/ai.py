@@ -305,3 +305,4 @@ def add_member_to_team():
     ].drop(columns=["display"])
 
     st.session_state.main_df = pd.concat([st.session_state.main_df, selected_data]).reset_index(drop=True)
+    
