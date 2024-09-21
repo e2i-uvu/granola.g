@@ -1,0 +1,13 @@
+include:
+  - path: ./compose/streamlit.yaml
+    project_directory: .
+  - path: ./compose/go_server.yaml
+    project_directory: .
+  - path: ./compose/traefik.yaml
+    project_directory: .
+
+networks:
+  traefik-network:
+    external: false # change to true for more services?
+  web:
+    external: false

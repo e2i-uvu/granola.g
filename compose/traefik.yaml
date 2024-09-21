@@ -1,0 +1,41 @@
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    restart: unless-stopped
+    # env_file:
+    #   - .env.traefik
+    command:
+      # [Optional] Dashboard
+      - "--log.level=DEBUG"
+      # - "--api.dashboard=true"
+      # - "--api.insecure=true"
+      # - "--serverstransport.insecureskipverify=true"
+      - "--providers.docker=true"
+      - "--providers.docker.watch=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.file.watch=true"
+      - "--providers.file.directory=/etc/traefik/conf/"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure" # Redirect http -> https
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.web.address=:80" # Entrypoints
+      - "--entrypoints.websecure.address=:443"
+      # - "--certificatesresolvers.production.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.production.acme.tlschallenge=true"
+      # - "--certificatesresolvers.production.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.production.acme.email=${ACME_EMAIL}"
+      - "--certificatesresolvers.production.acme.storage=/letsencrypt/acme.json"
+      # - "--certificatesresolvers.production.acme.httpchallenge=true"
+      # - "--certificatesresolvers.production.acme.httpchallenge.entrypoint=web"
+
+    ports:
+      - 80:80
+      - 443:443
+      # [Optional] Dashboard
+      # - 8080:8080
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./letsencrypt:/letsencrypt"
+      - ./conf/:/etc/traefik/conf/
+    networks:
+      - traefik-network
