@@ -239,21 +239,22 @@ def edit_dialog(df, main_df_container, column_configuration):
 
         r = requests.post(
             st.session_state.backend["url"] + "teams",
-            json=json.dumps(df_json),
+            json=df_json,
             auth=HTTPBasicAuth(
                 st.session_state.backend["username"],
                 st.session_state.backend["password"],
             ),
         )
-        if r.status_code == 200:
+        # if r.status_code == 200:
+            # recieved = r.json()
 
-            recieved = r.json()
-
-        else:
+        if r.status_code != 200:
             st.error(
                 f"Failed. Status code: {
                 r.status_code}"
             )
+        else:
+            st.success('Hey-Oh')
 
 def add_members(df, main_df_container, column_configuration):
     all_options = []
