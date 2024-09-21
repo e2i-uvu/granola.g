@@ -282,9 +282,6 @@ def add_members(df, main_df_container, column_configuration):
             f"Failed. Status code: {
                 r.status_code}"
         )
-    for item in to_send:
-        for key in item:
-            all_options.append(item[key])
 
     df = pd.DataFrame(to_send)
     temp_df = df
@@ -295,7 +292,15 @@ def add_members(df, main_df_container, column_configuration):
         "Select team members to Add:",
         (all_options),
         # on_change = auto_update(df, col1, main_df_container, column_configuration),
+        on_change=add_member_to_team,
         # default=None,
         placeholder="Begin typing to add...",
     )
 # I want to build a tech team with 5 people. We are building a website
+
+def add_member_to_team():
+    # Extract selected member data
+    selected_data = st.session_state.main_df.iloc[-1]
+
+    # Add selected data to the main dataframe
+    st.session_state.main_df = pd.concat([st.session_state.main_df, pd.DataFrame([selected_data])]).reset_index(drop=True)
