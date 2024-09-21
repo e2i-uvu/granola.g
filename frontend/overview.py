@@ -109,9 +109,10 @@ def show_status():
         st.error(f"Error code: {r.status_code}. Contact support.", icon=":material/sad:")
         st.toast(f"Error code: {r.status_code}", icon=":material/sad:")
     else:
-
+        st.write("---")
         df, stats = format_DataFrame(r.json())
         generate_stats(stats) 
+        st.write("---")
         edited_df = st.data_editor(
             df, 
             height = 1400,
@@ -143,6 +144,13 @@ def show_status():
                 st.error( f"Failed to save changes. Status code: {response.status_code}")
 
 # NOTE: PROJECTS
+
+PROJECT_STATUS_CODE: list[str] = [
+    "Active",
+    "Pending Assignment",
+    "Previously on e2i"
+]
+
 def show_pending_projects():
     st.write("Here is the status")
     r = requests.get(
@@ -154,8 +162,11 @@ def show_pending_projects():
     if r.status_code != 200:
         st.error(f"Error code: {r.status_code}. Contact support.", icon=":material/sad:")
         st.toast(f"Error code: {r.status_code}", icon=":material/sad:")
-    else:
-        st.json(r.json())
+    # WARN: Not implemented: waiting for backend endpoint
+    # else:
+    #     st.json(r.json())
+    #     df = pd.DataFrame(r.json)
+
 
 
 def generate_plots(df, vars: dict[str, str], plot_type: str):
@@ -209,22 +220,33 @@ def show_analytics():
             st.session_state.backend["username"], st.session_state.backend["password"]
         )
     )
+    # r_pro = requests.get(
+    #     st.session_state.backend["url"] + "projects",
+    #     auth=HTTPBasicAuth(
+    #         st.session_state.backend["username"], st.session_state.backend["password"]
+    #     )
+    # )
     #if not(r_emp.status_code == 200 and r_projects.status_code == 200):
     if r.status_code != 200:
         st.error(f"Error code: {r.status_code}. Contact support.", icon=":material/sad:")
         st.toast(f"Error code: {r.status_code}", icon=":material/sad:")
     else:
+        st.write("---")
+        # df_emp = pd.DataFrame(r_emp.json())
+        # df_pro = pd.DataFrame(r_pro.json())
         df = pd.DataFrame(r.json())
 
         statistics: dict[str, dict[str, str|int|float]] = {
-            "Counts" : {
+            "General" : {
                 "Total e2i Members": len(df),
                 "Assigned e2i Students": len([s for s in df.status if s == 1]),
                 "Unassigned e2i Students": len([s for s in df.status if s != 1]),
+                "Returning": len([s for s in df.teambefore if s])#,
+                #"Active Projects": len([s for s in df_pro.status if s])
             },
             "Means" : {
                 "Social Skills": round(df.social.mean(),2),
-                "Degree Completion Percentage": round(df.degreepercent.mean(),2),
+                "Degree Completion Percentage": round(df.degreepercent.mean(), 2),
             },
             "Modes" : {
                 #"Area of Interest": df.aoi.mode(),
@@ -236,6 +258,7 @@ def show_analytics():
         for stat, values in statistics.items():
             st.subheader(stat)
             generate_stats(values)
+            st.write("---")
 
         histogram_variables: dict[str,str] = {
             "degreepercent": "Degree Percent",
