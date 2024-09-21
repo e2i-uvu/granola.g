@@ -191,6 +191,9 @@ def display_team(team_json):
 
     edit_dialog(st.session_state.main_df, main_df_container, column_configuration)
 
+    # st.rerun()
+
+
 def callback():
 
     edited_rows = st.session_state["data_editor"]["edited_rows"]
@@ -204,6 +207,7 @@ def callback():
         st.session_state["main_df"].drop(rows_to_delete, axis=0).reset_index(drop=True)
     )
 
+
 # @st.dialog("Edit Data", width="large")
 def edit_dialog(df, main_df_container, column_configuration):
 
@@ -216,7 +220,9 @@ def edit_dialog(df, main_df_container, column_configuration):
     modified_df = df.copy()
     modified_df["Remove"] = False
     # Make Delete be the first column
-    modified_df = modified_df[["Remove"] + [col for col in modified_df.columns if col != "Remove"]]
+    modified_df = modified_df[
+        ["Remove"] + [col for col in modified_df.columns if col != "Remove"]
+    ]
 
     main_df_container.data_editor(
         modified_df,
@@ -224,12 +230,12 @@ def edit_dialog(df, main_df_container, column_configuration):
         on_change=callback,
         hide_index=True,
         column_config=column_configuration,
-        disabled = ('name', 'uvid', 'speciality', 'aoi')
+        disabled=("name", "uvid", "speciality", "aoi"),
     )
 
     st.session_state.main_df = df.copy()
 
-    callback()
+    # callback()
 
     add_members(df, main_df_container, column_configuration)
 
@@ -246,7 +252,7 @@ def edit_dialog(df, main_df_container, column_configuration):
             ),
         )
         # if r.status_code == 200:
-            # recieved = r.json()
+        # recieved = r.json()
 
         if r.status_code != 200:
             st.error(
@@ -254,7 +260,8 @@ def edit_dialog(df, main_df_container, column_configuration):
                 r.status_code}"
             )
         else:
-            st.success('Hey-Oh')
+            st.success("Hey-Oh")
+
 
 def add_members(df, main_df_container, column_configuration):
     all_options = []
@@ -295,13 +302,17 @@ def add_members(df, main_df_container, column_configuration):
 
     st.session_state.temp_df = temp_df
 
+
 # I want to build a tech team with 5 people. We are building a website
+
 
 def add_member_to_team():
     selected_display = st.session_state.selected_member
 
     selected_data = st.session_state.temp_df.loc[
-    st.session_state.temp_df['display'] == selected_display
+        st.session_state.temp_df["display"] == selected_display
     ].drop(columns=["display"])
 
-    st.session_state.main_df = pd.concat([st.session_state.main_df, selected_data]).reset_index(drop=True)
+    st.session_state.main_df = pd.concat(
+        [st.session_state.main_df, selected_data]
+    ).reset_index(drop=True)
