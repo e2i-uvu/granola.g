@@ -109,7 +109,8 @@ st.logo(
 )
 
 
-ROLES = [None, "student", "admin", "developer"]
+# ROLES = [None, "student", "admin", "developer"]
+ROLES = [None, "student", "admin"]
 
 
 def check_password(role) -> bool:
@@ -223,6 +224,9 @@ def logout():  # need to be careful to reset session_state
     if "gpt" in st.session_state:
         del st.session_state.gpt
 
+    if "first_login" in st.session_state:
+        del st.session_state.first_login
+
     st.session_state.user["role"] = None
     st.rerun()
 
@@ -290,6 +294,13 @@ if st.session_state.user["role"] == "developer":
 
 if len(pages) > 0:
     pg = st.navigation({"Profile": account_pages} | pages)
+
+    if "first_login" not in st.session_state:
+        st.session_state.first_login = True
+
+    if st.session_state.first_login:
+        st.toast(f"Welcome {st.session_state.user['first']}!", icon=":material/login:")
+        st.session_state.first_login = False
 
 else:
     pg = st.navigation([st.Page(login)])

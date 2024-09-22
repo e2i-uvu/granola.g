@@ -3,4 +3,11 @@ id = 10976160
 first = "Spencer"
 last = "Thompson"
 role = "developer" # admin | developer | student
+verified = true
+
+[[users]]
+id = 11111111
+first = "a"
+last = "b"
+role = "admin"   # admin | developer | student
 verified = false
