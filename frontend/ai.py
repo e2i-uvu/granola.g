@@ -308,7 +308,7 @@ def add_members(df, main_df_container, column_configuration):
     st.session_state.temp_df = temp_df
 
 
-# I want to build a tech team with 5 people. We are building a website
+# I want to build a tech team wth 5 people. We are building a website
 
 def add_member_to_team():
     selected_display = st.session_state.selected_member
@@ -318,3 +318,4 @@ def add_member_to_team():
     ].drop(columns=["display"])
 
     st.session_state.main_df = pd.concat([st.session_state.main_df, selected_data]).reset_index(drop=True)
+    # st.session_state.main_df.drop_duplicates(subset=['name'])
