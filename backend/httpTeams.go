@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 )
 
@@ -19,6 +20,13 @@ type Project struct {
 
 func TeamsHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" && r.Header.Get("Content-Type") == "application/json" {
+		data, err := io.ReadAll(r.Body)
+		if err != nil {
+			InfoLogger.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		InfoLogger.Println(string(data))
 		// Takes in
 		//{
 		//   "project_name": "Video Game and Website",
