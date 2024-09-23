@@ -32,46 +32,6 @@ respond = {
 }
 
 
-def get_employees():
-    r = requests.get(
-        st.session_state.backend["url"] + "employees",
-        auth=HTTPBasicAuth(
-            st.session_state.backend["username"], st.session_state.backend["password"]
-        ),
-    )
-    if r.status_code == 200:
-        return r.json()
-    else:
-        return "Failure"
-
-
-employees = {
-    "name": "get_employees",
-    "local": True,
-    "func": get_employees,
-    "tool": {
-        "type": "function",
-        "function": {
-            "name": "get_employees",
-            # "strict": True,
-            "description": """Get a list of all stored employees,
-            use when user asks specific questions about employees, but only use once""",
-            # "parameters": {
-            #     "type": "object",
-            #     "additionalProperties": False,
-            #     "properties": {
-            #         "project_type": {
-            #             "type": "string",
-            #             "description": "The type of project",
-            #             "enum": project_types,
-            #         },
-            #     }
-            # }
-        },
-    },
-}
-
-
 def build_new_team(
     # project_name: str, project_type: str, employees: list, total_employees: int
     request_json: str,
@@ -94,6 +54,7 @@ def build_new_team(
         # Successful request
         response_data = r.json()  # this is response data
         # print(response_data)
+        r.json()
 
         display_team(response_data)
         # have display_team return the whole submitted json, (this is in addition to making the post request)
@@ -187,7 +148,7 @@ create_team = {
     },
 }
 
-TOOLS = [respond, create_team, employees]
+TOOLS = [respond, create_team]
 
 
 # formatted_time = datetime.now().strftime("%H:%M on %A, %Y-%m-%d")
@@ -283,9 +244,13 @@ def edit_dialog(df, main_df_container, column_configuration):
 
         df_json = modified_df.to_dict(orient="records")
 
+        # st.markdown(df_json)
+        id_list = [row['id'] for row in df_json]
+
+        # st.markdown(id_list)
         r = requests.post(
             st.session_state.backend["url"] + "teams",
-            json=df_json,
+            json=id_list,
             auth=HTTPBasicAuth(
                 st.session_state.backend["username"],
                 st.session_state.backend["password"],
@@ -345,10 +310,11 @@ def add_members(df, main_df_container, column_configuration):
 
 # I want to build a tech team with 5 people. We are building a website
 
-
 def add_member_to_team():
     selected_display = st.session_state.selected_member
 
     selected_data = st.session_state.temp_df.loc[
         st.session_state.temp_df["display"] == selected_display
     ].drop(columns=["display"])
+
+    st.session_state.main_df = pd.concat([st.session_state.main_df, selected_data]).reset_index(drop=True)
