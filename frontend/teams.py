@@ -46,8 +46,10 @@ files = st.file_uploader(
     accept_multiple_files=True,
 )
 
+if st.button("Create Teams", type="primary", use_container_width=True):
 
-if files is not None:
-    for file in files:
-        # NOTE: project_description is a string containing text form pdf
-        project_description: str = read_pdf(file)
+    if files is not None:
+        for file in files:
+            # NOTE: project_description is a string containing text form pdf
+            project_description: str = read_pdf(file)
+            generate_team(project_description)
