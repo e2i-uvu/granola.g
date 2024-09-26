@@ -62,11 +62,6 @@ def build_new_team(
         # Handle the error
         print(f"Error: {r.status_code}")
 
-    # TODO: Guts
-    # after edits send to same endpoint but as a post request ('Don't use fake data for this')
-    # Display team and modal dialog here
-    # when submit is hit, we send a post request back to the same endpoint
-
 
 employee_types = [
     "Full stack",
@@ -247,7 +242,8 @@ def edit_dialog(df, main_df_container, column_configuration, necessary_details):
         df_json = modified_df.to_dict(orient="records")
 
         # st.markdown(df_json)
-        id_list = [f"{num} : {row['id']}" for num, row in enumerate(df_json)]
+        # id_list = [f"{num} : {row['id']}" for num, row in enumerate(df_json)]
+        id_list = {num : row['id'] for num, row in enumerate(df_json)}
 
         to_post = {'name': necessary_details[0],
                    'type': necessary_details[1],
@@ -274,9 +270,6 @@ def edit_dialog(df, main_df_container, column_configuration, necessary_details):
 
 def add_members(df, main_df_container, column_configuration):
     all_options = []
-    # TODO: Henry -
-    # GET REQUEST FROM DATABASE, SHOULD RETURN JSON INFORMATION OF FROM EVERY PERSON
-    # json_example_data = requests.get(... )
 
     r = requests.get(
         st.session_state.backend["url"] + "employees",
