@@ -256,7 +256,7 @@ def edit_dialog(df, main_df_container, column_configuration, necessary_details):
         st.markdown(to_post)
         r = requests.post(
             st.session_state.backend["url"] + "teams",
-            json=id_list,
+            json=to_post,
             auth=HTTPBasicAuth(
                 st.session_state.backend["username"],
                 st.session_state.backend["password"],
