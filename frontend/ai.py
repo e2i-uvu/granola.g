@@ -56,7 +56,7 @@ def build_new_team(
         # print(response_data)
         r.json()
 
-        display_team(response_data)
+        display_team(response_data, request_json)
         # have display_team return the whole submitted json, (this is in addition to making the post request)
     else:
         # Handle the error
@@ -245,7 +245,7 @@ def edit_dialog(df, main_df_container, column_configuration):
         df_json = modified_df.to_dict(orient="records")
 
         # st.markdown(df_json)
-        id_list = [row['id'] for row in df_json]
+        id_list = [row["id"] for row in df_json]
 
         # st.markdown(id_list)
         r = requests.post(
@@ -310,6 +310,7 @@ def add_members(df, main_df_container, column_configuration):
 
 # I want to build a tech team wth 5 people. We are building a website
 
+
 def add_member_to_team():
     selected_display = st.session_state.selected_member
 
@@ -317,5 +318,8 @@ def add_member_to_team():
         st.session_state.temp_df["display"] == selected_display
     ].drop(columns=["display"])
 
-    st.session_state.main_df = pd.concat([st.session_state.main_df, selected_data]).reset_index(drop=True)
+    st.session_state.main_df = pd.concat(
+        [st.session_state.main_df, selected_data]
+    ).reset_index(drop=True)
     # st.session_state.main_df.drop_duplicates(subset=['name'])
+
