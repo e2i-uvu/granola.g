@@ -172,7 +172,10 @@ Ask clarifying questions before calling tools if needed.
 
 
 @st.dialog("Edit Team", width="large")
-def display_team(team_json):
+def display_team(team_json, team_details):
+
+    necessary_details = [team_details['project_name'], team_details['project_type']]
+
 
     if "main_df" not in st.session_state:
         st.session_state.main_df = pd.DataFrame(team_json)
@@ -190,7 +193,7 @@ def display_team(team_json):
 
     main_df_container = st.empty()
 
-    edit_dialog(st.session_state.main_df, main_df_container, column_configuration)
+    edit_dialog(st.session_state.main_df, main_df_container, column_configuration, necessary_details)
 
     # st.rerun()
 
@@ -210,7 +213,7 @@ def callback():
 
 
 # @st.dialog("Edit Data", width="large")
-def edit_dialog(df, main_df_container, column_configuration):
+def edit_dialog(df, main_df_container, column_configuration, necessary_details):
 
     if "Remove" not in df.columns:
         df.insert(0, "Remove", False)
@@ -236,7 +239,6 @@ def edit_dialog(df, main_df_container, column_configuration):
 
     st.session_state.main_df = df.copy()
 
-    # callback()
 
     add_members(df, main_df_container, column_configuration)
 
@@ -245,9 +247,13 @@ def edit_dialog(df, main_df_container, column_configuration):
         df_json = modified_df.to_dict(orient="records")
 
         # st.markdown(df_json)
-        id_list = [row["id"] for row in df_json]
+        id_list = [f"{num} : {row['id']}" for num, row in enumerate(df_json)]
 
-        # st.markdown(id_list)
+        to_post = {'name': necessary_details[0],
+                   'type': necessary_details[1],
+                   'employees': id_list}
+
+        st.markdown(to_post)
         r = requests.post(
             st.session_state.backend["url"] + "teams",
             json=id_list,
@@ -256,8 +262,6 @@ def edit_dialog(df, main_df_container, column_configuration):
                 st.session_state.backend["password"],
             ),
         )
-        # if r.status_code == 200:
-        # recieved = r.json()
 
         if r.status_code != 200:
             st.error(
