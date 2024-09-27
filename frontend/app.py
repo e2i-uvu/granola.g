@@ -17,7 +17,7 @@ from ai import SYSTEM_MESSAGE, TOOLS
 
 
 VERSION = 1.000
-MODEL = "gpt-4o-mini"
+MODEL = "gpt-4o"
 USERS = "./.streamlit/users.toml"
 
 

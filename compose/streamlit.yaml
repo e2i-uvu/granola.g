@@ -33,3 +33,11 @@ services:
       - traefik.http.routers.streamlit.tls=true
       - traefik.http.routers.streamlit.tls.certresolver=production
       - traefik.http.services.streamlit.loadbalancer.server.port=8501
+
+volumes:
+  users:
+    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "./frontent/.streamlit/"

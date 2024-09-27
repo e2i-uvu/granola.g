@@ -32,46 +32,6 @@ respond = {
 }
 
 
-def get_employees():
-    r = requests.get(
-        st.session_state.backend["url"] + "employees",
-        auth=HTTPBasicAuth(
-            st.session_state.backend["username"], st.session_state.backend["password"]
-        ),
-    )
-    if r.status_code == 200:
-        return r.json()
-    else:
-        return "Failure"
-
-
-employees = {
-    "name": "get_employees",
-    "local": True,
-    "func": get_employees,
-    "tool": {
-        "type": "function",
-        "function": {
-            "name": "get_employees",
-            # "strict": True,
-            "description": """Get a list of all stored employees,
-            use when user asks specific questions about employees, but only use once""",
-            # "parameters": {
-            #     "type": "object",
-            #     "additionalProperties": False,
-            #     "properties": {
-            #         "project_type": {
-            #             "type": "string",
-            #             "description": "The type of project",
-            #             "enum": project_types,
-            #         },
-            #     }
-            # }
-        },
-    },
-}
-
-
 def build_new_team(
     # project_name: str, project_type: str, employees: list, total_employees: int
     request_json: str,
@@ -94,17 +54,13 @@ def build_new_team(
         # Successful request
         response_data = r.json()  # this is response data
         # print(response_data)
+        r.json()
 
-        display_team(response_data)
+        display_team(response_data, request_json)
         # have display_team return the whole submitted json, (this is in addition to making the post request)
     else:
         # Handle the error
         print(f"Error: {r.status_code}")
-
-    # TODO: Guts
-    # after edits send to same endpoint but as a post request ('Don't use fake data for this')
-    # Display team and modal dialog here
-    # when submit is hit, we send a post request back to the same endpoint
 
 
 employee_types = [
@@ -187,7 +143,7 @@ create_team = {
     },
 }
 
-TOOLS = [respond, create_team, employees]
+TOOLS = [respond, create_team]
 
 
 # formatted_time = datetime.now().strftime("%H:%M on %A, %Y-%m-%d")
@@ -211,7 +167,10 @@ Ask clarifying questions before calling tools if needed.
 
 
 @st.dialog("Edit Team", width="large")
-def display_team(team_json):
+def display_team(team_json, team_details):
+
+    necessary_details = [team_details['project_name'], team_details['project_type']]
+
 
     if "main_df" not in st.session_state:
         st.session_state.main_df = pd.DataFrame(team_json)
@@ -229,7 +188,7 @@ def display_team(team_json):
 
     main_df_container = st.empty()
 
-    edit_dialog(st.session_state.main_df, main_df_container, column_configuration)
+    edit_dialog(st.session_state.main_df, main_df_container, column_configuration, necessary_details)
 
     # st.rerun()
 
@@ -249,7 +208,7 @@ def callback():
 
 
 # @st.dialog("Edit Data", width="large")
-def edit_dialog(df, main_df_container, column_configuration):
+def edit_dialog(df, main_df_container, column_configuration, necessary_details):
 
     if "Remove" not in df.columns:
         df.insert(0, "Remove", False)
@@ -275,7 +234,6 @@ def edit_dialog(df, main_df_container, column_configuration):
 
     st.session_state.main_df = df.copy()
 
-    # callback()
 
     add_members(df, main_df_container, column_configuration)
 
@@ -283,16 +241,23 @@ def edit_dialog(df, main_df_container, column_configuration):
 
         df_json = modified_df.to_dict(orient="records")
 
+        # st.markdown(df_json)
+        # id_list = [f"{num} : {row['id']}" for num, row in enumerate(df_json)]
+        id_list = {num : row['id'] for num, row in enumerate(df_json)}
+
+        to_post = {'name': necessary_details[0],
+                   'type': necessary_details[1],
+                   'employees': id_list}
+
+        st.markdown(to_post)
         r = requests.post(
             st.session_state.backend["url"] + "teams",
-            json=df_json,
+            json=to_post,
             auth=HTTPBasicAuth(
                 st.session_state.backend["username"],
                 st.session_state.backend["password"],
             ),
         )
-        # if r.status_code == 200:
-        # recieved = r.json()
 
         if r.status_code != 200:
             st.error(
@@ -305,9 +270,6 @@ def edit_dialog(df, main_df_container, column_configuration):
 
 def add_members(df, main_df_container, column_configuration):
     all_options = []
-    # TODO: Henry -
-    # GET REQUEST FROM DATABASE, SHOULD RETURN JSON INFORMATION OF FROM EVERY PERSON
-    # json_example_data = requests.get(... )
 
     r = requests.get(
         st.session_state.backend["url"] + "employees",
@@ -343,7 +305,7 @@ def add_members(df, main_df_container, column_configuration):
     st.session_state.temp_df = temp_df
 
 
-# I want to build a tech team with 5 people. We are building a website
+# I want to build a tech team wth 5 people. We are building a website
 
 
 def add_member_to_team():
@@ -352,3 +314,9 @@ def add_member_to_team():
     selected_data = st.session_state.temp_df.loc[
         st.session_state.temp_df["display"] == selected_display
     ].drop(columns=["display"])
+
+    st.session_state.main_df = pd.concat(
+        [st.session_state.main_df, selected_data]
+    ).reset_index(drop=True)
+    # st.session_state.main_df.drop_duplicates(subset=['name'])
+
