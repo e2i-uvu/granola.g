@@ -137,7 +137,6 @@ func EmployeeIngestHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 			emp.Social = social
-			emp.Status = 0
 			emp.AOI = aoi
 			emp.SaveNew()
 		}

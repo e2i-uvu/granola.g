@@ -37,7 +37,9 @@ func main() {
 	InfoLogger = log.New(file, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
 
 	InfoLogger.Println("Initialized:")
-	go InitSQL()
+
+	InitSQL()
+
 	mux := http.NewServeMux()
 	mux.Handle("/hire", authMiddleWare(http.HandlerFunc(HireHandler)))
 	mux.Handle("/status", authMiddleWare(http.HandlerFunc(StatusHandler)))
