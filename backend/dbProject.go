@@ -1,6 +1,9 @@
 package main
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 type ProjectAOI struct {
 	Aoi    string `json:"employee"`
@@ -35,7 +38,7 @@ func GetAllProjects() ([]map[string]interface{}, error) {
 	defer result.Close()
 
 	var teams []map[string]interface{}
-
+	k := 0
 	for result.Next() {
 		InfoLogger.Println("You're a nerd")
 		columns, err := result.Columns()
@@ -55,7 +58,8 @@ func GetAllProjects() ([]map[string]interface{}, error) {
 
 		resultMap := make(map[string]interface{})
 		for i, colName := range columns {
-			resultMap[colName] = values[i]
+			k++
+			resultMap[fmt.Sprintf("%s%d", colName, k)] = values[i]
 		}
 
 		teams = append(teams, resultMap)
