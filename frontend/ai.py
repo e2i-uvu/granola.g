@@ -169,8 +169,7 @@ Ask clarifying questions before calling tools if needed.
 @st.dialog("Edit Team", width="large")
 def display_team(team_json, team_details):
 
-    necessary_details = [team_details['project_name'], team_details['project_type']]
-
+    necessary_details = [team_details["project_name"], team_details["project_type"]]
 
     if "main_df" not in st.session_state:
         st.session_state.main_df = pd.DataFrame(team_json)
@@ -188,7 +187,12 @@ def display_team(team_json, team_details):
 
     main_df_container = st.empty()
 
-    edit_dialog(st.session_state.main_df, main_df_container, column_configuration, necessary_details)
+    edit_dialog(
+        st.session_state.main_df,
+        main_df_container,
+        column_configuration,
+        necessary_details,
+    )
 
     # st.rerun()
 
@@ -234,7 +238,6 @@ def edit_dialog(df, main_df_container, column_configuration, necessary_details):
 
     st.session_state.main_df = df.copy()
 
-
     add_members(df, main_df_container, column_configuration)
 
     if st.button("Submit", use_container_width=True):
@@ -243,11 +246,15 @@ def edit_dialog(df, main_df_container, column_configuration, necessary_details):
 
         # st.markdown(df_json)
         # id_list = [f"{num} : {row['id']}" for num, row in enumerate(df_json)]
-        id_list = {num : row['id'] for num, row in enumerate(df_json)}
+        # id_list = {num : row['id'] for num, row in enumerate(df_json)}
+        id_list = [{"employee": row["id"]} for _, row in enumerate(df_json)]
+        # id_list = [row["id"] for row, val in df_json]
 
-        to_post = {'name': necessary_details[0],
-                   'type': necessary_details[1],
-                   'employees': id_list}
+        to_post = {
+            "project_name": necessary_details[0],
+            "project_type": necessary_details[1],
+            "employees": id_list,
+        }
 
         st.markdown(to_post)
         r = requests.post(
@@ -319,4 +326,3 @@ def add_member_to_team():
         [st.session_state.main_df, selected_data]
     ).reset_index(drop=True)
     # st.session_state.main_df.drop_duplicates(subset=['name'])
-
