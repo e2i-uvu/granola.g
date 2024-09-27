@@ -1,6 +1,6 @@
 package main
 
-import ()
+import "errors"
 
 type ProjectAOI struct {
 	Aoi    string `json:"employee"`
@@ -14,37 +14,52 @@ type BuildProject struct {
 	Status int          `json:"status"`
 }
 
-// func GetAllProjects() ([]Project, error) {
-// 	// returns all projects where the status is currently 0
-// 	db := OpenDB()
-// 	defer db.Close()
-//
-// 	result, err := db.Query(`SELECT *
-// 	FROM projects p
-// 	WHERE p.status = 0
-// `)
-// 	if err != nil {
-// 		InfoLogger.Println("Unable to select projects", err)
-// 		var projects []Project
-// 		return projects, errors.New("Unable to open connection to db")
-// 	}
-// 	defer result.Close()
-//
-// 	var projects []Project
-// 	for result.Next() {
-// 		var project Project
-// 		err := result.Scan(&project.ID, &project.Status, &project.Name, &project.Description, &project.Frontend, &project.Backend, &project.Database, &project.Game_dev, &project.Embedded)
-// 		if err != nil {
-// 			InfoLogger.Println("Unable to scan projects", err)
-// 			var projects []Project
-// 			return projects, errors.New("Unable to scan people")
-// 		}
-// 		InfoLogger.Println(project)
-// 		projects = append(projects, project)
-// 	}
-// 	if len(projects) > 0 {
-// 		return projects, nil
-// 	}
-// 	InfoLogger.Println("Didn't find anyone")
-// 	return projects, errors.New("didn't find anyone")
-// }
+func GetAllProjects() ([]map[string]interface{}, error) {
+	// returns all projects
+	db := OpenDB()
+	defer db.Close()
+
+	result, err := db.Query(
+		`SELECT p.name, 
+		p.type,
+		e.*
+		FROM projects p
+		INNER JOIN
+			teams t ON p.id = t.project_id
+		INNER JOIN
+			employees e ON t.employee_id = e.id`)
+	if err != nil {
+		InfoLogger.Println("Unable to select projects", err)
+		return nil, errors.New("Unable to open connection to db")
+	}
+	defer result.Close()
+
+	var teams []map[string]interface{}
+
+	for result.Next() {
+		InfoLogger.Println("You're a nerd")
+		columns, err := result.Columns()
+		if err != nil {
+			InfoLogger.Fatal("Failed to get columns:", err)
+		}
+
+		values := make([]interface{}, len(columns))
+		valuePtrs := make([]interface{}, len(columns))
+		for i := range columns {
+			valuePtrs[i] = &values[i]
+		}
+
+		if err := result.Scan(valuePtrs...); err != nil {
+			InfoLogger.Fatal("Failed to scan row:", err)
+		}
+
+		resultMap := make(map[string]interface{})
+		for i, colName := range columns {
+			resultMap[colName] = values[i]
+		}
+
+		teams = append(teams, resultMap)
+	}
+
+	return teams, nil
+}
