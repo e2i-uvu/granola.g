@@ -20,6 +20,8 @@ def ai(query: str = ""):
 
     if query:
         if moderate(query):
+            # return "I'm sorry, I can't help you with that."
+            st.error("I'm sorry, I can't help you with that.")
             return "I'm sorry, I can't help you with that."
 
     st.session_state.gpt["messages"].append({"role": "user", "content": query})
@@ -162,10 +164,26 @@ st.caption("Keep in mind AI responses may be inaccurate.")
 st.write("---")
 
 render_messages()
-if user_input := st.chat_input(random.choice(PLACEHOLDERS)):
 
+if user_input := st.chat_input(
+    # random.choice(PLACEHOLDERS), key="current_user_message"  # , on_submit=respond
+    "Send a message",
+    key="current_user_message",  # , on_submit=respond
+):
+
+    # st.chat_message("user").markdown(st.session_state.current_user_message)
     st.chat_message("user").markdown(user_input)
 
     with st.chat_message("assistant"):
 
+        # st.write_stream(ai(st.session_state.current_user_message))
         st.write_stream(ai(user_input))
+
+# if user_input := st.chat_input(random.choice(PLACEHOLDERS)):
+# if user_input:
+#
+#     st.chat_message("user").markdown(st.session_state.current_user_message)
+#
+#     with st.chat_message("assistant"):
+#
+#         st.write_stream(ai(st.session_state.current_user_message))

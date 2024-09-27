@@ -42,7 +42,7 @@ def generate_team(pdf_text):
 
 files = st.file_uploader(
     "Project Charter",
-    type=["csv", "docx", "pdf"],
+    type=["pdf"],
     accept_multiple_files=True,
 )
 
