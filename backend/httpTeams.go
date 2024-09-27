@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"io"
 	"net/http"
 )
 
@@ -18,26 +17,56 @@ type Project struct {
 	TotalEmployees int    `json:"total_employees"`
 }
 
+type SaveProject struct {
+	ProjectName string          `json:"project_name"`
+	Type        string          `json:"project_type"`
+	Employees   []SaveEmployees `json:"employees"`
+}
+
+type SaveEmployees struct {
+	Employee string `json:"employee"`
+}
+
 func TeamsHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" && r.Header.Get("Content-Type") == "application/json" {
-		data, err := io.ReadAll(r.Body)
+		var project SaveProject
+		decoder := json.NewDecoder(r.Body)
+		err := decoder.Decode(&project)
 		if err != nil {
-			InfoLogger.Println(err)
+			InfoLogger.Println("Error decoding JSON:", err)
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		InfoLogger.Println(string(data))
-		// Takes in
-		//{
-		//   "project_name": "Video Game and Website",
-		//   "project_type": "Tech",
-		//   "employees": [
-		//   "id":""
-		//   "id":""
-		//   "id":""
-		//   ]
-		// }
-		// saves project to projects and then adds the employee ids and project ids to many to many table
+
+		db := OpenDB()
+		defer db.Close()
+
+		result, err := db.Exec(`INSERT INTO projects (status, name, type) VALUES (?, ?, ?)`, 0, project.ProjectName, project.Type)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			InfoLogger.Fatal("Failed to insert record:", err)
+		}
+
+		lastID, err := result.LastInsertId()
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			InfoLogger.Fatal("Failed to get last insert ID:", err)
+		}
+
+		for _, id := range project.Employees {
+
+			_, err := db.Exec(`INSERT INTO teams (employee_id, project_id, project_manager) VALUES (?, ?, ?)`, id.Employee, lastID, 0)
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				InfoLogger.Fatal("Failed to insert record:", err)
+			}
+
+			update := []EmployeeStatus{
+				{PID: id.Employee, Status: 1},
+			}
+			EmployeeStatusChange(update)
+		}
+
 		w.WriteHeader(http.StatusOK)
 	}
 	if r.Method == "GET" && r.Header.Get("Content-Type") == "application/json" {

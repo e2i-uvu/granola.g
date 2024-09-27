@@ -56,9 +56,9 @@ func InitSQL() {
 		InfoLogger.Println("projects table did not setup")
 	}
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS teams
-		(employee_id INTEGER, 
+		(employee_id STRING, 
 		project_id INTEGER,
-		project_manager BOOLEAN,
+		project_manager TINYINT,
 		constraint employee_id FOREIGN KEY (employee_id) REFERENCES employees(id),
 		constraint project_id FOREIGN KEY (project_id) REFERENCES projects(id))`)
 	if err != nil {
