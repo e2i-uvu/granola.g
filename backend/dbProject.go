@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 )
 
 type ProjectAOI struct {
@@ -23,8 +22,8 @@ func GetAllProjects() ([]map[string]interface{}, error) {
 	defer db.Close()
 
 	result, err := db.Query(
-		`SELECT p.name, 
-		p.type,
+		`SELECT p.pname, 
+		p.ptype,
 		e.*
 		FROM projects p
 		INNER JOIN
@@ -38,7 +37,6 @@ func GetAllProjects() ([]map[string]interface{}, error) {
 	defer result.Close()
 
 	var teams []map[string]interface{}
-	k := 0
 	for result.Next() {
 		InfoLogger.Println("You're a nerd")
 		columns, err := result.Columns()
@@ -58,8 +56,7 @@ func GetAllProjects() ([]map[string]interface{}, error) {
 
 		resultMap := make(map[string]interface{})
 		for i, colName := range columns {
-			k++
-			resultMap[fmt.Sprintf("%s%d", colName, k)] = values[i]
+			resultMap[colName] = values[i]
 		}
 
 		teams = append(teams, resultMap)

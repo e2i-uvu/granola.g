@@ -41,7 +41,7 @@ func TeamsHandler(w http.ResponseWriter, r *http.Request) {
 		db := OpenDB()
 		defer db.Close()
 
-		result, err := db.Exec(`INSERT INTO projects (status, name, type) VALUES (?, ?, ?)`, 0, project.ProjectName, project.Type)
+		result, err := db.Exec(`INSERT INTO projects (pstatus, pname, ptype) VALUES (?, ?, ?)`, 0, project.ProjectName, project.Type)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			InfoLogger.Fatal("Failed to insert record:", err)
