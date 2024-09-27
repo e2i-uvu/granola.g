@@ -46,7 +46,8 @@ if st.button("Create Team"):
 
         st.json(r.json())
 
-        to_send = r.json()
+        # to_send = r.json()
+        to_send = test_post
 
         st.success("success")
 
