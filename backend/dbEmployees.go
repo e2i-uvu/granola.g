@@ -153,13 +153,13 @@ func (user Employee) SaveNew() error {
 	db := OpenDB()
 	defer db.Close()
 
-	stmt, err := db.Prepare("INSERT OR REPLACE INTO employees (id, name, email, uvid, degree, prevteam, speciality, major, majoralt, aoi, social, status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)")
+	stmt, err := db.Prepare("INSERT OR IGNORE INTO employees (id, name, email, uvid, degree, prevteam, speciality, major, majoralt, aoi, social) VALUES (?,?,?,?,?,?,?,?,?,?,?)")
 	if err != nil {
 		InfoLogger.Printf("Saving had an error, %s\n", err)
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(user.Id, user.Name, user.Email, user.UVID, user.DegreePercent, user.TeamBefore, user.Speciality, user.Major, user.MajorAlt, user.AOI, user.Social, user.Status)
+	_, err = stmt.Exec(user.Id, user.Name, user.Email, user.UVID, user.DegreePercent, user.TeamBefore, user.Speciality, user.Major, user.MajorAlt, user.AOI, user.Social)
 	if err != nil {
 		InfoLogger.Printf("Saving had an error, %s\n", err)
 	}

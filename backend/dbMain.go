@@ -43,7 +43,7 @@ func InitSQL() {
 		majorAlt TEXT,
 		aoi TEXT,
 		social Decimal(2,0),
-		status INTEGER)`)
+		status INTEGER DEFAULT 0)`)
 	if err != nil {
 		InfoLogger.Println("Employees table did not setup")
 	}
