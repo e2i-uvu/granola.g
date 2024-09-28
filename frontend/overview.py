@@ -4,21 +4,75 @@ from requests.auth import HTTPBasicAuth
 import pandas as pd
 
 # Data Analytics
+from copy import copy
 import altair as alt
-import numpy as np
 from collections.abc import Callable
 #from enum import Enum
 
 st.title("Overview :material/groups:")
 st.write("---")
 
-# NOTE: EMPLOYEES
-
 EMPLOYEE_STATUS_CODE: list[str] = [
     "Assigned",
     "Pending Assignment",
     "Previously on e2i"
 ]
+
+def encode_status_code(status: str):
+    match status:
+        case "Assigned":
+            return 1
+        case "Pending Assignment":
+            return 0
+        case "Previously on e2i":
+            return -1
+
+# WARN: Obsolete. overview.py does not send POST requests
+def decode_status_code(status: int):
+    match status:
+        case 1:
+            return "Assigned"
+        case 0:
+            return "Pending Assignment"
+        case -1:
+            return "Previously on e2i"
+
+def format_DataFrame(data: list[dict[str, str | int | bool]]):
+    df = pd.DataFrame(data)
+
+    # NOTE: Parsing:
+    df["status"] = [decode_status_code(value) for value in df["status"]]#.iloc()]
+
+    parse_degree = lambda x: [f"{value}%" for value in df[x]]
+    parse_prev_team = lambda x: "Yes" if x else "No"
+
+    if "teambefore" in df:
+        df["teambefore"] = [parse_prev_team(value) for value in df["teambefore"]]
+    else:
+        df["prevTeam"] = [parse_prev_team(value) for value in df["prevTeam"]]
+
+
+    if "degreepercent" in df:
+        df["degreepercent"] = parse_degree("degreepercent")
+    else:
+        df["degree"] = parse_degree("degree")
+
+    return df
+
+def generate_stats(stats: dict[str, int|float|str]| pd.Series) -> None:
+    if type(stats) == dict:
+        labels = list(stats.keys())
+        values = list(stats.values())
+        stat_num: int = len(stats)
+        metric_columns = st.columns(stat_num)
+
+        for i in range(stat_num):
+            with metric_columns[i]:
+                if type(values[i]) == pd.Series:
+                    values[i] = values[i][0]
+                st.metric(labels[i], values[i])
+
+# NOTE: EMPLOYEES
 
 EMPLOYEE_COLUMN_ORDER: list[str] = [
     "status",
@@ -32,7 +86,7 @@ EMPLOYEE_COLUMN_ORDER: list[str] = [
     "degreepercent",
     "aoi",
     "social",
-    "id"
+    #"id"
 ]
  
 EMPLOYEE_COLUMN_CONFIG = {
@@ -50,53 +104,12 @@ EMPLOYEE_COLUMN_CONFIG = {
     "social": st.column_config.Column(label="Social", disabled=True),
 }
 
-def encode_status_code(status: str):
-    match status:
-        case "Assigned":
-            return 1
-        case "Pending Assignment":
-            return 0
-        case "Previously on e2i":
-            return -1
-
 def employee_stats_summary(df: pd.Series | pd.DataFrame) -> dict[str, int|float|str]:
     return {
         "Total Team Members": len(df),
         "Assigned": len([s for s in df.status if s == 1]),
         "Unassigned": len([s for s in df.status if s != 1]),
     }
-
-def format_DataFrame(data: list[dict[str, str | int | bool]]):
-    def decode_status_code(status: int):
-        match status:
-            case 1:
-                return "Assigned"
-            case 0:
-                return "Pending Assignment"
-            case -2:
-                return "Previously on e2i"
-
-    df = pd.DataFrame(data)
-    stats = employee_stats_summary(df)
-
-    df["status"] = [decode_status_code(value) for value in df["status"]]#.iloc()]
-    df["degreepercent"] = [f"{value}%" for value in df["degreepercent"]]
-
-    return df, stats
-
-def generate_stats(stats: dict[str, int|float|str]| pd.Series) -> None:
-    if type(stats) == dict:
-        labels = list(stats.keys())
-        values = list(stats.values())
-        stat_num: int = len(stats)
-        metric_columns = st.columns(stat_num)
-
-        for i in range(stat_num):
-            with metric_columns[i]:
-                if type(values[i]) == pd.Series:
-                    values[i] = values[i][0]
-                st.metric(labels[i], values[i])
-
 
 def show_status():
     r = requests.get(
@@ -105,13 +118,15 @@ def show_status():
             st.session_state.backend["username"], st.session_state.backend["password"]
         ),
     )
-    if r.status_code != 200:
-        st.error(f"Error code: {r.status_code}. Contact support.", icon=":material/sad:")
-        st.toast(f"Error code: {r.status_code}", icon=":material/sad:")
+    if r.status_code == 400:
+        st.warning(f"The database is empty!")
+    elif r.status_code != 200:
+        st.error(f"Error code: {r.status_code}. Contact support.")
+        st.toast(f"Error code: {r.status_code}")
     else:
         st.write("---")
-        df, stats = format_DataFrame(r.json())
-        generate_stats(stats) 
+        df = format_DataFrame(r.json())
+        generate_stats(employee_stats_summary(df)) 
         st.write("---")
         edited_df = st.data_editor(
             df, 
@@ -125,8 +140,6 @@ def show_status():
         if st.button("Save Changes"):
             edited_df["status"] = edited_df["status"].apply(encode_status_code)
 
-            # HACK: Backend expects a PID key, not an ID. 
-            # Therefore, this funky algorithm
             edited_df["pid"] = edited_df["id"]
             filtered_data = edited_df[["pid", "status"]].to_dict(orient="records")
 
@@ -151,8 +164,46 @@ PROJECT_STATUS_CODE: list[str] = [
     "Previously on e2i"
 ]
 
+TEAM_COLUMN_ORDER: list[str] = [
+    "pname",
+    "ptype",
+    "uvid",
+    "name",
+    "major",
+    "majoralt",
+    "speciality",
+    "degree",
+    "status",
+    "prevTeam",
+    "aoi",
+    "social",
+    "email",
+    #"id"
+]
+
+TEAM_COLUMN_CONFIG = {
+    "pname": st.column_config.Column(label="Project Name", disabled=True),
+    "ptype": st.column_config.Column(label="Project Type", disabled=True),
+    "status": st.column_config.SelectboxColumn(label="Status", disabled=True, options=EMPLOYEE_STATUS_CODE, required=True),
+    #"id": st.column_config.Column(label="Employee ID", disabled=True),
+    "uvid": st.column_config.Column(label="UVID", disabled=True),
+    "name": st.column_config.Column(label="Name", disabled=True),
+    "email": st.column_config.Column(label="Email", disabled=True),
+    "degree": st.column_config.Column(label="Degree Percent", disabled=True),
+    "prevTeam": st.column_config.Column(label="Team Before?", disabled=True),
+    "speciality": st.column_config.Column(label="Speciality", disabled=True),
+    "major": st.column_config.Column(label="Major", disabled=True),
+    "majoralt": st.column_config.Column(label="Major (Alt)", disabled=True),
+    "aoi": st.column_config.Column(label="Interest", disabled=True),
+    "social": st.column_config.Column(label="Social", disabled=True),
+}
+
+def team_stats_summary(df: pd.DataFrame) -> dict[str, int|float]:
+    return {
+        "Teams/Project Number": len(set(df["pname"]))
+    }
+
 def show_pending_projects():
-    st.write("Here is the status")
     r = requests.get(
         st.session_state.backend["url"] + "project",
         auth=HTTPBasicAuth(
@@ -162,12 +213,21 @@ def show_pending_projects():
     if r.status_code != 200:
         st.error(f"Error code: {r.status_code}. Contact support.", icon=":material/sad:")
         st.toast(f"Error code: {r.status_code}", icon=":material/sad:")
-    # WARN: Not implemented: waiting for backend endpoint
-    # else:
-    #     st.json(r.json())
-    #     df = pd.DataFrame(r.json)
+    else:
+        # st.json(r.json())
+        df = format_DataFrame(r.json())
+        generate_stats(team_stats_summary(df))
+        st.write("---")
+        st.dataframe(df,
+                     height = 14000,
+                     use_container_width=True,
+                     column_order=TEAM_COLUMN_ORDER,
+                     column_config=TEAM_COLUMN_CONFIG,
+                     hide_index=True
+                     )
+        st.write("---")
 
-
+# NOTE: DATA ANALYTICS
 
 def generate_plots(df, vars: dict[str, str], plot_type: str):
     def _generate_histogram(df, var: str, label: str):
@@ -210,48 +270,54 @@ def generate_plots(df, vars: dict[str, str], plot_type: str):
         with vars_columns[i]:
             generate_plot(df, columns[i], labels[i])
 
+def return_joined_majors():
+    pass
 
-# NOTE: DATA ANALYTICS
 def show_analytics():
-    r = requests.get(
-    #r_emp = requests.get(
+    r_emp = requests.get(
         st.session_state.backend["url"] + "employees",
         auth=HTTPBasicAuth(
             st.session_state.backend["username"], st.session_state.backend["password"]
         )
     )
-    # r_pro = requests.get(
-    #     st.session_state.backend["url"] + "projects",
-    #     auth=HTTPBasicAuth(
-    #         st.session_state.backend["username"], st.session_state.backend["password"]
-    #     )
-    # )
-    #if not(r_emp.status_code == 200 and r_projects.status_code == 200):
-    if r.status_code != 200:
-        st.error(f"Error code: {r.status_code}. Contact support.", icon=":material/sad:")
-        st.toast(f"Error code: {r.status_code}", icon=":material/sad:")
+    r_pro = requests.get(
+        st.session_state.backend["url"] + "project",
+        auth=HTTPBasicAuth(
+            st.session_state.backend["username"], st.session_state.backend["password"]
+        )
+    )
+    if r_emp.status_code == 400 or r_pro.status_code == 400:
+        st.warning(f"The database is empty!")
+    elif r_emp.status_code != 200:
+        st.error(f"Error code: {r_emp.status_code}. Contact support.")
+        st.toast(f"Error code: {r_emp.status_code}")
+    elif r_pro.status_code != 200:
+        st.error(f"Error code: {r_pro.status_code}. Contact support.")
+        st.toast(f"Error code: {r_pro.status_code}")
     else:
         st.write("---")
-        # df_emp = pd.DataFrame(r_emp.json())
-        # df_pro = pd.DataFrame(r_pro.json())
-        df = pd.DataFrame(r.json())
+        df_emp = pd.DataFrame(r_emp.json())
+        df_pro = pd.DataFrame(r_pro.json())
 
         statistics: dict[str, dict[str, str|int|float]] = {
             "General" : {
-                "Total e2i Members": len(df),
-                "Assigned e2i Students": len([s for s in df.status if s == 1]),
-                "Unassigned e2i Students": len([s for s in df.status if s != 1]),
-                "Returning": len([s for s in df.teambefore if s])#,
-                #"Active Projects": len([s for s in df_pro.status if s])
+                "Total e2i Members": len(df_emp),
+                "Assigned e2i Students": len([s for s in df_emp.status if s == 1]),
+                "Unassigned e2i Students": len([s for s in df_emp.status if s != 1]),
+                "Returning": len([s for s in df_emp.teambefore if s]),
+                "Formed Teams/Active Projects": len(set(df_pro["pname"]))
             },
             "Means" : {
-                "Social Skills": round(df.social.mean(),2),
-                "Degree Completion Percentage": round(df.degreepercent.mean(), 2),
+                "Program Overall Social Skills": round(df_emp.social.mean(),2),
+                "Social Skills per Team": round(df_pro.groupby("pname").social.mean(),2),
+                "Degree Completion Percentage": round(df_emp.degreepercent.mean(), 2),
+                "Degree Percentage per Team": round(df_pro.groupby("pname").degree.mean(),2),
+                
             },
             "Modes" : {
-                #"Area of Interest": df.aoi.mode(),
-                "Most Frequent Major": df.major.mode(),
-                #"Major (Alt)": df.majoralt.mode()
+                "Area of Interest": pd.Series([value for value in df_emp.aoi if value != ""]).mode(),
+                "Most Frequent Major": pd.Series([value for value in df_emp.major if value != ""]).mode(),
+                "Major (Alt)": pd.Series([value for value in df_emp.majoralt if value != ""]).mode()
             }
         }
 
@@ -270,15 +336,15 @@ def show_analytics():
             "majoralt": "Major (Alt)"
         }
 
-        generate_plots(df, histogram_variables, "histogram")
-        generate_plots(df, barplot_variables, "barplot")
+        generate_plots(df_emp, histogram_variables, "histogram")
+        generate_plots(df_emp, barplot_variables, "barplot")
 
 
 # NOTE: main
 def main():
     # NOTE:
     # pending projects + running projects (teams and descriptions)
-    option = st.selectbox("Select one", ("Select an option", "Employees", "Team Projects", "Analytics"))  # old_options)
+    option = st.selectbox("Select one", ( "Analytics", "Employees", "Team Projects"))  # old_options)
 
     if option != "Select an option":
         match option:
